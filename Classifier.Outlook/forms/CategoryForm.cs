@@ -1,0 +1,166 @@
+﻿using System;
+using System.Linq;
+using System.Windows.Forms;
+using myoddweb.classifier.core;
+using System.Collections.Generic;
+
+namespace myoddweb.classifier
+{
+  public partial class CategoryForm : Form
+  {
+    private readonly Engine _engine = null;
+
+    private Category GivenCategory { get; set; }
+
+    public CategoryForm( Engine engine, Category category  )
+    {
+      // 
+      InitializeComponent();
+
+      // the engine to create new categories.
+      _engine = engine;
+
+      // the category we working with.
+      GivenCategory = category;
+    }
+
+    private void CategoryForm_Load(object sender, EventArgs e)
+    {
+      // set the text
+      textName.Text = GivenCategory == null ? "" : GivenCategory.Name;
+
+      // rebuild the combo
+      RebuildFoldersCombo();
+    }
+
+    private void RebuildFoldersCombo()
+    { 
+      // remove everything
+      comboBoxFolders.Items.Clear();
+
+      // the text and value.
+      comboBoxFolders.DisplayMember = "Text";
+      comboBoxFolders.ValueMember = "Value";
+
+      // and set the folder values.
+      var items = new List<object>();
+
+      // select the first item
+      var selectedIndex = 0;
+
+      // we can have is 'n/a' if we want no folders
+      items.Add(new { Text = "n/a", Value = "" });
+
+      // go around all the folders.
+      foreach (var folder in _engine.GetFolders() )
+      {
+        // is that our current one?
+        if (GivenCategory?.FolderId == folder.Id())
+        {
+          selectedIndex = items.Count;
+        }
+        items.Add( new {Text = folder.Path( true ), Value = folder.Id() });
+      }
+
+      // the data source.
+      comboBoxFolders.DataSource = items;
+
+      // do we have any folders?
+      if (_engine.GetFolders().Count == 0)
+      {
+        // there is nothing to select here, nothing much we can do really.
+        // so we select the first item, (the 'n/a' one)
+        comboBoxFolders.SelectedIndex = 0;
+        comboBoxFolders.Enabled = false;
+      }
+      else
+      {
+        // select our current one.
+        comboBoxFolders.SelectedIndex = selectedIndex;
+      }
+    }
+
+    private void Cancel_Click(object sender, EventArgs e)
+    {
+      DialogResult = DialogResult.Cancel;
+      Close();
+    }
+
+    private void Apply_Click(object sender, EventArgs e)
+    {
+      var allCategories = _engine.GetCategories();
+
+      // get the text and clean it up
+      var text = textName.Text;
+      text = text.Trim();
+
+      // is it empty?
+      if (text.Length == 0)
+      {
+        MessageBox.Show("The category name cannot be empty", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+        return;
+      }
+
+      // does it already exist?
+      var item = allCategories.Where(c => string.Equals(c.Value, text, StringComparison.CurrentCultureIgnoreCase))
+                              .Select( f => new { Key = f.Key, Value = f.Value })
+                              .FirstOrDefault();
+      if ( item != null )
+      {
+        if(GivenCategory == null          // Given category is null, no we are trying to create a duplicate.
+           ||
+          (item.Key != GivenCategory.Id ) // the new string matches an existing string.
+          )
+        {
+          MessageBox.Show("The category name given already exists", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+      }
+
+      // Get the selected folder id.
+      // We want to allow the user to select nothing, maybe they just want to 
+      // classify the post and do nothing else with it.
+      var folderId = GetSelectedFolderId();
+
+      // did we change anything at all?
+      if (GivenCategory != null && GivenCategory == new Category(text, GivenCategory.Id, folderId))
+      {
+        //  just ignore this.
+        DialogResult = DialogResult.Ignore;
+        Close();
+        return;
+      }
+
+      //  we are updating a value
+      if (GivenCategory != null)
+      {
+        //  change the name of the category.
+        _engine.RenameCategory(GivenCategory.Name, text);
+      }
+      else
+      {
+        // add the category
+        _engine.GetCategory(text);
+      }
+
+      // save the id of the folder.
+      _engine.SetConfig(Categories.GetConfigName(text), folderId);
+
+      // and we are dome
+      DialogResult = DialogResult.OK;
+      Close();
+    }
+
+    private string GetSelectedFolderId()
+    {
+      // did we select anything at all?
+      if (comboBoxFolders.SelectedIndex == -1)
+      {
+        return "";
+      }
+
+      // otherwise get the id
+      return ((string) comboBoxFolders.SelectedValue).Trim();
+    }
+  }
+}

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+  </ribbon>
+  <contextMenus>
+    <contextMenu idMso="ContextMenuMailItem">
+      <dynamicMenu id="MyoddweblassifierSingleItemMenu" 
+                   getLabel="GetMainLabel"
+                   getVisible="IsMenuVisible"
+                   getContent="GetContent"
+                   getImage="GetImageClassify"/>
+    </contextMenu>
+  
+    <contextMenu idMso="ContextMenuMultipleItems">
+      <dynamicMenu id="MyoddwebClassifierMultipleItemsMenu" 
+                   getLabel="GetMultipleItemsLabel"
+                   getVisible="IsMultipleItemsMenuVisible"
+                   getContent="GetMultipleItemsContent"
+                   getImage="GetImageClassify" />
+      </contextMenu>
+  
+  </contextMenus>
+</customUI>
+
