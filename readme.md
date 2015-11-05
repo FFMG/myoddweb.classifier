@@ -1,4 +1,11 @@
 # MyOddWeb.Classifier #
+
+<!---
+Mono does not work currently...
+ ## Status ##
+[comment]: <> [![Build Status](https://travis-ci.org/FFMG/myoddweb.classifier.svg?branch=master)](https://travis-ci.org/FFMG/myoddweb.classifier)
+-->
+
 ## What is it ##
 MyOddWeb classifier, as it's name mentions, classifies emails as they arrive and move them to predefined folders.
 
@@ -36,9 +43,11 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions ##
-### 1.0.0.0 ###
+### 0.1.0.0 (05/11/2015)###
 
+- **Beta**
 - Initial release
+
 
 ## FAQ ##
 ### General ###
@@ -83,7 +92,10 @@ Just close outlook, delete the database and restart outlook.
 	- <s>Test on outlook 2013</s>
 	- Test on outlook 2010
 	- Test on outlook 2007
-- Test on 32bit app
+- Test on 32bit versions of Outlook.
+	- On 32bit machines
+	- On 64bit machines
 - Test on 64bit versions of Outlook
 - Ask someone to give us a certificate rather than the temp one we have.
 - Languages
+- Add copyright notice in front of all the files...
