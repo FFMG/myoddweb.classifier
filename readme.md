@@ -99,3 +99,8 @@ Just close outlook, delete the database and restart outlook.
 - Ask someone to give us a certificate rather than the temp one we have.
 - Languages
 - Add copyright notice in front of all the files...
+- 
+
+## LICENSE ##
+[Apache License](https://github.com/FFMG/myoddweb.classifier/blob/master/LICENSE)
+http://www.apache.org/licenses/
