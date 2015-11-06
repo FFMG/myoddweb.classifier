@@ -102,5 +102,4 @@ Just close outlook, delete the database and restart outlook.
 - 
 
 ## LICENSE ##
-[Apache License](https://github.com/FFMG/myoddweb.classifier/blob/master/LICENSE)
-http://www.apache.org/licenses/
+[Apache License](https://github.com/FFMG/myoddweb.classifier/blob/master/LICENSE) / (http://www.apache.org/licenses/)
