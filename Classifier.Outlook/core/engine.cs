@@ -84,8 +84,13 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     private bool InitialiseEngine(string directoryName, string databasePath)
     {
-      var dllInteropPath = Path.Combine( directoryName, "Classifier.Interop.dll" );
-      var dllEnginePath = Path.Combine(directoryName, "Classifier.Engine.dll" );
+      var dllInteropPath = Path.Combine( directoryName, "x86\\Classifier.Interop.dll");
+      var dllEnginePath = Path.Combine(directoryName, "x86\\Classifier.Engine.dll" );
+      if (Environment.Is64BitProcess)
+      {
+        dllInteropPath = Path.Combine(directoryName, "x64\\Classifier.Interop.dll");
+        dllEnginePath = Path.Combine(directoryName, "x64\\Classifier.Engine.dll");
+      }
 
       // look for the 
       Assembly asm = null;
@@ -189,32 +194,32 @@ namespace myoddweb.classifier.core
 
     public bool SetConfig(string configName, string configValue)
     {
-      return ClassifyEngine.SetConfig(configName, configValue);
+      return ClassifyEngine?.SetConfig(configName, configValue) ?? false;
     }
 
     public bool Train(string categoryName, string uniqueIdentifier, string textToCategorise)
     {
-      return ClassifyEngine.Train(categoryName, uniqueIdentifier, textToCategorise);
+      return ClassifyEngine?.Train(categoryName, uniqueIdentifier, textToCategorise) ?? false;
     }
 
     public bool UnTrain( string uniqueIdentifier, string textToCategorise)
     {
-      return ClassifyEngine.UnTrain( uniqueIdentifier, textToCategorise);
+      return ClassifyEngine?.UnTrain( uniqueIdentifier, textToCategorise) ?? false;
     }
 
     public int GetCategory(string categoryName)
     {
-      return ClassifyEngine.GetCategory(categoryName );
+      return ClassifyEngine?.GetCategory(categoryName ) ?? -1;
     }
 
     public int GetCategoryFromUniqueId(string uniqueIdentifier)
     {
-      return ClassifyEngine.GetCategoryFromUniqueId( uniqueIdentifier );
+      return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
     }
 
     public int Categorize(string categoryText)
     {
-      return ClassifyEngine.Categorize(categoryText, 75/*%*/);
+      return ClassifyEngine?.Categorize(categoryText, 75/*%*/) ?? -1;
     }
 
     public int Categorize(List<string> categoryList)
@@ -225,13 +230,16 @@ namespace myoddweb.classifier.core
     public Dictionary<int, string> GetCategories( )
     {
       var categories = new Dictionary<int, string>();
-      var result = ClassifyEngine.GetCategories( out categories);
+      if (ClassifyEngine?.GetCategories(out categories) < 0 )
+      {
+        return new Dictionary<int, string>();
+      }
       return categories;
     }
 
     public bool RenameCategory(string oldCategory, string newCategory)
     {
-      return ClassifyEngine.RenameCategory(oldCategory, newCategory);
+      return ClassifyEngine?.RenameCategory(oldCategory, newCategory) ?? false;
     }
 
     public bool DeleteCategory(string categoryName)

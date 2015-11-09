@@ -68,7 +68,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Classifier.Outlook\myoddweb.classifier.csproj">
       <Project>{04db8779-a2ce-4e72-a5a9-4dd75e925d08}</Project>
-      <Name>SpamCatcher</Name>
+      <Name>myoddweb.classifier</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
