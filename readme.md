@@ -43,6 +43,12 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions ##
+### 0.2.0.0 (09/11/2015)###
+
+- By default we compile the x86 and x64 binaries.
+- Created 2 output folders.
+- We now automatically load the x64 or x86 dll depending on the version of outlook running.
+
 ### 0.1.0.0 (05/11/2015)###
 
 - **Beta**

@@ -32,12 +32,18 @@ ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x86 x64
 
 [Files]
-Source: "{#APP_SOURCE}Classifier.Engine.dll"; DestDir: "{app}"; Flags: ignoreversion
+; x64
+Source: "{#APP_SOURCE}\x64\Classifier.Engine.dll"; DestDir: "{app}\x64"; Flags: ignoreversion
+Source: "{#APP_SOURCE}\x64\Classifier.Interop.dll"; DestDir: "{app}\x64"; Flags: ignoreversion
+
+; x86
+Source: "{#APP_SOURCE}\x86\Classifier.Engine.dll"; DestDir: "{app}\x86"; Flags: ignoreversion
+Source: "{#APP_SOURCE}\x86\Classifier.Interop.dll"; DestDir: "{app}\x86"; Flags: ignoreversion
+
 Source: "{#APP_SOURCE}Classifier.Interfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#APP_SOURCE}myoddweb.classifier.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#APP_SOURCE}myoddweb.classifier.dll.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#APP_SOURCE}myoddweb.classifier.vsto"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#APP_SOURCE}Classifier.Interop.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; https://msdn.microsoft.com/en-us/library/ee712616.aspx
 Source: "{#APP_SOURCE}Microsoft.Office.Tools.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
