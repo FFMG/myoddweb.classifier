@@ -25,7 +25,7 @@ namespace myoddweb.classifierUnitTest
     {
       // the paths we will be using.
       var directoryName = AppDomain.CurrentDomain.BaseDirectory;
-      if (File.Exists($"{directoryName}\\classifier.engine.dll"))
+      if (File.Exists($"{directoryName}\\x64\\classifier.engine.dll"))
       {
         return directoryName;
       }
@@ -34,9 +34,9 @@ namespace myoddweb.classifierUnitTest
       foreach (var loadedAssembly in loadedAssemblies)
       {
         directoryName = Path.GetDirectoryName(loadedAssembly.Location);
-        for (;;)
+        for (; directoryName!= null;)
         {
-          if (File.Exists($"{directoryName}\\classifier.engine.dll"))
+          if (File.Exists($"{directoryName}\\x64\\classifier.engine.dll"))
           {
             return directoryName;
           }
