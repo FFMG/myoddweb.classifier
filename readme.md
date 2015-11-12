@@ -49,6 +49,10 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - Created 2 output folders.
 - We now automatically load the x64 or x86 dll depending on the version of outlook running.
 
+#### 0.2.1.0 (11/11/2015)####
+
+- Removed dependency on .NET 4.5.2 and replaced it with more realistic 4.5.0  
+
 ### 0.1.0.0 (05/11/2015)###
 
 - **Beta**
