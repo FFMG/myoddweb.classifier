@@ -43,15 +43,19 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions ##
+#### 0.3.0.0 (24/12/2015)####
+
+- Added weights  
+
+#### 0.2.1.0 (11/11/2015)####
+
+- Removed dependency on .NET 4.5.2 and replaced it with more realistic 4.5.0  
+
 ### 0.2.0.0 (09/11/2015)###
 
 - By default we compile the x86 and x64 binaries.
 - Created 2 output folders.
 - We now automatically load the x64 or x86 dll depending on the version of outlook running.
-
-#### 0.2.1.0 (11/11/2015)####
-
-- Removed dependency on .NET 4.5.2 and replaced it with more realistic 4.5.0  
 
 ### 0.1.0.0 (05/11/2015)###
 
@@ -77,6 +81,13 @@ Eventually, it will keep on learning and you will not need to worry.
 #### How many magnets/categories can I have ####
 There is no limit on the number of categories and/or magnets.
 But you have to be realistic and not have too many.
+
+### Weights ###
+Weights are ways of marking an email more or less important depending on .
+
+For example, if you use a magnet then the weight of that email is slightly more than when the engine tries to categorize the email itself.
+
+When you categorize an email yourself, then this is considered to have the greatest weight, (who knows better than you what an email should be). 
 
 ### Database ###
 #### Where is the database ####

@@ -1,7 +1,15 @@
-﻿namespace myoddweb.classifier.core
+﻿using System;
+
+namespace myoddweb.classifier.core
 {
   public class Options
   {
+    public enum DefaultOptions
+    {
+      UserWeight = 10,
+      MagnetsWeight = 2  
+    }
+
     private readonly Engine _engine;
     
     internal bool? _reCheckCategories;
@@ -9,6 +17,10 @@
     internal bool? _checkIfUnownCategory;
 
     internal bool? _reCheckIfCtrlIsDown;
+
+    internal uint? _magenetsWeight;
+
+    internal uint? _userWeight;
 
     /// <summary>
     /// (re) Check all the categories all the time.
@@ -43,6 +55,40 @@
       {
         _reCheckIfCtrlIsDown = value;
         _engine?.SetConfig("Option.ReCheckIfCtrlKeyIsDown", (value ? "1" : "0"));
+      }
+    }
+
+    /// <summary>
+    /// Set the magnet weight multiplier.
+    /// </summary>
+    public uint MagenetsWeight
+    {
+      get
+      {
+        return (uint)(_magenetsWeight ??
+                       (_magenetsWeight = (Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.MagenetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
+      }
+      set
+      {
+        _magenetsWeight = value;
+        _engine?.SetConfig("Option.MagenetsWeight", Convert.ToString(value));
+      }
+    }
+
+    /// <summary>
+    /// Set the user weight multiplier.
+    /// </summary>
+    public uint UserWeight
+    {
+      get
+      {
+        return (uint)(_userWeight ??
+                       (_userWeight = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.UserWeight", Convert.ToString( (uint)DefaultOptions.UserWeight))))));
+      }
+      set
+      {
+        _userWeight = value;
+        _engine?.SetConfig("Option.UserWeight", Convert.ToString(value));
       }
     }
 

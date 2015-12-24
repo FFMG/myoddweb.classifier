@@ -234,10 +234,13 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">The mail item we wish to categorise</param>
     /// <param name="id">The category id number we want to set this to.</param>
     /// <returns>boolean success or not.</returns>
-    async private Task<myoddweb.classifier.Errors> ClassifyMailAsync( _MailItem mailItem, uint id)
+    async private Task<myoddweb.classifier.Errors> ClassifyMailAsync( _MailItem mailItem, uint id )
     {
       var categories = GetAllCategories();
-      return await categories.ClassifyAsync(mailItem, id);
+
+      // we know this is a user selected item
+      // so we can get the weight from the options.
+      return await categories.ClassifyAsync(mailItem, id, _options.UserWeight);
     }
 
     /// <summary>
@@ -303,38 +306,50 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">the mail item itself.</param>
     /// <param name="categories">the categories tool we will use to re-categorise</param>
     /// <param name="currentCategoryId">The current value of the category</param>
-    /// <returns>int the new id or -1 if we don't know.</returns>
-    protected int GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, Categories categories )
+    /// <returns>Categories.CategorizeResponse the new id or -1 if we don't know.</returns>
+    protected Categories.CategorizeResponse GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, Categories categories )
     {
+      var guessCategoryResponse = new Categories.CategorizeResponse
+      {
+        CategoryId = 0,
+        WasMagnetUsed = false
+      };
+
       if ( !_options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
       {
         // if we do not want to check options, then we don't want to do that.
         if ( !_options.ReCheckCategories )
         {
-          return -1;
+          return guessCategoryResponse;
         }
 
         // if we currently have a category and we only want to check the
         // unknown categories, then we musn't check.
         if (currentCategoryId != -1 && _options.CheckIfUnownCategory)
         {
-          return -1;
+          return guessCategoryResponse;
         }
       }
 
       var currentCursor = Cursor.Current;
       Cursor.Current = Cursors.WaitCursor;
 
-      var guessCategory = -1;
       try
       {
         // guess where it could be going to now.
-        guessCategory = mailItem == null ? -1 : categories.CategorizeAsync(mailItem).Result;
+        if (mailItem != null)
+        {
+          guessCategoryResponse = categories.CategorizeAsync(mailItem).Result;
+        }
       }
       catch (Exception)
       {
         // @todo we need to log that there was an issue.
-        guessCategory = -1;
+        guessCategoryResponse = new Categories.CategorizeResponse
+        {
+          CategoryId = 0,
+          WasMagnetUsed = false
+        };
       }
 
       // reset the cursor.
@@ -342,12 +357,12 @@ namespace myoddweb.classifier.core
 
 
       // add a debug message.
-      Debug.WriteLine(guessCategory != currentCategoryId
-        ? $"My new classifying guess for this message is : {guessCategory}"
-        : $"My classifying guess for this message is category remains the same : {guessCategory}");
+      Debug.WriteLine(guessCategoryResponse.CategoryId != currentCategoryId
+        ? $"My new classifying guess for this message is : {guessCategoryResponse.CategoryId}"
+        : $"My classifying guess for this message is category remains the same : {guessCategoryResponse.CategoryId}");
 
       // return what we found
-      return guessCategory;
+      return guessCategoryResponse;
     }
 
     /// <summary>
@@ -377,14 +392,14 @@ namespace myoddweb.classifier.core
       var currentCategoryId = currentCategory == null ? -1 : (int)currentCategory.Id;
 
       // try and guess the new category
-      var guessCategory = GuessPosibleCategory(mailItem, currentCategoryId, categories);
+      var guessCategoryResponse = GuessPosibleCategory(mailItem, currentCategoryId, categories);
 
       // and create a menu for all of them.
       foreach (var category in categories.List() )
       {
         var safeLabel = category.XmlName.Replace( "&amp;", "&amp;&amp;");
         var getImage = "";
-        if (currentCategoryId == category.Id && guessCategory == category.Id)
+        if (currentCategoryId == category.Id && guessCategoryResponse.CategoryId == category.Id)
         {
           // best guess selected image.
           getImage = @"getImage=""GetImageBoth""";
@@ -393,7 +408,7 @@ namespace myoddweb.classifier.core
         {
           getImage = @"getImage=""GetImageSelected""";
         }
-        else if (guessCategory == category.Id)
+        else if (guessCategoryResponse.CategoryId == category.Id)
         {
           getImage = @"getImage=""GetImageMaybe""";
         }

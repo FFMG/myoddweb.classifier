@@ -32,11 +32,17 @@
       this.ok = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.comboUser = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.comboMagnets = new System.Windows.Forms.ComboBox();
       this.reCheckIfCtrl = new System.Windows.Forms.CheckBox();
       this.checkCategoryIfUnknown = new System.Windows.Forms.CheckBox();
       this.Categories = new System.Windows.Forms.Button();
       this.Magnets = new System.Windows.Forms.Button();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // reCheckCategories
@@ -53,18 +59,18 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(270, 120);
+      this.ok.Location = new System.Drawing.Point(270, 209);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 1;
       this.ok.Text = "&Ok";
       this.ok.UseVisualStyleBackColor = true;
-      this.ok.Click += new System.EventHandler(this.ok_Click);
+      this.ok.Click += new System.EventHandler(this.Ok_Click);
       // 
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(351, 120);
+      this.button1.Location = new System.Drawing.Point(351, 209);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(75, 23);
       this.button1.TabIndex = 2;
@@ -78,10 +84,44 @@
       this.groupBox1.Controls.Add(this.reCheckCategories);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(414, 102);
+      this.groupBox1.Size = new System.Drawing.Size(414, 100);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Debug";
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(6, 48);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(64, 13);
+      this.label3.TabIndex = 7;
+      this.label3.Text = "User trained";
+      // 
+      // comboUser
+      // 
+      this.comboUser.FormattingEnabled = true;
+      this.comboUser.Location = new System.Drawing.Point(115, 45);
+      this.comboUser.Name = "comboUser";
+      this.comboUser.Size = new System.Drawing.Size(98, 21);
+      this.comboUser.TabIndex = 6;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 19);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(48, 13);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "Magnets";
+      // 
+      // comboMagnets
+      // 
+      this.comboMagnets.FormattingEnabled = true;
+      this.comboMagnets.Location = new System.Drawing.Point(115, 16);
+      this.comboMagnets.Name = "comboMagnets";
+      this.comboMagnets.Size = new System.Drawing.Size(98, 21);
+      this.comboMagnets.TabIndex = 4;
       // 
       // reCheckIfCtrl
       // 
@@ -105,7 +145,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(18, 120);
+      this.Categories.Location = new System.Drawing.Point(11, 209);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 4;
@@ -115,7 +155,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(103, 120);
+      this.Magnets.Location = new System.Drawing.Point(96, 209);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 5;
@@ -123,11 +163,25 @@
       this.Magnets.UseVisualStyleBackColor = true;
       this.Magnets.Click += new System.EventHandler(this.Magnets_Click);
       // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.label2);
+      this.groupBox2.Controls.Add(this.comboMagnets);
+      this.groupBox2.Controls.Add(this.label3);
+      this.groupBox2.Controls.Add(this.comboUser);
+      this.groupBox2.Location = new System.Drawing.Point(12, 120);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(414, 83);
+      this.groupBox2.TabIndex = 4;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Weights";
+      // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(438, 153);
+      this.ClientSize = new System.Drawing.Size(438, 247);
+      this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.Magnets);
       this.Controls.Add(this.Categories);
       this.Controls.Add(this.groupBox1);
@@ -140,8 +194,11 @@
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.Text = "Options";
+      this.Load += new System.EventHandler(this.OnLoad);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -156,5 +213,10 @@
     private System.Windows.Forms.CheckBox reCheckIfCtrl;
     private System.Windows.Forms.Button Categories;
     private System.Windows.Forms.Button Magnets;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.ComboBox comboUser;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ComboBox comboMagnets;
+    private System.Windows.Forms.GroupBox groupBox2;
   }
 }

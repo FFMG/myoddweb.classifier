@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -9,6 +10,13 @@ namespace myoddweb.classifier.core
 {
   public class Categories
   {
+    public class CategorizeResponse
+    {
+      public int CategoryId { get; set; }
+
+      public bool WasMagnetUsed { get; set; }
+    }
+
     /// <summary>
     /// Sorted list of categories.
     /// </summary>
@@ -95,13 +103,14 @@ namespace myoddweb.classifier.core
     /// <param name="uniqueEntryId">The unique entry id</param>
     /// <param name="listOfItems">The list of strings we want to classify.</param>
     /// <param name="categoryId">The category we are classifying to.</param>
+    /// <param name="weight">The category weight to use.</param>
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
-    private async Task<Errors> ClassifyAsync(string uniqueEntryId, List<string> listOfItems, uint categoryId)
+    private async Task<Errors> ClassifyAsync(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId, uint weight)
     {
-      return await Task.FromResult(Classify(uniqueEntryId, listOfItems, categoryId));
+      return await Task.FromResult(Classify(uniqueEntryId, listOfItems, categoryId, weight));
     }
 
-    private string GetUniqueIdentifierString(Outlook._MailItem mailItem)
+    private static string GetUniqueIdentifierString(Outlook._MailItem mailItem)
     {
       // does it already exist?
       if (mailItem.UserProperties[IdentifierKey] == null)
@@ -279,36 +288,45 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mailItem">The mail we want to classify.</param>
     /// <param name="id">the category we are setting it to.</param>
+    /// <param name="weight">The classification weight we will be using.</param>
     /// <returns></returns>
-    public async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id)
+    public async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight )
     {
       return await ClassifyAsync( GetUniqueIdentifierString( mailItem ),
                                   GetStringFromMailItem( mailItem ),
-                                  id);
+                                  id,
+                                  weight );
     }
 
     /// <summary>
     /// Try and categorise an email.
     /// </summary>
     /// <param name="mailItem">The mail item we are working with</param>
+    /// <param name="magnetWasUsed">If we used a magnet or not</param>
     /// <returns></returns>
-    public async Task<int> CategorizeAsync(Outlook._MailItem mailItem )
+    public async Task<CategorizeResponse> CategorizeAsync(Outlook._MailItem mailItem )
     {
-      return await Task.FromResult(Categorize( mailItem));
+      var magnetWasUsed = false;
+      var categoryId = await Task.FromResult(Categorize(mailItem, out magnetWasUsed));
+      return new CategorizeResponse { CategoryId = categoryId, WasMagnetUsed = magnetWasUsed};
     }
 
     /// <summary>
     /// Try and categorise an email.
     /// </summary>
     /// <param name="mailItem">The mail item we are working with</param>
+    /// <param name="magnetWasUsed">If we used a magnet or not</param>
     /// <returns></returns>
-    public int Categorize(Outlook._MailItem mailItem)
+    protected int Categorize(Outlook._MailItem mailItem, out bool magnetWasUsed )
     {
       //  try and use a magnet if we can
       var magnetCategory = CategorizeUsingMagnets(mailItem);
 
+      // set if we used a magnet or not.
+      magnetWasUsed = (magnetCategory != -1);
+
       // otherwise, use the engine direclty.
-      return magnetCategory != -1 ? magnetCategory : _engine.Categorize(GetStringFromMailItem(mailItem));
+      return magnetWasUsed ? magnetCategory : _engine.Categorize(GetStringFromMailItem(mailItem));
     }
 
     /// <summary>
@@ -417,8 +435,9 @@ namespace myoddweb.classifier.core
     /// <param name="uniqueEntryId">The unique entry id</param>
     /// <param name="listOfItems">The list of strings we want to classify.</param>
     /// <param name="categoryId">The category we are classifying to.</param>
+    /// <param name="weight">The category weight to use.</param>
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
-    private Errors Classify(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId)
+    private Errors Classify(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId, uint weight)
     {
       if (_engine == null)
       {
@@ -434,9 +453,9 @@ namespace myoddweb.classifier.core
 
       // make one big string out of it.
       var contents = string.Join( " ", listOfItems );
-      
+
       // classify it.
-      if ( !_engine.Train(category.Name, uniqueEntryId, contents ) )
+      if ( !_engine.Train(category.Name, contents, uniqueEntryId, (int)weight ) )
       {
         //  did not work.
         return Errors.CategoryTrainning;

@@ -36,7 +36,7 @@ namespace Classifier
       //
       //  Classification 
       //
-      virtual bool Train( String^ categoryName, String^ uniqueIdentifier, String^ textToCategorise);
+      virtual bool Train( String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
       virtual bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
       virtual int Categorize( String^ textToCategorise, unsigned int minPercentage);
       

@@ -29,7 +29,7 @@ public:
   //
   //  Classification 
   //
-  bool Train(String^ categoryName, String^ uniqueIdentifier, String^ textToCategorise);
+  bool Train(String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
   bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
   int Categorize(String^ textToCategorise, unsigned int minPercentage);
   
@@ -54,7 +54,7 @@ protected:
   typedef bool(__stdcall *f_Initialise)(const char*);
   typedef bool(__stdcall *f_SetConfig)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_GetConfig)(const char16_t*, char16_t*, size_t);
-  typedef bool(__stdcall *f_TrainEx)(const char16_t*, const char16_t*, const char16_t*);
+  typedef bool(__stdcall *f_TrainEx)(const char16_t*, const char16_t*, const char16_t*, const int );
   typedef bool(__stdcall *f_UnTrainEx)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_RenameCategory)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_DeleteCategory)(const char16_t*);

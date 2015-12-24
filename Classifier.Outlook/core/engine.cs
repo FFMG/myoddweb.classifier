@@ -24,6 +24,27 @@ namespace myoddweb.classifier.core
     /// </summary>
     private IClassify1 ClassifyEngine { get; set; }
 
+    internal uint? _minPercentage;
+
+    /// <summary>
+    /// (re) Check all the categories all the time.
+    /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
+    /// The net effect of that would be to only check if we don't already know the value.
+    /// </summary>
+    public uint MinPercentage
+    {
+      get
+      {
+        return (uint)(_minPercentage ??
+                       (_minPercentage = ( Convert.ToUInt32( GetConfigWithDefault("Option.MinPercentage", "75")))));
+      }
+      set
+      {
+        _minPercentage = value;
+        SetConfig("Option.MinPercentage", Convert.ToString(value) );
+      }
+    }
+
     public Engine()
     {
       InitialiseEngine();
@@ -197,9 +218,13 @@ namespace myoddweb.classifier.core
       return ClassifyEngine?.SetConfig(configName, configValue) ?? false;
     }
 
-    public bool Train(string categoryName, string uniqueIdentifier, string textToCategorise)
+    public bool Train(string categoryName, string textToCategorise, string uniqueIdentifier, int weight )
     {
-      return ClassifyEngine?.Train(categoryName, uniqueIdentifier, textToCategorise) ?? false;
+      if (weight <= 0)
+      {
+        throw new ArgumentException( "The weight cannot be 0 or less!" );
+      }
+      return ClassifyEngine?.Train(categoryName, textToCategorise, uniqueIdentifier, weight ) ?? false;
     }
 
     public bool UnTrain( string uniqueIdentifier, string textToCategorise)
@@ -217,14 +242,20 @@ namespace myoddweb.classifier.core
       return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
     }
 
-    public int Categorize(string categoryText)
+    public int Categorize(string categoryText, uint minPercentage )
     {
-      return ClassifyEngine?.Categorize(categoryText, 75/*%*/) ?? -1;
+      // the category min percentage cannot be more than 100%.
+      // it also cannot be less than 0, but we use a uint.
+      if( minPercentage > 100)
+      {
+        throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
+      }
+      return ClassifyEngine?.Categorize(categoryText, minPercentage ) ?? -1;
     }
 
     public int Categorize(List<string> categoryList)
     {
-      return Categorize( string.Join( " ", categoryList ));
+      return Categorize( string.Join( " ", categoryList ), MinPercentage );
     }
 
     public Dictionary<int, string> GetCategories( )

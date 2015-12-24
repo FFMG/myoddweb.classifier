@@ -50,9 +50,9 @@ namespace Classifier
       return _iEngine->GetConfig(configName, configValue);
     }
 
-    bool Classify::Train( String^ categoryName, String^ uniqueIdentifier, String^ textToCategorise)
+    bool Classify::Train( String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight )
     {
-      return _iEngine->Train(categoryName, uniqueIdentifier, textToCategorise);
+      return _iEngine->Train(categoryName, textToCategorise, uniqueIdentifier, weight);
     }
 
     bool Classify::UnTrain( String^ uniqueIdentifier, String^ textToCategorise)

@@ -328,7 +328,7 @@ bool ClassifyEngine::GetConfig(String^ configName, String^% configValue)
   return resultOfCall;
 }
 
-bool ClassifyEngine::Train(String^ categoryName, String^ uniqueIdentifier, String^ textToCategorise)
+bool ClassifyEngine::Train(String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight)
 {
   // the initialise function.
   f_TrainEx funci = (f_TrainEx)GetUnmanagedFunction( ProcType::procTrainEx );
@@ -348,8 +348,9 @@ bool ClassifyEngine::Train(String^ categoryName, String^ uniqueIdentifier, Strin
   // cast the wide string to a char16_t* for windows.
   // this is the same size/value so no work needs to be done here.
   return funci((const char16_t*)wCategoryName.c_str(), 
-               (const char16_t*)wUniqueIdentifier.c_str(), 
-               (const char16_t*)wTextToCategorise.c_str()
+               (const char16_t*)wTextToCategorise.c_str(),
+               (const char16_t*)wUniqueIdentifier.c_str(),
+               weight
               );
 }
 

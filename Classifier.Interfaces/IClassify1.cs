@@ -56,10 +56,11 @@ namespace Classifier.Interfaces
     /// Train a text/document to be into a given category id
     /// </summary>
     /// <param name="categoryName">the name of the category we are adding it to.</param>
-    /// <param name="uniqueIdentifier">A unique value to help us ensure that we only train this document once. This value is unique to the app</param>
     /// <param name="textToCategorise">the text/document we want to categorise.</param>
+    /// <param name="uniqueIdentifier">A unique value to help us ensure that we only train this document once. This value is unique to the app</param>
+    /// <param name="weight">The weight of this document</param>
     /// <returns>success or not.</returns>
-    bool Train( string categoryName, string uniqueIdentifier, string textToCategorise);
+    bool Train( string categoryName, string textToCategorise, string uniqueIdentifier, int weight );
 
     /// <summary>
     /// UnTrain a text/document from a given category id

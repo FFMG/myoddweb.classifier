@@ -117,7 +117,7 @@ namespace myoddweb.classifier.forms
       ReloadCategories();
     }
 
-    private void ok_Click(object sender, EventArgs e)
+    private void Ok_Click(object sender, EventArgs e)
     {
       DialogResult = DialogResult.OK;
       Close();
