@@ -118,7 +118,7 @@ namespace myoddweb.classifier
       Debug.WriteLine($"I classified the new message category : {categoryId}");
 
       // get the weight
-      var weight = (wasMagnetUsed ? _options.MagenetsWeight : 1);
+      var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
 
       // we can now classify it.
       var resultOfCategorise = TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);

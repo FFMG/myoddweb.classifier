@@ -294,12 +294,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ImageSelected.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\IconSelected.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\valid.png" />
   </ItemGroup>
   <ItemGroup>

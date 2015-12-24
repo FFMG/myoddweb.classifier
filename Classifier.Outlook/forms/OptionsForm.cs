@@ -89,7 +89,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentWeight = _options.MagenetsWeight;
+      var currentWeight = _options.MagnetsWeight;
 
       // go around all the folders.
       for (var i = 1; i <= 20; ++i )
@@ -121,7 +121,7 @@ namespace myoddweb.classifier.forms
       _options.ReCheckIfCtrlKeyIsDown = reCheckIfCtrl.Checked;
 
       // save the weights of the magnets.
-      _options.MagenetsWeight = GetMagnetsWeight();
+      _options.MagnetsWeight = GetMagnetsWeight();
 
       // save the weights of the magnets.
       _options.UserWeight = GetUserWeight();

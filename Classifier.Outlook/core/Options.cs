@@ -18,7 +18,7 @@ namespace myoddweb.classifier.core
 
     internal bool? _reCheckIfCtrlIsDown;
 
-    internal uint? _magenetsWeight;
+    internal uint? _magnetsWeight;
 
     internal uint? _userWeight;
 
@@ -61,17 +61,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Set the magnet weight multiplier.
     /// </summary>
-    public uint MagenetsWeight
+    public uint MagnetsWeight
     {
       get
       {
-        return (uint)(_magenetsWeight ??
-                       (_magenetsWeight = (Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.MagenetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
+        return (uint)(_magnetsWeight ??
+                       (_magnetsWeight = (Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.MagnetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
       }
       set
       {
-        _magenetsWeight = value;
-        _engine?.SetConfig("Option.MagenetsWeight", Convert.ToString(value));
+        _magnetsWeight = value;
+        _engine?.SetConfig("Option.MagnetsWeight", Convert.ToString(value));
       }
     }
 

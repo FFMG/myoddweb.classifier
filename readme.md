@@ -43,12 +43,14 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions ##
-#### 0.3.0.0 (24/12/2015)####
+#### 0.3.0.1 (24/12/2015)####
+- Fixed a typo in the name  
 
-- Added weights  
+#### 0.3.0.0 (24/12/2015)####
+- Added weights
+- Added option to set the magnets/user specified items weight.  
 
 #### 0.2.1.0 (11/11/2015)####
-
 - Removed dependency on .NET 4.5.2 and replaced it with more realistic 4.5.0  
 
 ### 0.2.0.0 (09/11/2015)###

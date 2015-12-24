@@ -133,7 +133,7 @@ namespace Classifier.Interfaces
     bool UpdateMagnet(int id, string magnetName, int ruleType, int categoryTarget);
 
     /// <summary>
-    /// Delete a magnet from our list of magenets
+    /// Delete a magnet from our list of magnets
     /// We return false if there was an error and/or if the magnet does not exist.
     /// </summary>
     /// <param name="id">The manet id we are trying to delete.</param>

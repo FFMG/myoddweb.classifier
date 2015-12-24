@@ -4,6 +4,7 @@
 debug/
 release/
 *.opensdf
+*.opendb
 *.pdb
 bin/Classifier.Interfaces.dll
 bin/Microsoft.Office.Tools.Common.dll
