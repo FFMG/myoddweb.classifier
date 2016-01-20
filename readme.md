@@ -43,6 +43,9 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions ##
+#### 0.3.0.2 (20/01/2016)####
+- Removed a couple of outlook/html/xml words that could confuse the classifier.  
+
 #### 0.3.0.1 (24/12/2015)####
 - Fixed a typo in the name  
 
