@@ -107,7 +107,7 @@ namespace myoddweb.classifier.core
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
     private async Task<Errors> ClassifyAsync(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId, uint weight)
     {
-      return await Task.FromResult(Classify(uniqueEntryId, listOfItems, categoryId, weight));
+      return await Task.FromResult(Classify(uniqueEntryId, listOfItems, categoryId, weight)).ConfigureAwait(false);
     }
 
     private static string GetUniqueIdentifierString(Outlook._MailItem mailItem)
@@ -295,7 +295,7 @@ namespace myoddweb.classifier.core
       return await ClassifyAsync( GetUniqueIdentifierString( mailItem ),
                                   GetStringFromMailItem( mailItem ),
                                   id,
-                                  weight );
+                                  weight ).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -307,7 +307,7 @@ namespace myoddweb.classifier.core
     public async Task<CategorizeResponse> CategorizeAsync(Outlook._MailItem mailItem )
     {
       var magnetWasUsed = false;
-      var categoryId = await Task.FromResult(Categorize(mailItem, out magnetWasUsed));
+      var categoryId = await Task.FromResult(Categorize(mailItem, out magnetWasUsed)).ConfigureAwait(false);
       return new CategorizeResponse { CategoryId = categoryId, WasMagnetUsed = magnetWasUsed};
     }
 

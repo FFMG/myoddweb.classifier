@@ -101,7 +101,7 @@ namespace myoddweb.classifier
       }
 
       // look for the category
-      var guessCategoryResponse = await TheCategories.CategorizeAsync(newMail);
+      var guessCategoryResponse = await TheCategories.CategorizeAsync(newMail).ConfigureAwait(false);
 
       // 
       var categoryId = guessCategoryResponse.CategoryId;
@@ -121,7 +121,7 @@ namespace myoddweb.classifier
       var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
 
       // we can now classify it.
-      var resultOfCategorise = TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
+      var resultOfCategorise = await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
 
       // get the posible folder.
       var folder = TheCategories.FindFolderByCategoryId(categoryId);

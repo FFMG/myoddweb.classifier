@@ -240,7 +240,7 @@ namespace myoddweb.classifier.core
 
       // we know this is a user selected item
       // so we can get the weight from the options.
-      return await categories.ClassifyAsync(mailItem, id, _options.UserWeight);
+      return await categories.ClassifyAsync(mailItem, id, _options.UserWeight).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -283,7 +283,7 @@ namespace myoddweb.classifier.core
       // do we have a valid mail item?
       // if not then we are not going to display it.
       var mailItem = GetMailItemFromRibbonControl(control);
-      return null == mailItem ? "" : GetContentWithPosibleMailItem(null);
+      return null == mailItem ? "" : GetContentWithPosibleMailItem(null).Result;
     }
 
 
@@ -297,7 +297,7 @@ namespace myoddweb.classifier.core
       // do we have a valid mail item?
       // if not then we are not going to display it.
       var mailItem = GetMailItemFromRibbonControl(control);
-      return null == mailItem ? "" : GetContentWithPosibleMailItem( mailItem );
+      return null == mailItem ? "" : GetContentWithPosibleMailItem( mailItem ).Result;
     }
 
     /// <summary>
@@ -307,7 +307,7 @@ namespace myoddweb.classifier.core
     /// <param name="categories">the categories tool we will use to re-categorise</param>
     /// <param name="currentCategoryId">The current value of the category</param>
     /// <returns>Categories.CategorizeResponse the new id or -1 if we don't know.</returns>
-    protected Categories.CategorizeResponse GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, Categories categories )
+    protected async Task<Categories.CategorizeResponse> GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, Categories categories )
     {
       var guessCategoryResponse = new Categories.CategorizeResponse
       {
@@ -339,7 +339,7 @@ namespace myoddweb.classifier.core
         // guess where it could be going to now.
         if (mailItem != null)
         {
-          guessCategoryResponse = categories.CategorizeAsync(mailItem).Result;
+          guessCategoryResponse = await categories.CategorizeAsync(mailItem).ConfigureAwait(false);
         }
       }
       catch (Exception)
@@ -354,8 +354,7 @@ namespace myoddweb.classifier.core
 
       // reset the cursor.
       Cursor.Current = currentCursor;
-
-
+      
       // add a debug message.
       Debug.WriteLine(guessCategoryResponse.CategoryId != currentCategoryId
         ? $"My new classifying guess for this message is : {guessCategoryResponse.CategoryId}"
@@ -370,7 +369,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mailItem">The mail item.</param>
     /// <returns></returns>
-    public string GetContentWithPosibleMailItem( _MailItem mailItem )
+    public async Task<string> GetContentWithPosibleMailItem( _MailItem mailItem )
     { 
       // create the menu xml
       var translationsXml = new StringBuilder(@"<menu xmlns=""http://schemas.microsoft.com/office/2009/07/customui"">");
@@ -392,7 +391,7 @@ namespace myoddweb.classifier.core
       var currentCategoryId = currentCategory == null ? -1 : (int)currentCategory.Id;
 
       // try and guess the new category
-      var guessCategoryResponse = GuessPosibleCategory(mailItem, currentCategoryId, categories);
+      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, categories).ConfigureAwait(false);
 
       // and create a menu for all of them.
       foreach (var category in categories.List() )
