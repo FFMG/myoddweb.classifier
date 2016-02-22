@@ -185,6 +185,15 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Information);
     }
 
+    /// <summary>
+    /// Get the current version number of the engine.
+    /// </summary>
+    /// <returns>int the engine version number</returns>
+    public int GetEngineVersion()
+    {
+      return ClassifyEngine.GetEngineVersion();
+    }
+
     public string GetConfig(string configName )
     {
       string configValue;
