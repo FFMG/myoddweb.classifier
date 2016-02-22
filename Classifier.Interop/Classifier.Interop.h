@@ -22,6 +22,11 @@ namespace Classifier
 
     public:
       //
+      // Version
+      //
+      virtual int GetEngineVersion();
+
+      //
       //  Setup
       //
       virtual bool Initialise(String^ eventViewSource, String^ enginePath, String^ databasePath);

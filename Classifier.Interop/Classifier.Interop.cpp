@@ -109,5 +109,13 @@ namespace Classifier
     {
       return _iEngine->GetMagnets( magnets );
     }
+
+    //
+    // Version
+    //
+    int Classify::GetEngineVersion()
+    {
+      return _iEngine->GetEngineVersion();
+    }
   }
 }

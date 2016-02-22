@@ -23,6 +23,12 @@ namespace Classifier.Interfaces
   public interface IClassify1
   {
     /// <summary>
+    /// Get the engine version number.
+    /// </summary>
+    /// <returns>int the engine version number.</returns>
+    int GetEngineVersion();
+
+    /// <summary>
     /// Inisialise all the values needed, create the classifier instance.
     /// </summary>
     /// <param name="eventViewSource">string when we are logging a defect this is the event viewer name.</param>
