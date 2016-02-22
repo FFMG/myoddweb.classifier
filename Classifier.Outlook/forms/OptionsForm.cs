@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using myoddweb.classifier.core;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace myoddweb.classifier.forms
 {
@@ -125,6 +126,14 @@ namespace myoddweb.classifier.forms
 
       // save the weights of the magnets.
       _options.UserWeight = GetUserWeight();
+
+      // save the percent option
+      _options.CommonWordsMinPercent = GetCommonWordsMinPercent();
+    }
+
+    private uint GetCommonWordsMinPercent()
+    {
+      return (uint)numericCommonPercent.Value;
     }
 
     private uint GetMagnetsWeight()
@@ -189,6 +198,32 @@ namespace myoddweb.classifier.forms
 
       // rebuild the combo
       RebuildCombos();
+
+      // the spinner
+      RebuildSpinner();
+
+      // the defaults.
+      RebuildDefaults();
+    }
+
+    private void RebuildDefaults()
+    {
+      labelMagnets.Text = $"[ {(int)Options.DefaultOptions.MagnetsWeight} ]";
+      labelMagnets.ForeColor = Color.DarkGray;
+
+      labelUserTrained.Text = $"[ {(int)Options.DefaultOptions.UserWeight} ]";
+      labelUserTrained.ForeColor = Color.DarkGray;
+
+      labelCommonWord.Text = $"[ {(int)Options.DefaultOptions.CommonWordsMinPercent}% ]";
+      labelCommonWord.ForeColor = Color.DarkGray;
+    }
+
+    private void RebuildSpinner()
+    {
+      numericCommonPercent.Maximum = 100;
+      numericCommonPercent.Minimum = 1;
+      numericCommonPercent.ReadOnly = false;
+      numericCommonPercent.Value = _options.CommonWordsMinPercent;
     }
   }
 }

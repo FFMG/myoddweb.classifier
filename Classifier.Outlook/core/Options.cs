@@ -7,7 +7,8 @@ namespace myoddweb.classifier.core
     public enum DefaultOptions
     {
       UserWeight = 10,
-      MagnetsWeight = 2  
+      MagnetsWeight = 2,
+      CommonWordsMinPercent = 50
     }
 
     private readonly Engine _engine;
@@ -21,6 +22,8 @@ namespace myoddweb.classifier.core
     internal uint? _magnetsWeight;
 
     internal uint? _userWeight;
+
+    internal uint? _commonWordsMinPercent;
 
     /// <summary>
     /// (re) Check all the categories all the time.
@@ -109,7 +112,21 @@ namespace myoddweb.classifier.core
         _engine?.SetConfig("Option.CheckIfUnownCategory", (value ? "1" : "0"));
       }
     }
-    
+
+    public uint CommonWordsMinPercent
+    {
+      get
+      {
+        return (uint)(_commonWordsMinPercent ?? 
+                     (_commonWordsMinPercent = Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.CommonWordsMinPercent", Convert.ToString((uint)DefaultOptions.CommonWordsMinPercent)))));
+      }
+      set
+      {
+        _commonWordsMinPercent = value;
+         _engine?.SetConfig("Option.CommonWordsMinPercent", Convert.ToString(value));
+      }
+    }
+
     public Options(Engine engine)
     {
       _engine = engine;
