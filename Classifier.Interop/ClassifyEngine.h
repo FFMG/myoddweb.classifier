@@ -15,6 +15,11 @@ public:
 
 public:
   //
+  // Version
+  //
+  int GetEngineVersion();
+
+  //
   //  Setup
   //
   bool Initialise(String^ eventViewSource, String^ configurationXml, String^ databasePath);
@@ -81,6 +86,8 @@ protected:
 
   typedef int(__stdcall *f_GetMagnets)(magnets_info&);
 
+  typedef int(__stdcall *f_GetVersion)();
+
   enum ProcType
   {
     procUnk = 0,
@@ -100,6 +107,7 @@ protected:
     procDeleteMagnet,
     procUpdateMagnet,
     procGetMagnets,
+    procGetVersion,
 
     procRelease,
   };

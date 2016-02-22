@@ -153,6 +153,10 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     procAddress = GetProcAddress(hInstance, "GetMagnets");
     break;
 
+  case procGetVersion:
+    procAddress = GetProcAddress(hInstance, "GetVersion");
+    break;
+
   default:
     break;
   }
@@ -612,3 +616,21 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets 
   return numberOfMagnets;
 }
 
+/**
+ * Get the engine version number.
+ * @return int the engine version number.
+ */
+int ClassifyEngine::GetEngineVersion()
+{
+  f_GetVersion funci = (f_GetVersion)GetUnmanagedFunction(ProcType::procGetVersion);
+
+  // did it work?
+  if (NULL == funci)
+  {
+    LogEventWarning("Could not locate the Classifier.Engine 'GetVersion()' function?");
+    return -1;
+  }
+
+  // just call the funtion.
+  return funci();
+}
