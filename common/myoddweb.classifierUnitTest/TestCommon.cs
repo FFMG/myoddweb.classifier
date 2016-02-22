@@ -12,8 +12,8 @@ namespace myoddweb.classifierUnitTest
     // the engine
     private static Engine _engine = null;
 
-    protected static string _dbName = "ctest_database.classifier";
-    protected static string _cleandbName = "clean_ctest_database.classifier";
+    protected static string DbName = "ctest_database.classifier";
+    protected static string CleandbName = "clean_ctest_database.classifier";
 
     protected Engine TheEngine => _engine ?? (_engine = CreateEngine());
 
@@ -21,7 +21,7 @@ namespace myoddweb.classifierUnitTest
     public static string DatabaseFullPath { get; private set; }
     public static string CleanDatabaseFullPath { get; private set; }
 
-    public static string GetDirectory()
+    protected static string GetDirectory()
     {
       // the paths we will be using.
       var directoryName = AppDomain.CurrentDomain.BaseDirectory;
@@ -64,7 +64,7 @@ namespace myoddweb.classifierUnitTest
       }
 
       //  the database path
-      DatabaseFullPath = $"{DirectoryPath}\\{_dbName}";
+      DatabaseFullPath = $"{DirectoryPath}\\{DbName}";
 
       // if the file exists, then we need to remove it.
       if (File.Exists(DatabaseFullPath))
@@ -78,10 +78,11 @@ namespace myoddweb.classifierUnitTest
         }
       }
 
-      CleanDatabaseFullPath = $"{DirectoryPath}\\{_cleandbName}";
+      CleanDatabaseFullPath = $"{DirectoryPath}\\{CleandbName}";
       if (!File.Exists(CleanDatabaseFullPath))
       {
         var e = new Engine(DirectoryPath, CleanDatabaseFullPath);
+        e.SetConfig("Option.CommonWordsMinPercent", "100");
         e.Release();
       }
 
