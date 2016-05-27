@@ -29,3 +29,4 @@ bin/x64/Classifier.Interop.dll
 bin/x64/Classifier.Interfaces.dll
 bin/myoddweb.classifierUnitTest.dll
 bin/myoddweb.classifierUnitTest64.dll
+*.user
