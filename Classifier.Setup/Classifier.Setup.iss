@@ -4,6 +4,7 @@
 #define APP_DIR "{pf}\myoddweb\classifier";
 #define APP_SOURCE "..\bin\";
 #define APP_REG_NAME "myoddweb.classifier";
+#define EVENT_LOG_NAME "myoddweb.classifier";
 
 ; we add the engine version number, just in case.
 #define APP_DESC "Classify mail items into various categories as they arrive (engine:" + GetFileVersion( APP_SOURCE + 'Classifier.Engine.dll' ) + ')';
@@ -55,6 +56,10 @@ Source: "{#APP_SOURCE}Microsoft.Office.Tools.Common.v4.0.Utilities.dll"; DestDir
 Source: "{#APP_SOURCE}Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
+
+; create the event log registry...
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\EventLog\Application\{#EVENT_LOG_NAME}"; ValueType: string; ValueName: "EventMessageFile"; ValueData: ""
+
 ; @see https://msdn.microsoft.com/en-us/library/bb772100.aspx
 ; @see LoadBehavior=3 for vsto https://msdn.microsoft.com/en-us/library/bb386106.aspx
 
