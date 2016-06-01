@@ -7,6 +7,7 @@ release/
 *.opendb
 *.pdb
 *.vc.db
+setup.*.exe
 bin/Classifier.Interfaces.dll
 bin/Microsoft.Office.Tools.Common.dll
 bin/Microsoft.Office.Tools.Common.v4.0.Utilities.dll

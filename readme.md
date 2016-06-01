@@ -43,11 +43,12 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.3.0.4 (17/02/2016)
+#### 0.3.0.4 (01/06/2016)
 - Updated to new Classifier engine 1.1.0, (bug fixes)
 	- New setting to remove very common words, ("Option.CommonWordsMinPercent").
 - Added ***GetEngineVersion()*** to use the new engine version.  
 - Added possibility to change the common word percentage.
+- Changed the output name of the setup.exe so it includes the version number.
 
 #### 0.3.0.3 (01/02/2016)
 - Updated to new Classifier engine, (bug fixes)  
