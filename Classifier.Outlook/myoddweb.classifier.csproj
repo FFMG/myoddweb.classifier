@@ -288,12 +288,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Classifier\Classifier.Interfaces\Classifier.Interfaces.csproj">
-      <Project>{d5036364-aa81-46ca-9139-cb3e84298265}</Project>
-      <Name>Classifier.Interfaces</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\valid.png" />
   </ItemGroup>
   <ItemGroup>
@@ -310,6 +304,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\both.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Classifier.Interfaces\Classifier.Interfaces.csproj">
+      <Project>{d5036364-aa81-46ca-9139-cb3e84298265}</Project>
+      <Name>Classifier.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
