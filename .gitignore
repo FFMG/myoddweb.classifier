@@ -6,6 +6,7 @@ release/
 *.opensdf
 *.opendb
 *.pdb
+*.vc.db
 bin/Classifier.Interfaces.dll
 bin/Microsoft.Office.Tools.Common.dll
 bin/Microsoft.Office.Tools.Common.v4.0.Utilities.dll
