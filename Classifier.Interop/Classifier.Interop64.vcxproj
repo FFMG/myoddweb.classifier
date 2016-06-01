@@ -76,24 +76,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(Configuration)\Win32\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\Win32\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(Configuration)\x64\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\x64\</OutDir>
     <TargetName>Classifier.Interop</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(Configuration)\Win32\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\Win32\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(Configuration)\x64\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\x64\</OutDir>
     <TargetName>Classifier.Interop</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -168,6 +168,7 @@ xcopy /y "$(TargetDir)*.lib" "..\lib\x86"
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
