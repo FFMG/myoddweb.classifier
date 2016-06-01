@@ -1,16 +1,16 @@
-#define APP_NAME "Myoddweb Classifier";
-#define APP_PUBLISHER "myoddweb.com";
-#define APP_URL "http://www.myoddweb.com";
-#define APP_DIR "{pf}\myoddweb\classifier";
-#define APP_SOURCE "..\bin\";
-#define APP_REG_NAME "myoddweb.classifier";
-#define EVENT_LOG_NAME "myoddweb.classifier";
+#define APP_NAME "Myoddweb Classifier"
+#define APP_PUBLISHER "myoddweb.com"
+#define APP_URL "http://www.myoddweb.com"
+#define APP_DIR "{pf}\myoddweb\classifier"
+#define APP_SOURCE "..\bin\"
+#define APP_REG_NAME "myoddweb.classifier"
+#define EVENT_LOG_NAME "myoddweb.classifier"
 
 ; we add the engine version number, just in case.
-#define APP_DESC "Classify mail items into various categories as they arrive (engine:" + GetFileVersion( APP_SOURCE + 'Classifier.Engine.dll' ) + ')';
+#define APP_DESC "Classify mail items into various categories as they arrive (engine:" + GetFileVersion( AddBackslash( APP_SOURCE) + 'Classifier.Engine.dll' ) + ')'
 
 ; set the version number based on the classifier version number.
-#define APP_VERSION GetFileVersion( APP_SOURCE + 'myoddweb.classifier.dll' );
+#define APP_VERSION GetFileVersion( AddBackslash( APP_SOURCE) + 'myoddweb.classifier.dll' )
 
 ;
 ; No need to edit past here.
@@ -31,6 +31,8 @@ AppUpdatesURL={#APP_URL}
 ; 64-bit Program Files directory and the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x86 x64
+OutputBaseFilename="setup.{#APP_VERSION}"
+
 
 [Files]
 ; x64
