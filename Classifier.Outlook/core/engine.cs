@@ -10,6 +10,12 @@ namespace myoddweb.classifier.core
   public class Engine
   {
     /// <summary>
+    /// If NULL we have not check for event source.
+    /// Any other value, we will check for.
+    /// </summary>
+    private bool? _eventSource = null;
+
+    /// <summary>
     /// The current list of folders.
     /// </summary>
     private Folders _folders;
@@ -47,7 +53,10 @@ namespace myoddweb.classifier.core
 
     public Engine()
     {
-      InitialiseEngine();
+      if (!InitialiseEngine() )
+      {
+        throw new Exception("I was unable to load the engine. Check the event log for errors.");
+      }
     }
 
     public Engine(string directoryName, string databasePath)
@@ -166,21 +175,62 @@ namespace myoddweb.classifier.core
       // and free the memory
       ClassifyEngine = null;
     }
+
+    private bool InstallAndValidateSource()
+    {
+      if (null != _eventSource)
+      {
+        return (bool) _eventSource;
+      }
+
+      try
+      {
+        if (!System.Diagnostics.EventLog.SourceExists(EventViewSource))
+        {
+          System.Diagnostics.EventLog.CreateEventSource(EventViewSource, null);
+        }
+
+        // set the value.
+        _eventSource = System.Diagnostics.EventLog.SourceExists(EventViewSource);
+      }
+      catch (System.Security.SecurityException)
+      {
+        _eventSource = false;
+      }
+
+      // one last check.
+      return InstallAndValidateSource();
+    }
     
     public void LogEventError(string sEvent)
     {
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
       appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Error);
     }
 
     public void LogEventWarning(string sEvent)
     {
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
       appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Warning);
     }
 
     public void LogEventInformation(string sEvent)
     {
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
       appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Information);
     }

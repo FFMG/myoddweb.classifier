@@ -132,5 +132,10 @@ protected:
   void LogEventWarning(String^ sEvent);
   void LogEventInfo(String^ sEvent);
   void LogEventError(String^ sEvent);
+
+private:
+  bool _canUseEventLog;
+  bool CanUseLog() const;
+  void SetCanUseLog();
 };
 

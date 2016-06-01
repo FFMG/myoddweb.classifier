@@ -11,8 +11,11 @@ using namespace System::IO;
 const unsigned int MAX_CONFIGVALUE_LEN = 1024;
 
 ClassifyEngine::ClassifyEngine() : 
-  _hGetProcIDDLL( NULL )
+  _hGetProcIDDLL( NULL ),
+  _canUseEventLog( false )
 {
+  //  check if we are allowed/able to use the event log.
+  SetCanUseLog();
 }
 
 void ClassifyEngine::Release()
@@ -49,8 +52,45 @@ void ClassifyEngine::Release()
   _hGetProcIDDLL = NULL;
 }
 
+/**
+ * Check if we can use event log or not.
+ * @return bool
+ */
+bool ClassifyEngine::CanUseLog() const 
+{
+  return _canUseEventLog;
+};
+
+/** 
+ * Check and set if we can use the event log or not.
+ */
+void ClassifyEngine::SetCanUseLog()
+{
+  try
+  {
+    System::String^ source = gcnew System::String(_eventViewSource.c_str());
+    if (!System::Diagnostics::EventLog::SourceExists(source))
+    {
+      _canUseEventLog = false;
+      return;
+    }
+  }
+  catch (System::Security::SecurityException^)
+  {
+    _canUseEventLog = false;
+    return;
+  }
+  _canUseEventLog = true;
+}
+
 void ClassifyEngine::LogEventWarning(String^ sEvent)
 {
+  if (!CanUseLog())
+  {
+    return;
+  }
+
+  System::String^ source = gcnew System::String(_eventViewSource.c_str());
   System::Diagnostics::EventLog^ appLog = gcnew System::Diagnostics::EventLog();
   appLog->Source = gcnew System::String(_eventViewSource.c_str());
   appLog->WriteEntry(sEvent, EventLogEntryType::Warning);
@@ -58,6 +98,12 @@ void ClassifyEngine::LogEventWarning(String^ sEvent)
 
 void ClassifyEngine::LogEventError(String^ sEvent)
 {
+  if (!CanUseLog())
+  {
+    return;
+  }
+
+  System::String^ source = gcnew System::String(_eventViewSource.c_str());
   System::Diagnostics::EventLog^ appLog = gcnew System::Diagnostics::EventLog();
   appLog->Source = gcnew System::String(_eventViewSource.c_str());
   appLog->WriteEntry(sEvent, EventLogEntryType::Error);
@@ -65,8 +111,14 @@ void ClassifyEngine::LogEventError(String^ sEvent)
 
 void ClassifyEngine::LogEventInfo(String^ sEvent)
 {
+  if (!CanUseLog())
+  {
+    return;
+  }
+
+  System::String^ source = gcnew System::String(_eventViewSource.c_str());
   System::Diagnostics::EventLog^ appLog = gcnew System::Diagnostics::EventLog();
-  appLog->Source = gcnew System::String(_eventViewSource.c_str());
+  appLog->Source = source;
   appLog->WriteEntry(sEvent, EventLogEntryType::Information);
 }
 
