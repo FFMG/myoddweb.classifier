@@ -260,11 +260,33 @@ namespace myoddweb.classifier.core
       }
     }
 
+    public void OnDetails(Office.IRibbonControl control)
+    {
+      var items = GetMultipleMailItemFromRibbonControl(control);
+      if (items == null || items.Count == 0 || items.Count > 1)
+      {
+        // we can only show the details of one email
+        return;
+      }
+
+      // get the one and only item
+      var mailItem = items.First();
+
+      // show the displays
+      var categoryList = Categories.GetStringFromMailItem(mailItem);
+      var text = string.Join(";", categoryList.Select(x => x.Value));
+      using (var detailsForm = new DetailsForm(_engine, text ))
+      {
+        detailsForm.ShowDialog();
+      }
+    }
+
     public void OnMagnet(Office.IRibbonControl control)
     {
       var items = GetMultipleMailItemFromRibbonControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
       {
+        // we can only do the magnet of one email
         return;
       }
 
@@ -427,6 +449,14 @@ namespace myoddweb.classifier.core
       if (categories.Count > 0 )
       {
         translationsXml.Append(@"<menuSeparator id=""separator"" />");
+      }
+
+      // show the email details
+      // but only if we have selected one email.
+      if (mailItem != null)
+      {
+        translationsXml.Append(
+          $@"<button id =""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
       }
 
       // If the value is null, it means we have more than one mail item

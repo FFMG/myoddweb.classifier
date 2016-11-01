@@ -4,6 +4,9 @@ using System.IO;
 using System.Reflection;
 using Classifier.Interfaces;
 using myoddweb.classifier.utils;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace myoddweb.classifier.core
 {
@@ -301,20 +304,34 @@ namespace myoddweb.classifier.core
       return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
     }
 
+    public int Categorize(string categoryText, uint minPercentage, out List<WordCategory> wordsCategory )
+    {
+      wordsCategory = new List<WordCategory>();
+
+      // the category min percentage cannot be more than 100%.
+      // it also cannot be less than 0, but we use a uint.
+      if (minPercentage > 100)
+      {
+        throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
+      }
+      return ClassifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory) ?? -1;
+    }
+
     public int Categorize(string categoryText, uint minPercentage )
     {
       // the category min percentage cannot be more than 100%.
       // it also cannot be less than 0, but we use a uint.
-      if( minPercentage > 100)
+      if (minPercentage > 100)
       {
         throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
       }
-      return ClassifyEngine?.Categorize(categoryText, minPercentage ) ?? -1;
+
+      return ClassifyEngine?.Categorize(categoryText, minPercentage) ?? -1;
     }
 
-    public int Categorize(List<string> categoryList)
+    public int Categorize(Dictionary< Categories.MailStringCategories, string> categoryList)
     {
-      return Categorize( string.Join( " ", categoryList ), MinPercentage );
+      return Categorize(string.Join(";", categoryList.Select(x => x.Value) ), MinPercentage );
     }
 
     public Dictionary<int, string> GetCategories( )

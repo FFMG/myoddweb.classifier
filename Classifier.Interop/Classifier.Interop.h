@@ -44,7 +44,8 @@ namespace Classifier
       virtual bool Train( String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
       virtual bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
       virtual int Categorize( String^ textToCategorise, unsigned int minPercentage);
-      
+      virtual int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory);
+
       //
       //  Information / Manipulation
       //

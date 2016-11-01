@@ -37,7 +37,8 @@ public:
   bool Train(String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
   bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
   int Categorize(String^ textToCategorise, unsigned int minPercentage);
-  
+  int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory );
+
   //
   //  Information / Manipulation
   //
@@ -83,8 +84,16 @@ protected:
 
   // all the magnets, the id => MagnetInfo
   typedef std::unordered_map<int, MagnetInfo> magnets_info;
-
   typedef int(__stdcall *f_GetMagnets)(magnets_info&);
+
+  struct WordCategoryInfo
+  {
+    int category;
+    double probability;
+  };
+  typedef std::unordered_map<std::u16string, WordCategoryInfo> wordscategory_info;
+  typedef int(__stdcall *f_CategorizeWithWordCategory)(const char16_t*, unsigned int, wordscategory_info&);
+
 
   typedef int(__stdcall *f_GetVersion)();
 
@@ -97,6 +106,7 @@ protected:
     procTrainEx,
     procUnTrainEx,
     procCategorize,
+    procCategorizeWithInfo,
     procGetCategoryFromUniqueId,
     procGetCategory,
     procGetCategories,

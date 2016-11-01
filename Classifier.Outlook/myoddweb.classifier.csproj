@@ -133,7 +133,9 @@
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -187,6 +189,12 @@
     <Compile Include="core\Rules.cs" />
     <Compile Include="core\folder.cs" />
     <Compile Include="core\folders.cs" />
+    <Compile Include="forms\DetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\DetailsForm.Designer.cs">
+      <DependentUpon>DetailsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\MagnetMailItemForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -231,6 +239,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="utils\typeloader.cs" />
+    <EmbeddedResource Include="forms\DetailsForm.resx">
+      <DependentUpon>DetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="forms\MagnetMailItemForm.resx">
       <DependentUpon>MagnetMailItemForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -288,6 +299,12 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Classifier\Classifier.Interfaces\Classifier.Interfaces.csproj">
+      <Project>{d5036364-aa81-46ca-9139-cb3e84298265}</Project>
+      <Name>Classifier.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\valid.png" />
   </ItemGroup>
   <ItemGroup>
@@ -304,12 +321,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\both.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Classifier.Interfaces\Classifier.Interfaces.csproj">
-      <Project>{d5036364-aa81-46ca-9139-cb3e84298265}</Project>
-      <Name>Classifier.Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

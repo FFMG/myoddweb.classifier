@@ -10,6 +10,20 @@ namespace myoddweb.classifier.core
 {
   public class Categories
   {
+    public enum MailStringCategories
+    {
+      Bcc,
+      To,
+      Address,
+      SenderName,
+      Cc,
+      Subject,
+      Body,
+      HtmlBody,
+      RtfBody,
+      Smtp
+    }
+
     public class CategorizeResponse
     {
       public int CategoryId { get; set; }
@@ -105,7 +119,7 @@ namespace myoddweb.classifier.core
     /// <param name="categoryId">The category we are classifying to.</param>
     /// <param name="weight">The category weight to use.</param>
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
-    private async Task<Errors> ClassifyAsync(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId, uint weight)
+    private async Task<Errors> ClassifyAsync(string uniqueEntryId, Dictionary<MailStringCategories, string> listOfItems, uint categoryId, uint weight)
     {
       return await Task.FromResult(Classify(uniqueEntryId, listOfItems, categoryId, weight)).ConfigureAwait(false);
     }
@@ -192,7 +206,7 @@ namespace myoddweb.classifier.core
     /// @see https://msdn.microsoft.com/en-us/library/office/ff868695.aspx
     /// </summary>
     /// <param name="mail"></param>
-    public static List<string> GetSmtpAddressForRecipients(Outlook._MailItem mail)
+    private static List<string> GetSmtpAddressForRecipients(Outlook._MailItem mail)
     {
       const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
       var recips = mail.Recipients;
@@ -228,39 +242,36 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mailItem">The mail item that has the information we are after.</param>
     /// <returns>List<string> list of items</returns>
-    private static List<string> GetStringFromMailItem(Outlook._MailItem mailItem)
+    public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem)
     {
       if (null == mailItem)
       {
         // @todo we should never get this far.
-        return new List<string>();
+        return new Dictionary<MailStringCategories, string>();
       }
 
-      if ( !Categories.IsUsableClassNameForClassification(mailItem?.MessageClass) )
+      if ( !IsUsableClassNameForClassification(mailItem?.MessageClass) )
       {
         // @todo we should never get this far.
-        return new List<string>();
+        return new Dictionary<MailStringCategories, string>();
       }
 
-      var mailItems = new List<string>()
+      var mailItems = new Dictionary<MailStringCategories, string>
       {
-        mailItem.BCC,
-        mailItem.To,
-        GetSmtpMailAddressForSender( mailItem )?.Address,
-        mailItem.SenderName,
-        mailItem.CC,
-        mailItem.Subject,
-        mailItem.Body
+        {MailStringCategories.Bcc, mailItem.BCC},
+        {MailStringCategories.To, mailItem.To},
+        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem)?.Address},
+        {MailStringCategories.SenderName, mailItem.SenderName},
+        {MailStringCategories.Cc, mailItem.CC},
+        {MailStringCategories.Subject, mailItem.Subject},
+        {MailStringCategories.Smtp, string.Join(" ", GetSmtpAddressForRecipients(mailItem))}
       };
-
-      // add all the recepients.
-      mailItems.AddRange(GetSmtpAddressForRecipients(mailItem));
 
       //  add the body of the email.
       switch ( mailItem.BodyFormat )
       {
       case Outlook.OlBodyFormat.olFormatHTML:
-        mailItems.Add(mailItem.HTMLBody);
+        mailItems.Add( MailStringCategories.HtmlBody, mailItem.HTMLBody );
         break;
 
       case Outlook.OlBodyFormat.olFormatRichText:
@@ -268,14 +279,18 @@ namespace myoddweb.classifier.core
         if(byteArray != null )
         { 
           var convertedRtf = new System.Text.ASCIIEncoding().GetString(byteArray);
-          mailItems.Add(convertedRtf);
+          mailItems.Add(MailStringCategories.RtfBody, convertedRtf);
+        }
+        else
+        {
+          mailItems.Add(MailStringCategories.Body, mailItem.Body);
         }
         break;
 
       case Outlook.OlBodyFormat.olFormatUnspecified:
       case Outlook.OlBodyFormat.olFormatPlain:
       default:
-        mailItems.Add(mailItem.Body);
+        mailItems.Add(MailStringCategories.Body, mailItem.Body);
         break;
       }
 
@@ -306,7 +321,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public async Task<CategorizeResponse> CategorizeAsync(Outlook._MailItem mailItem )
     {
-      var magnetWasUsed = false;
+      bool magnetWasUsed;
       var categoryId = await Task.FromResult(Categorize(mailItem, out magnetWasUsed)).ConfigureAwait(false);
       return new CategorizeResponse { CategoryId = categoryId, WasMagnetUsed = magnetWasUsed};
     }
@@ -437,7 +452,7 @@ namespace myoddweb.classifier.core
     /// <param name="categoryId">The category we are classifying to.</param>
     /// <param name="weight">The category weight to use.</param>
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
-    private Errors Classify(string uniqueEntryId, IEnumerable<string> listOfItems, uint categoryId, uint weight)
+    private Errors Classify(string uniqueEntryId, Dictionary<MailStringCategories, string> listOfItems, uint categoryId, uint weight)
     {
       if (_engine == null)
       {
@@ -452,7 +467,7 @@ namespace myoddweb.classifier.core
       }
 
       // make one big string out of it.
-      var contents = string.Join( " ", listOfItems );
+      var contents = string.Join(";", listOfItems.Select(x => x.Value));
 
       // classify it.
       if ( !_engine.Train(category.Name, contents, uniqueEntryId, (int)weight ) )

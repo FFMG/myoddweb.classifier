@@ -169,6 +169,10 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     procAddress = GetProcAddress(hInstance, "Categorize");
     break;
 
+  case procCategorizeWithInfo:
+    procAddress = GetProcAddress(hInstance, "CategorizeWithInfo");
+    break;
+
   case procGetCategoryFromUniqueId:
     procAddress = GetProcAddress(hInstance, "GetCategoryFromUniqueId");
     break;
@@ -433,6 +437,54 @@ bool ClassifyEngine::UnTrain( String^ uniqueIdentifier, String^ textToCategorise
               );
 }
 
+int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory)
+{
+  // sanity check.
+  if (wordsCategory == nullptr)
+  {
+    LogEventError("Trying to categorize with words category, but the array of words has not been initialised!");
+    return -1;
+  }
+
+  // the initialise function.
+  f_CategorizeWithWordCategory funci = (f_CategorizeWithWordCategory)GetUnmanagedFunction(ProcType::procCategorizeWithInfo);
+
+  // did it work?
+  if (NULL == funci)
+  {
+    LogEventWarning("Could not locate the Classifier.Engine 'CategorizeWithInfo()', function?");
+    return -1;
+  }
+
+  // call the function
+  std::wstring wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
+
+  // call the category info.
+  wordscategory_info wordsCategoryInfo;
+  int overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo );
+
+  // add them all to the list.
+  for (wordscategory_info::const_iterator it = wordsCategoryInfo.begin();
+    it != wordsCategoryInfo.end();
+    ++it)
+  {
+    // create the category.
+    Classifier::Interfaces::WordCategory^ wordCategory = gcnew Classifier::Interfaces::WordCategory();
+
+    // re-create it in managed c++ so we can pass it along.
+    const std::wstring ws = (const wchar_t*)it->first.c_str();
+    wordCategory->Word = gcnew System::String(ws.c_str());
+    wordCategory->Category = it->second.category;
+    wordCategory->Probability = it->second.probability;
+
+    // add it to the list.
+    wordsCategory->Add(wordCategory);
+  }
+
+  // return the overall category.
+  return overallCategoryId;
+}
+
 int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage)
 {
   // the initialise function.
@@ -495,6 +547,13 @@ int ClassifyEngine::GetCategory(String^ categoryName)
 
 int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
 {
+  // sanity check.
+  if (categories == nullptr)
+  {
+    LogEventError("Trying to get the categories, but the array of categories has not been initialised!");
+    return -1;
+  }
+
   // the initialise function.
   f_GetCategories funci = (f_GetCategories)GetUnmanagedFunction( ProcType::procGetCategories );
 

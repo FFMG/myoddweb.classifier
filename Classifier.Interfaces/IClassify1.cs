@@ -3,20 +3,61 @@ using System.Collections.Generic;
 
 namespace Classifier.Interfaces
 {
+  public class WordCategory
+  {
+    public WordCategory()
+    {
+      Word = "";
+      Category = -1;
+      Probability = 0;
+    }
+
+    /// <summary>
+    /// The word been categoried.
+    /// </summary>
+    public string Word;
+
+    /// <summary>
+    /// The word category
+    /// </summary>
+    public int Category;
+
+    /// <summary>
+    /// The word probability percentage.
+    /// </summary>
+    public double Probability;
+  };
+
   public class Magnet
   {
+    /// <summary>
+    /// The constructor.
+    /// </summary>
     public Magnet()
     {
+      // reset all the values.
       Id = Rule = Category = -1;
       Name = "";
     }
 
+    /// <summary>
+    /// The magnet id
+    /// </summary>
     public int Id;
 
+    /// <summary>
+    /// The magnet name
+    /// </summary>
     public string Name;
 
+    /// <summary>
+    /// The magnet rule type, only specific to the client.
+    /// </summary>
     public int Rule;
 
+    /// <summary>
+    /// The magnet category, (if the magnet is triggered).
+    /// </summary>
     public int Category;
   }
 
@@ -98,6 +139,15 @@ namespace Classifier.Interfaces
     int Categorize(string textToCategorise, uint minPercentage );
 
     /// <summary>
+    /// Categorise a text/document and ca. 
+    /// </summary>
+    /// <param name="textToCategorise">The text we want to categorise</param>
+    /// <param name="minPercentage">The minimum percentage we want to allow.</param>
+    /// <param name="wordsCategory">Each works and their categories.</param>
+    /// <returns>either the id of the category or -1 if we do not know.</returns>
+    int Categorize(string textToCategorise, uint minPercentage, out List<WordCategory> wordsCategory );
+
+    /// <summary>
     /// Get all the categories currently on record.
     /// </summary>
     /// <param name="categories">out Dictionary<int, string> the list of id => name of categories.</param>
@@ -136,6 +186,15 @@ namespace Classifier.Interfaces
     /// <param name="categoryTarget">int the target category.</param>
     /// <returns>number the created magnet id.</returns>
     int CreateMagnet(string magnetName, int ruleType, int categoryTarget);
+
+    /// <summary>
+    /// Update a single magnet
+    /// </summary>
+    /// <param name="id">The id we want to update.</param>
+    /// <param name="magnetName">The updated name.</param>
+    /// <param name="ruleType">The updated type.</param>
+    /// <param name="categoryTarget">The updated category target, (when the magnet is true)</param>
+    /// <returns>boolean success or not.</returns>
     bool UpdateMagnet(int id, string magnetName, int ruleType, int categoryTarget);
 
     /// <summary>
