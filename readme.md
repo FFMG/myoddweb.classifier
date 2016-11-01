@@ -43,6 +43,12 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.4.0.1 (01/10/2016)
+- Fixed a few issues in the tokenizer.
+- Made some changes in the engine with the lessons learned over the last 6 months.
+  - More html code is now ignored.
+- We can now see the classification details to see each words classification.
+  
 #### 0.3.0.5 (01/06/2016)
 - Fixed a couple of EventSource issues.
 - Changed the output name of the setup.exe so it includes the version number.
