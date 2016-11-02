@@ -43,7 +43,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.4.0.1 (01/10/2016)
+#### 0.4.0.1 (01/11/2016)
 - Fixed a few issues in the tokenizer.
 - Made some changes in the engine with the lessons learned over the last 6 months.
   - More html code is now ignored.
