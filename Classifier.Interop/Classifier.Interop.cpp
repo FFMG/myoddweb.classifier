@@ -65,9 +65,9 @@ namespace Classifier
       return _iEngine->Categorize(textToCategorise, minPercentage);
     }
 
-    int Classify::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory)
+    int Classify::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities)
     {
-      return _iEngine->Categorize(textToCategorise, minPercentage, wordsCategory);
+      return _iEngine->Categorize(textToCategorise, minPercentage, wordsCategory, categoryProbabilities);
     }
 
     int Classify::GetCategory(String^ categoryName)

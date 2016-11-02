@@ -437,12 +437,26 @@ bool ClassifyEngine::UnTrain( String^ uniqueIdentifier, String^ textToCategorise
               );
 }
 
-int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory)
+/**
+ * Categorise a text and return the posible category id, return information as well about the classification.
+ * @param String^ textToCategorise the text we want to categorise.
+ * @param unsigned int minPercentage the minimum percentage value we want to accept the best possible category, anything lower will not be accepted.
+ * @param List<Classifier::Interfaces::WordCategory^> ^% wordsCategory list of words, 'best' category and the percentage.
+ * @param Dictionary<int, double> ^% categoryProbabilities the probabilities for each category.
+ * @return int the probable category ... or -1
+ */
+int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities )
 {
   // sanity check.
   if (wordsCategory == nullptr)
   {
     LogEventError("Trying to categorize with words category, but the array of words has not been initialised!");
+    return -1;
+  }
+
+  if (categoryProbabilities == nullptr)
+  {
+    LogEventError("Trying to categorize with categories probabilities, dictionary has not been initialised!");
     return -1;
   }
 
@@ -461,7 +475,11 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
 
   // call the category info.
   wordscategory_info wordsCategoryInfo;
-  int overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo );
+  categoriesProbabilities_info categoriesProbabilitiesInfo;
+  int overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo, categoriesProbabilitiesInfo );
+
+  // reset our own list in case the user passed something.
+  wordsCategory->Clear();
 
   // add them all to the list.
   for (wordscategory_info::const_iterator it = wordsCategoryInfo.begin();
@@ -479,6 +497,15 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
 
     // add it to the list.
     wordsCategory->Add(wordCategory);
+  }
+
+  // reset the probabilities in case the user passed something
+  categoryProbabilities->Clear();
+
+  // and copy the values.
+  for (categoriesProbabilities_info::const_iterator it = categoriesProbabilitiesInfo.begin(); it != categoriesProbabilitiesInfo.end(); ++it)
+  {
+    categoryProbabilities->Add(it->first, it->second);
   }
 
   // return the overall category.

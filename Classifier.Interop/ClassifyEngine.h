@@ -37,7 +37,7 @@ public:
   bool Train(String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
   bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
   int Categorize(String^ textToCategorise, unsigned int minPercentage);
-  int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory );
+  int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities );
 
   //
   //  Information / Manipulation
@@ -92,9 +92,9 @@ protected:
     double probability;
   };
   typedef std::unordered_map<std::u16string, WordCategoryInfo> wordscategory_info;
-  typedef int(__stdcall *f_CategorizeWithWordCategory)(const char16_t*, unsigned int, wordscategory_info&);
-
-
+  typedef std::unordered_map<int, double> categoriesProbabilities_info;
+  typedef int(__stdcall *f_CategorizeWithWordCategory)(const char16_t*, unsigned int, wordscategory_info&, categoriesProbabilities_info&);
+  
   typedef int(__stdcall *f_GetVersion)();
 
   enum ProcType

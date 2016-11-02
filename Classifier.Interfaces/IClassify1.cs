@@ -144,8 +144,9 @@ namespace Classifier.Interfaces
     /// <param name="textToCategorise">The text we want to categorise</param>
     /// <param name="minPercentage">The minimum percentage we want to allow.</param>
     /// <param name="wordsCategory">Each works and their categories.</param>
+    /// <param name="categoryProbabilities">Map or categories > probabilities.</param>
     /// <returns>either the id of the category or -1 if we do not know.</returns>
-    int Categorize(string textToCategorise, uint minPercentage, out List<WordCategory> wordsCategory );
+    int Categorize(string textToCategorise, uint minPercentage, out List<WordCategory> wordsCategory, out Dictionary<int, double> categoryProbabilities );
 
     /// <summary>
     /// Get all the categories currently on record.

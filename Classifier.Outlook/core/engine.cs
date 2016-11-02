@@ -304,9 +304,10 @@ namespace myoddweb.classifier.core
       return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
     }
 
-    public int Categorize(string categoryText, uint minPercentage, out List<WordCategory> wordsCategory )
+    public int Categorize(string categoryText, uint minPercentage, out List<WordCategory> wordsCategory, out Dictionary<int, double > categoryProbabilities)
     {
       wordsCategory = new List<WordCategory>();
+      categoryProbabilities = new Dictionary<int, double>();
 
       // the category min percentage cannot be more than 100%.
       // it also cannot be less than 0, but we use a uint.
@@ -314,7 +315,7 @@ namespace myoddweb.classifier.core
       {
         throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
       }
-      return ClassifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory) ?? -1;
+      return ClassifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory, out categoryProbabilities ) ?? -1;
     }
 
     public int Categorize(string categoryText, uint minPercentage )

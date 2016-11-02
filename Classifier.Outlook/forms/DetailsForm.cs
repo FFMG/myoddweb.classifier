@@ -56,7 +56,8 @@ namespace myoddweb.classifier.forms
       {
         // try and categorise the text
         List<WordCategory> wordsCategory;
-        var category = _classifyEngine.Categorize(_rawText, _classifyEngine.MinPercentage, out wordsCategory);
+        Dictionary<int, double> categoriesProbability;
+        var category = _classifyEngine.Categorize(_rawText, _classifyEngine.MinPercentage, out wordsCategory, out categoriesProbability );
 
         // get the text body
         html += GetParsedBody(wordsCategory);
@@ -65,9 +66,9 @@ namespace myoddweb.classifier.forms
         html += GetSummary(category);
 
         // Display the categories table
-        html += GetCategoriesTable();
+        html += GetCategoriesTable( categoriesProbability);
       }
-      Cursor.Current = Cursors.Default;
+      Cursor.Current = Cursors.Default; 
 
       // display the code.
       DisplayHtml(GetHtml(html));
@@ -89,7 +90,12 @@ namespace myoddweb.classifier.forms
       {
         return GetParagraph("Summary", "No categories listed!");
       }
-      
+
+      if (!categories.ContainsKey(category))
+      {
+        return GetParagraph("Summary", $"Could not find a valid category.");
+      }
+
       var cr = $"cr{category}";
       return GetParagraph("Summary", $"Selected category <span class='{cr}'>{categories[category]}({category})</span>");
     }
@@ -173,8 +179,9 @@ namespace myoddweb.classifier.forms
     /// <summary>
     /// Create an html table with all the categories.
     /// </summary>
+    /// <param name="categoryProbabilities">the list of probabiliries/probability</param>
     /// <returns>string a categories table.</returns>
-    private string GetCategoriesTable()
+    private string GetCategoriesTable(Dictionary<int, double> categoryProbabilities)
     {
       var categories = _classifyEngine.GetCategories();
       if (categories.Count == 0)
@@ -188,8 +195,11 @@ namespace myoddweb.classifier.forms
         int cat = category.Key;
         var cr = $"cr{cat}";
 
+        // get the percentage
+        var probability = categoryProbabilities.ContainsKey(cat) ? (categoryProbabilities[cat] * 100).ToString(@"0.#0\%") : "0.00%";
+
         // add the row to the table.
-        table += $"<tr><td style='text-align: right;'>{category.Key}</td><td class='{cr}'>{category.Value}</td><tr>";
+        table += $"<tr><td style='text-align: right;'>{category.Key}</td><td class='{cr}'>{category.Value}</td><td style='text-align: right;'>{probability}</td><tr>";
       }
       return GetParagraph("Categories", $"<table>{table}</table>");
     }
