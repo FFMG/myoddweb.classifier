@@ -299,7 +299,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Classifier\Classifier.Interfaces\Classifier.Interfaces.csproj">
+    <ProjectReference Include="..\Classifier.Interfaces\Classifier.Interfaces.csproj">
       <Project>{d5036364-aa81-46ca-9139-cb3e84298265}</Project>
       <Name>Classifier.Interfaces</Name>
     </ProjectReference>

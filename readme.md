@@ -43,11 +43,13 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.4.0.1 (01/11/2016)
+#### 0.4.0.1 - 0.4.0.2 (02/11/2016)
 - Fixed a few issues in the tokenizer.
 - Made some changes in the engine with the lessons learned over the last 6 months.
   - More html code is now ignored.
 - We can now see the classification details to see each words classification.
+	- Added a menu option to display raw-text classification.
+	- Added a 'viewer' application to test raw text to confirm that the engine is working as expected.
   
 #### 0.3.0.5 (01/06/2016)
 - Fixed a couple of EventSource issues.
