@@ -129,6 +129,12 @@ namespace myoddweb.classifier.forms
 
       // save the percent option
       _options.CommonWordsMinPercent = GetCommonWordsMinPercent();
+
+      // automatically train messages with magnet
+      _options.ReAutomaticallyTrainMagnetMessages = checkAutomaticallyMagnetTrain.Checked;
+
+      // automatically train messages?
+      _options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
     }
 
     private uint GetCommonWordsMinPercent()
@@ -166,6 +172,12 @@ namespace myoddweb.classifier.forms
       checkCategoryIfUnknown.Enabled = reCheckCategories.Checked;
     }
 
+    private void checkAutomaticallyTrain_CheckedChanged(object sender, EventArgs e)
+    {
+      // we only check unknown categories if we check categories.
+      checkAutomaticallyMagnetTrain.Enabled = !checkAutomaticallyTrain.Checked;
+    }
+
     private void Categories_Click(object sender, EventArgs e)
     {
       using (var categoriesForm = new CategoriesForm(categories: _categories, engine: _engine))
@@ -195,6 +207,12 @@ namespace myoddweb.classifier.forms
 
       // if we want to check only if the ctrl key is down.
       reCheckIfCtrl.Checked = _options.ReCheckIfCtrlKeyIsDown;
+
+      // check if we want to train new messages or not.
+      checkAutomaticallyTrain.Checked = _options.ReAutomaticallyTrainMessages;
+
+      // check if we want to train new messages that used a magnet or not.
+      checkAutomaticallyMagnetTrain.Checked = _options.ReAutomaticallyTrainMagnetMessages;
 
       // rebuild the combo
       RebuildCombos();

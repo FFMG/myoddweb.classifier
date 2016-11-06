@@ -44,10 +44,12 @@
       this.labelUserTrained = new System.Windows.Forms.Label();
       this.labelMagnets = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.checkAutomaticallyTrain = new System.Windows.Forms.CheckBox();
+      this.numericCommonPercent = new System.Windows.Forms.NumericUpDown();
       this.label4 = new System.Windows.Forms.Label();
       this.labelCommonWord = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.numericCommonPercent = new System.Windows.Forms.NumericUpDown();
+      this.checkAutomaticallyMagnetTrain = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -68,7 +70,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(270, 274);
+      this.ok.Location = new System.Drawing.Point(271, 310);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -79,7 +81,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(351, 274);
+      this.button1.Location = new System.Drawing.Point(352, 310);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(75, 23);
       this.button1.TabIndex = 9;
@@ -154,7 +156,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(11, 274);
+      this.Categories.Location = new System.Drawing.Point(12, 310);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -164,7 +166,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(96, 274);
+      this.Magnets.Location = new System.Drawing.Point(97, 310);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -207,16 +209,46 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.checkAutomaticallyMagnetTrain);
+      this.groupBox3.Controls.Add(this.checkAutomaticallyTrain);
       this.groupBox3.Controls.Add(this.numericCommonPercent);
       this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.labelCommonWord);
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 209);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(414, 59);
+      this.groupBox3.Size = new System.Drawing.Size(414, 95);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
+      // 
+      // checkAutomaticallyTrain
+      // 
+      this.checkAutomaticallyTrain.AutoSize = true;
+      this.checkAutomaticallyTrain.Location = new System.Drawing.Point(6, 45);
+      this.checkAutomaticallyTrain.Name = "checkAutomaticallyTrain";
+      this.checkAutomaticallyTrain.Size = new System.Drawing.Size(233, 17);
+      this.checkAutomaticallyTrain.TabIndex = 13;
+      this.checkAutomaticallyTrain.Text = "Automatically use new messages for training";
+      this.checkAutomaticallyTrain.UseVisualStyleBackColor = true;
+      this.checkAutomaticallyTrain.CheckedChanged += new System.EventHandler(this.checkAutomaticallyTrain_CheckedChanged);
+      // 
+      // numericCommonPercent
+      // 
+      this.numericCommonPercent.Location = new System.Drawing.Point(6, 19);
+      this.numericCommonPercent.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericCommonPercent.Name = "numericCommonPercent";
+      this.numericCommonPercent.Size = new System.Drawing.Size(72, 20);
+      this.numericCommonPercent.TabIndex = 12;
+      this.numericCommonPercent.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
       // label4
       // 
@@ -245,28 +277,21 @@
       this.label1.TabIndex = 8;
       this.label1.Text = "Common word prct";
       // 
-      // numericCommonPercent
+      // checkAutomaticallyMagnetTrain
       // 
-      this.numericCommonPercent.Location = new System.Drawing.Point(6, 19);
-      this.numericCommonPercent.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericCommonPercent.Name = "numericCommonPercent";
-      this.numericCommonPercent.Size = new System.Drawing.Size(72, 20);
-      this.numericCommonPercent.TabIndex = 12;
-      this.numericCommonPercent.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.checkAutomaticallyMagnetTrain.AutoSize = true;
+      this.checkAutomaticallyMagnetTrain.Location = new System.Drawing.Point(23, 68);
+      this.checkAutomaticallyMagnetTrain.Name = "checkAutomaticallyMagnetTrain";
+      this.checkAutomaticallyMagnetTrain.Size = new System.Drawing.Size(298, 17);
+      this.checkAutomaticallyMagnetTrain.TabIndex = 14;
+      this.checkAutomaticallyMagnetTrain.Text = "Automatically use new messages with magnets for training";
+      this.checkAutomaticallyMagnetTrain.UseVisualStyleBackColor = true;
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(439, 310);
+      this.ClientSize = new System.Drawing.Size(435, 341);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.Magnets);
@@ -315,5 +340,7 @@
     private System.Windows.Forms.Label labelCommonWord;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.NumericUpDown numericCommonPercent;
+    private System.Windows.Forms.CheckBox checkAutomaticallyTrain;
+    private System.Windows.Forms.CheckBox checkAutomaticallyMagnetTrain;
   }
 }

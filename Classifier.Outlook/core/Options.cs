@@ -12,7 +12,11 @@ namespace myoddweb.classifier.core
     }
 
     private readonly Engine _engine;
-    
+
+    internal bool? _reAutomaticallyTrainMagnetMessages;
+
+    internal bool? _reAutomaticallyTrainMessages;
+
     internal bool? _reCheckCategories;
 
     internal bool? _checkIfUnownCategory;
@@ -40,6 +44,42 @@ namespace myoddweb.classifier.core
       {
         _reCheckCategories = value;
          _engine?.SetConfig("Option.ReCheckCategories", (value ? "1" : "0") );
+      }
+    }
+
+    /// <summary>
+    /// Check if we want to train the message because we used a magnet.
+    /// </summary>
+    public bool ReAutomaticallyTrainMagnetMessages
+    {
+      get
+      {
+        return (bool)(_reAutomaticallyTrainMagnetMessages ??
+                       (_reAutomaticallyTrainMagnetMessages = ("1" == _engine?.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", "1"))));
+      }
+      set
+      {
+        _reAutomaticallyTrainMagnetMessages = value;
+        _engine?.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", (value ? "1" : "0"));
+      }
+    }
+
+    /// <summary>
+    /// Check if we want to automaticlly train messages when they arrive.
+    /// We categorise messages, but do we also want to train them?
+    /// By default we don't do that...
+    /// </summary>
+    public bool ReAutomaticallyTrainMessages
+    {
+      get
+      {
+        return (bool)(_reAutomaticallyTrainMessages ??
+                       (_reAutomaticallyTrainMessages = ("1" == _engine?.GetConfigWithDefault("Option.ReAutomaticallyTrainMessages", "0"))));
+      }
+      set
+      {
+        _reAutomaticallyTrainMessages = value;
+        _engine?.SetConfig("Option.ReAutomaticallyTrainMessages", (value ? "1" : "0"));
       }
     }
 

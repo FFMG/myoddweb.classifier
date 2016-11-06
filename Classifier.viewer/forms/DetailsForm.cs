@@ -294,7 +294,7 @@ namespace myoddweb.viewer.forms
     {
       if (keyData == Keys.Escape)
       {
-        Close();
+        BeginInvoke((MethodInvoker)Close);
         return true;
       }
       return base.ProcessCmdKey(ref msg, keyData);

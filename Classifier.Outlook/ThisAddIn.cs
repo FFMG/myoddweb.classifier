@@ -117,11 +117,16 @@ namespace myoddweb.classifier
       // 
       Debug.WriteLine($"I classified the new message category : {categoryId}");
 
-      // get the weight
-      var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
+      //
+      // Do we want to train this
+      if( _options.ReAutomaticallyTrainMessages || (wasMagnetUsed && _options.ReAutomaticallyTrainMagnetMessages ))
+      {
+        // get the weight
+        var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
 
-      // we can now classify it.
-      var resultOfCategorise = await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
+        // we can now classify it.
+        var resultOfCategorise = await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
+      }
 
       // get the posible folder.
       var folder = TheCategories.FindFolderByCategoryId(categoryId);
