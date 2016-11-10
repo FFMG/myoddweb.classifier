@@ -55,12 +55,14 @@ namespace myoddweb.classifier.core
 
         // child folder item
         var childFolder = item as Outlook.Folder;
+        if (null != childFolder)
+        {
+          // add this folder to the list.
+          folders.Add(new Folder(childFolder, PrettyFolderPath(childFolder.FolderPath)));
 
-        // add this folder to the list.
-        folders.Add( new Folder(childFolder, PrettyFolderPath(childFolder.FolderPath) ) );
-
-        // Call EnumerateFolders using childFolder.
-        EnumerateFolders(childFolder, folders );
+          // Call EnumerateFolders using childFolder.
+          EnumerateFolders(childFolder, folders);
+        }
       }
     }
 

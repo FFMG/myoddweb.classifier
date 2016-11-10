@@ -8,7 +8,6 @@ namespace myoddweb.classifierUnitTest
   [TestClass]
   public class TestSqlConfig : TestCommon
   {
-
     [ClassCleanup]
     public static void ClassCleanup()
     {

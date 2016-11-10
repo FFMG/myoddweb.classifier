@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using myoddweb.classifier.core;
-
 using Outlook = Microsoft.Office.Interop.Outlook;
-using System.Collections.Generic;
 
 namespace myoddweb.classifier
 {
@@ -41,7 +38,7 @@ namespace myoddweb.classifier
       _explorers = this.Application.Explorers;
 
       // new email arrives.
-      this.Application.NewMailEx += Application_NewMailEx;
+      Application.NewMailEx += Application_NewMailEx;
     }
 
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

@@ -16,6 +16,12 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
+    [TestCleanup]
+    public void CleanupTest()
+    {
+      ReleaseEngine(false);
+    }
+
     [ClassCleanup]
     public static void ClassCleanup()
     {

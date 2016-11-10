@@ -10,6 +10,12 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
+    [TestCleanup]
+    public void CleanupTest()
+    {
+      ReleaseEngine(false);
+    }
+
     [ClassCleanup]
     public static void ClassCleanup()
     {
@@ -20,7 +26,7 @@ namespace myoddweb.classifierUnitTest
     public void TestGetVersionNumber()
     {
       var versionNumber = TheEngine.GetEngineVersion();
-      Assert.AreEqual(1001000, versionNumber );
+      Assert.AreEqual(1005002, versionNumber );
     }
   }
 }

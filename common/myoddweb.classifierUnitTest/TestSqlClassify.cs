@@ -12,7 +12,6 @@ namespace myoddweb.classifierUnitTest
   [TestClass]
   public class TestSqlClassify : TestCommon
   {
-
     [ClassCleanup]
     public static void ClassCleanup()
     {

@@ -10,7 +10,7 @@ namespace myoddweb.classifierUnitTest
   public class TestCommon
   {
     // the engine
-    private static Engine _engine = null;
+    private static Engine _engine;
 
     protected static string DbName = "ctest_database.classifier";
     protected static string CleandbName = "clean_ctest_database.classifier";

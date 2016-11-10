@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using myoddweb.classifier.core;
 
 namespace myoddweb.classifierUnitTest
 {
@@ -18,6 +17,12 @@ namespace myoddweb.classifierUnitTest
     public static void ClassCleanup()
     {
       ReleaseEngine(true);
+    }
+
+    [TestCleanup]
+    public void CleanupTest()
+    {
+      ReleaseEngine(false);
     }
 
     [TestMethod]

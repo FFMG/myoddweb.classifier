@@ -43,10 +43,11 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.5.0.1 (06/11/2016)
+#### 0.5.0.1 - 0.5.0.2 (06/11/2016)
 - Option to automatically train classified mail, (false by default)
 - Option to automatically train classified mail using magnet, (true by default)
-- Updated to 1.5.1 engine, ( has beter/faster classification)
+- Updated to 1.5.2 engine, ( has better/faster classification)
+	- Classifications are now threaded.
 
 #### 0.4.0.1 - 0.4.0.2 (02/11/2016)
 - Fixed a few issues in the tokenizer.

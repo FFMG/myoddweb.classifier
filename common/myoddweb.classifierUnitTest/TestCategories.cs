@@ -25,7 +25,7 @@ namespace myoddweb.classifierUnitTest
     public void TestReloadCategories()
     {
       // we should have no categories.
-      var theCategories = new myoddweb.classifier.core.Categories(TheEngine );
+      var theCategories = new classifier.core.Categories(TheEngine );
       Assert.AreEqual(0, theCategories.Count);
 
       // create 2 categories by getting them.
