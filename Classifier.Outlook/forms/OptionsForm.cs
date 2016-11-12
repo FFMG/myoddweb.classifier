@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using myoddweb.classifier.core;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace myoddweb.classifier.forms
 {
@@ -194,8 +195,24 @@ namespace myoddweb.classifier.forms
       }
     }
 
+    private Version GetFileVersion()
+    {
+      var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+      var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+      return new Version(fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart, fvi.FilePrivatePart);
+    }
+
     private void OnLoad(object sender, EventArgs e)
     {
+      //  get the file version
+      var version = GetFileVersion();
+
+      // get the engine version.
+      var engineVersion = _engine.GetEngineVersion();
+
+      //Version version = Assembly.GetEntryAssembly().GetName().Version;
+      Text = $"Options - [{version.Major}.{version.Minor}.{version.Build}.{version.Revision}] - (Engine [{engineVersion.Major}.{engineVersion.Minor}.{engineVersion.Build}])";
+
       // check if we want to re-check all categories.
       reCheckCategories.Checked = _options.ReCheckCategories;
 

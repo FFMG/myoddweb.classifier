@@ -48,6 +48,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - Option to automatically train classified mail using magnet, (true by default)
 - Updated to 1.5.2 engine, ( has better/faster classification)
 	- Classifications are now threaded.
+- Options text now gives the version number + engine version number.	
 
 #### 0.4.0.1 - 0.4.0.2 (02/11/2016)
 - Fixed a few issues in the tokenizer.

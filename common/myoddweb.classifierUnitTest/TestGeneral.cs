@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace myoddweb.classifierUnitTest
 {
@@ -25,8 +26,15 @@ namespace myoddweb.classifierUnitTest
     [TestMethod]
     public void TestGetVersionNumber()
     {
-      var versionNumber = TheEngine.GetEngineVersion();
+      var versionNumber = TheEngine.GetEngineVersionNumber();
       Assert.AreEqual(1005002, versionNumber );
+    }
+
+    [TestMethod]
+    public void TestGetVersion()
+    {
+      var version = TheEngine.GetEngineVersion();
+      Assert.AreEqual( new Version(1, 5, 2, 0), version);
     }
   }
 }

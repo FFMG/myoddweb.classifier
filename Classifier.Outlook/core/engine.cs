@@ -242,9 +242,27 @@ namespace myoddweb.classifier.core
     /// Get the current version number of the engine.
     /// </summary>
     /// <returns>int the engine version number</returns>
-    public int GetEngineVersion()
+    public int GetEngineVersionNumber()
     {
       return ClassifyEngine.GetEngineVersion();
+    }
+
+    /// <summary>
+    /// Get the current version number of the engine.
+    /// </summary>
+    /// <returns>Version the engine version number</returns>
+    public Version GetEngineVersion()
+    {
+      //  get the version
+      var engineVersion = GetEngineVersionNumber();
+      var major = (int)(engineVersion / 1000000.0);
+
+      engineVersion -= (major * 1000000);
+      var minor = (int)(engineVersion / 1000.0);
+
+      engineVersion -= (minor * 1000);
+      var build = engineVersion;
+      return new Version( major, minor, build, 0 );
     }
 
     public string GetConfig(string configName )
