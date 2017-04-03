@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using myoddweb.viewer.utils;
 
 namespace myoddweb.viewer.forms
 {
@@ -56,7 +57,10 @@ namespace myoddweb.viewer.forms
         // try and categorise the text
         var wordsCategory = new List<WordCategory>();
         var categoryProbabilities = new Dictionary<int, double>();
+
+        var sw = StopWatch.Start();
         var category = _classifyEngine == null ? -1 : _classifyEngine.Categorize(_rawText, 75, out wordsCategory, out categoryProbabilities );
+        sw.Stop( @"Done : {0}." );
 
         // get the text body
         html += GetParsedBody(wordsCategory );

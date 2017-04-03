@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.forms;
+using myoddweb.viewer.utils;
 using Exception = System.Exception;
 using Office = Microsoft.Office.Core;
 
@@ -29,19 +30,19 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// all the categories.
     /// </summary>
-    private readonly Categories _categories = null;
+    private readonly Categories _categories;
 
     /// <summary>
     /// All the options
     /// </summary>
-    private readonly Options _options = null;
+    private readonly Options _options;
 
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private readonly Engine _engine = null;
+    private readonly Engine _engine;
 
-    private Office.IRibbonUI ribbon;
+    private Office.IRibbonUI _ribbon;
 
     public CustomUI(Engine engine, Categories categories, Options options )
     {
@@ -69,7 +70,7 @@ namespace myoddweb.classifier.core
 
     public void Ribbon_Load(Office.IRibbonUI ribbonUI)
     {
-      this.ribbon = ribbonUI;
+      this._ribbon = ribbonUI;
     }
 
     #endregion
@@ -167,7 +168,7 @@ namespace myoddweb.classifier.core
       // if there was a problem, we need to tell the user about it.
       if (resultOfOperation == false)
       {
-        MessageBox.Show("There was a problem updating the category, is the datbase locked?", "Could not classify", MessageBoxButtons.OK, MessageBoxIcon.Error );
+        MessageBox.Show(@"There was a problem updating the category, is the datbase locked?", @"Could not classify", MessageBoxButtons.OK, MessageBoxIcon.Error );
       }
     }
 
@@ -184,31 +185,25 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          var watch = Stopwatch.StartNew();
+          var watch = StopWatch.Start();
 
           // log a message to indicate when we are trying to do.
           Debug.WriteLine($"Classifying message id {mailItem.EntryID} to category {categoryId}");
 
           // we have all the information we need
           // we can now categorize the mail.
-          if (myoddweb.classifier.Errors.Success == await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
+          if (Errors.Success == await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
           {
-            // stop the timer.
-            watch.Stop();
-
-            // and log how long this took
-            Debug.WriteLine($"  [Success] Classifying took {(double)watch.ElapsedMilliseconds / 1000}.");
+            // stop the timer and say how long it took...
+            watch.Stop( "  [Success] Classifying took {0}." );
             continue;
           }
 
           // debug
           Debug.WriteLine($"There was a problem setting the mail for message id {mailItem.EntryID}");
 
-          // stop the timer.
-          watch.Stop();
-
           //  how long this took.
-          Debug.WriteLine($"  [Failed] Classifying took {(double)watch.ElapsedMilliseconds / 1000}.");
+          watch.Stop("  [Failed] Classifying took {0}.");
 
           // log the error
           _engine.LogEventError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
@@ -234,7 +229,7 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">The mail item we wish to categorise</param>
     /// <param name="id">The category id number we want to set this to.</param>
     /// <returns>boolean success or not.</returns>
-    async private Task<myoddweb.classifier.Errors> ClassifyMailAsync( _MailItem mailItem, uint id )
+    private async Task<myoddweb.classifier.Errors> ClassifyMailAsync( _MailItem mailItem, uint id )
     {
       var categories = GetAllCategories();
 
@@ -356,6 +351,9 @@ namespace myoddweb.classifier.core
       var currentCursor = Cursor.Current;
       Cursor.Current = Cursors.WaitCursor;
 
+      // start the wath
+      var watch = StopWatch.Start();
+
       try
       {
         // guess where it could be going to now.
@@ -376,11 +374,11 @@ namespace myoddweb.classifier.core
 
       // reset the cursor.
       Cursor.Current = currentCursor;
-      
+
       // add a debug message.
-      Debug.WriteLine(guessCategoryResponse.CategoryId != currentCategoryId
-        ? $"My new classifying guess for this message is : {guessCategoryResponse.CategoryId}"
-        : $"My classifying guess for this message is category remains the same : {guessCategoryResponse.CategoryId}");
+      watch.Stop(guessCategoryResponse.CategoryId != currentCategoryId
+        ? $"My new classifying guess for this message is : {guessCategoryResponse.CategoryId} (in {{0}})"
+        : $"My classifying guess for this message is category remains the same : {guessCategoryResponse.CategoryId} (in {{0}})");
 
       // return what we found
       return guessCategoryResponse;

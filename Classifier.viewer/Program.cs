@@ -207,13 +207,13 @@ namespace myoddweb.viewer
       var databasePath = ci.GetDatabasePath();
       if (null == databasePath)
       {
-        MessageBox.Show("Unknown or missing database path.", "Help", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(@"Unknown or missing database path.", @"Help", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
       var directoryName = ci.GetEnginePath();
       if (null == directoryName)
       {
-        MessageBox.Show("Unknown or missing engines path.", "Help", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(@"Unknown or missing engines path.", @"Help", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 

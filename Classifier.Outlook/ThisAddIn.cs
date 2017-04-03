@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using myoddweb.classifier.core;
+using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier
@@ -97,6 +98,9 @@ namespace myoddweb.classifier
         return;
       }
 
+      // start the watch
+      var watch = StopWatch.Start();
+
       // look for the category
       var guessCategoryResponse = await TheCategories.CategorizeAsync(newMail).ConfigureAwait(false);
 
@@ -107,12 +111,12 @@ namespace myoddweb.classifier
       // did we find a category?
       if (-1 == categoryId)
       {
-        Debug.WriteLine("I could not classify the new message into any categories");
+        watch.Checkpoint("I could not classify the new message into any categories: (in: {0})");
         return;
       }
 
       // 
-      Debug.WriteLine($"I classified the new message category : {categoryId}");
+      watch.Checkpoint( $"I classified the new message category : {categoryId} (in: {{0}})");
 
       //
       // Do we want to train this
@@ -122,7 +126,7 @@ namespace myoddweb.classifier
         var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
 
         // we can now classify it.
-        var resultOfCategorise = await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
+        await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait(false);
       }
 
       // get the posible folder.
@@ -151,7 +155,7 @@ namespace myoddweb.classifier
       }
       catch (System.Exception ex)
       {
-        Debug.WriteLine("Could not move : {0}, {1} ", newMail.Subject, ex.StackTrace);
+        watch.Checkpoint( $"Could not move : {newMail.Subject}, {ex.StackTrace} {{0}}");
       }
     }
 
