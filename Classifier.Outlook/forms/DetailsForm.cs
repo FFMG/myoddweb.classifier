@@ -173,7 +173,7 @@ namespace myoddweb.classifier.forms
     /// <returns></returns>
     private static string GetParagraph(string header, string paragraph)
     {
-      return $"<h1>{header}</h1><p>{paragraph}</p>";
+      return $"<h1>{header}</h1><p>{paragraph}";
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ namespace myoddweb.classifier.forms
         var probability = categoryProbabilities.ContainsKey(cat) ? (categoryProbabilities[cat] * 100).ToString(@"0.#0\%") : "0.00%";
 
         // add the row to the table.
-        table += $"<tr><td style='text-align: right;'>{category.Key}</td><td class='{cr}'>{category.Value}</td><td style='text-align: right;'>{probability}</td><tr>";
+        table += $"<tr><td style='text-align: right;'>{category.Key}</td><td class='{cr}'>{category.Value}</td><td style='text-align: right;'>{probability}</td></tr>";
       }
       return GetParagraph("Categories", $"<table>{table}</table>");
     }
@@ -264,7 +264,7 @@ namespace myoddweb.classifier.forms
     private static string GetHtml(string body)
     {
       var css = GetCss();
-      return ($"<!DOCTYPE html>{css}<html><body>{body}</body></html>");
+      return ($"<!DOCTYPE html><html><head><title>Message Details</title>{css}</head><body>{body}</body></html>");
     }
 
     /// <summary>
