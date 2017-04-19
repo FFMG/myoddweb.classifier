@@ -31,7 +31,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private IClassify1 ClassifyEngine { get; set; }
+    public IClassify1 ClassifyEngine { get; private set; }
 
     internal uint? _minPercentage;
 

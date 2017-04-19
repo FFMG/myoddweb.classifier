@@ -195,6 +195,7 @@
     <Compile Include="forms\DetailsForm.Designer.cs">
       <DependentUpon>DetailsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\HtmlDisplay.cs" />
     <Compile Include="forms\MagnetMailItemForm.cs">
       <SubType>Form</SubType>
     </Compile>
