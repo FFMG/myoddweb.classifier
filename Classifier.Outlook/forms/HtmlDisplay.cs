@@ -108,9 +108,13 @@ namespace myoddweb.classifier.forms
       // but it should still split all the words.
       const string patternAll = @"[\s\p{P}\p{Z}\p{S}\p{C}\p{No}]";
 
+      // the regex we will be using over and over...
+      var regex = new Regex(patternAll);
+
       // this is to split everything, without actually removing the tags.
       // that way we can rebuild the entire text.
       var pattern = $@"(?<={patternAll}+)";
+
       var parts = Regex.Split(_rawText, pattern).ToList();
       var guids = new Dictionary<string, string>();
       var raws = new ConcurrentDictionary<string, string>();
@@ -128,17 +132,15 @@ namespace myoddweb.classifier.forms
           Task.Run(() =>
           {
             // get akk the unique words we want to replace.
-            var words = parts.FindAll(w => Regex.Replace(w, patternAll, " ").Trim() == wordCategory.Word)
+            var words = parts.FindAll(word => regex.Replace(word, " ").Trim() == wordCategory.Word)
               .Distinct();
             foreach (var word in words)
             {
               // the category id probability and 'clean' word.
               var categoryId = wordCategory.Category;
               var probability = wordCategory.Probability;
-
-              // remove all the extra characters.
-              var partClean = Regex.Replace(word, patternAll, " ").Trim();
-
+              var partClean = wordCategory.Word;
+              
               // the class we will be using.
               var cr = $"cr{categoryId}";
 
@@ -148,7 +150,7 @@ namespace myoddweb.classifier.forms
               guids.Add(guid, $"<span class='{cr}' title='{categories[categoryId]}, {percent}'>{partClean}</span>");
               var guidAndPart = word.Replace(partClean, guid);
 
-              raws.TryAdd(word, word.Replace(word, guidAndPart));
+              raws.TryAdd(word, guidAndPart);
             }
           })
         );
