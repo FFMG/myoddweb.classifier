@@ -43,9 +43,9 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.6.0.1 - 0.6.0.4 (19/04/2017)
+#### 0.6.0.1 - 0.6.0.4 (20/04/2017)
 - Added debug log messages to time how slow classification is.
-- Updated to classifier engine 1.5.6.0, (faster)
+- Updated to classifier engine 1.5.7.0, (faster)
   - Added a couple of css values to no parse, (max-width/width etc...)
 - Updated the interface 0.6.0.4, (no change, just align the number)
 - Fixed a couple of issues with the 'detailed' html view.
