@@ -5,8 +5,6 @@ using System.Reflection;
 using Classifier.Interfaces;
 using myoddweb.classifier.utils;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace myoddweb.classifier.core
 {
@@ -19,11 +17,6 @@ namespace myoddweb.classifier.core
     private bool? _eventSource = null;
 
     /// <summary>
-    /// The current list of folders.
-    /// </summary>
-    private Folders _folders;
-
-    /// <summary>
     /// Name for logging in the event viewer,
     /// </summary>
     private const string EventViewSource = "myoddweb.classifier";
@@ -34,6 +27,8 @@ namespace myoddweb.classifier.core
     public IClassify1 ClassifyEngine { get; private set; }
 
     internal uint? _minPercentage;
+
+    private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
     /// (re) Check all the categories all the time.
@@ -56,7 +51,7 @@ namespace myoddweb.classifier.core
 
     public Engine()
     {
-      if (!InitialiseEngine() )
+      if (!InitialiseEngine())
       {
         throw new Exception("I was unable to load the engine. Check the event log for errors.");
       }
@@ -74,12 +69,7 @@ namespace myoddweb.classifier.core
     {
       ReleaseEngine();
     }
-
-    public void SetFolders(Folders folders)
-    {
-      _folders = folders;
-    }
-
+    
     public void Release()
     {
       ReleaseEngine();
@@ -373,9 +363,15 @@ namespace myoddweb.classifier.core
       return ClassifyEngine.DeleteCategory(categoryName);
     }
 
-    public List<Folder> GetFolders()
+    public void SetRootFolder(Microsoft.Office.Interop.Outlook.MAPIFolder rootFolder)
     {
-      return (_folders != null ? _folders.GetFolders() : new List<Folder>());
+      // set the root folder.
+      _rootFolder = rootFolder;
+    }
+
+    public Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()
+    {
+      return _rootFolder;
     }
 
     public int CreateMagnet(string randomName, int ruleType, int categoryId)

@@ -47,6 +47,17 @@ namespace myoddweb.classifier.core
     private readonly Engine _engine;
 
     /// <summary>
+    /// The actual folders
+    /// </summary>
+    private Folders _folders = null;
+
+    /// <summary>
+    /// The folders we will be using.
+    /// </summary>
+    /// 
+    private Folders TheFolders => _folders ?? (_folders = new Folders(_engine.GetRootFolder() ));
+
+    /// <summary>
     /// Unique identitider to all messages that will contain our unique key.
     /// </summary>
     private const string IdentifierKey = "Classifier.Identifier";
@@ -480,24 +491,13 @@ namespace myoddweb.classifier.core
       return Errors.Success;
     }
 
-    /// <summary>
-    /// Get all the folders that we will be using as a flat list.
-    /// </summary>
-    /// <returns>List<Folder> the outlook folders</returns>
-    public List<Folder> GetFolders()
-    {
-      return _engine.GetFolders();
-    }
-
     public Folder FindFolderById(string folderId)
     {
       if (string.IsNullOrEmpty(folderId))
       {
         return null;
       }
-
-      var folders = GetFolders();
-      return folders.FirstOrDefault(e => e.Id() == folderId);
+      return TheFolders?.GetFolders().FirstOrDefault(e => e.Id() == folderId);
     }
 
     public Category FindCategoryById( int categoryId )

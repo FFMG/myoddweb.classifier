@@ -122,7 +122,7 @@ namespace myoddweb.classifier.forms
       comboBoxRules.DataSource = items;
 
       // do we have any folders?
-      if (_engine.GetFolders().Count == 0)
+      if (items.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)

@@ -10,6 +10,17 @@ namespace myoddweb.classifier
   {
     private readonly Engine _engine = null;
 
+    /// <summary>
+    /// The actual folders
+    /// </summary>
+    private Folders _folders = null;
+
+    /// <summary>
+    /// The folders we will be using.
+    /// </summary>
+    /// 
+    private Folders TheFolders => _folders ?? (_folders = new Folders(_engine.GetRootFolder()));
+
     private Category GivenCategory { get; set; }
 
     public CategoryForm( Engine engine, Category category  )
@@ -52,7 +63,7 @@ namespace myoddweb.classifier
       items.Add(new { Text = "n/a", Value = "" });
 
       // go around all the folders.
-      foreach (var folder in _engine.GetFolders() )
+      foreach (var folder in TheFolders.GetFolders() )
       {
         // is that our current one?
         if (GivenCategory?.FolderId == folder.Id())
@@ -66,7 +77,7 @@ namespace myoddweb.classifier
       comboBoxFolders.DataSource = items;
 
       // do we have any folders?
-      if (_engine.GetFolders().Count == 0)
+      if (TheFolders.GetFolders().Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)

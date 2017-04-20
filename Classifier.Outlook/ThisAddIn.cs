@@ -33,7 +33,7 @@ namespace myoddweb.classifier
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
       // tell the engine what the folders are.
-      TheEngine.SetFolders(new Folders(Application.Session.DefaultStore.GetRootFolder()));
+      TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder() );
 
       // get the explorers.
       _explorers = this.Application.Explorers;
