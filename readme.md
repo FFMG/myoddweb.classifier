@@ -28,7 +28,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 ## Setup
 ### From setup
 
-- Download the setup app, (in the [Classifier.Setup/Output](https://github.com/FFMG/myoddweb.classifier/tree/master/Classifier.Setup/Output) sub folder for now)
+- Download the setup app, (in the [Classifier.Setup/Output](https://github.com/FFMG/myoddweb.classifier/releases/latest) sub folder for now)
 - Run it
 - Start outlook
 	- You will need to accept the certificate, (only first time).
@@ -146,20 +146,20 @@ Just close outlook, delete the database and restart outlook.
 
 - Create some tutorials.
 	- How to setup
-	- Manage categories
-	- Manage Magnets
+	- <s>Manage categories</s>[0.5.0.4]
+	- <s>Manage Magnets</s>[0.5.0.4]
 	- Maybe create a youtube account and explain various features.
 - Give a link to the setup program on http://www.myoddweb.com
 - Update the site with more information.
 - Test on versions of Outlook, please add a message if you are able to test.
-	- Test on outlook 2016
-	- <s>Test on outlook 2013</s>
-	- Test on outlook 2010
+	- <s>Test on outlook 2016</s>[0.6.0.5]
+	- <s>Test on outlook 2013</s>[0.5.0.4]
+	- <s>Test on outlook 2010</s>[0.5.0.4]
 	- Test on outlook 2007
 - Test on 32bit versions of Outlook.
-	- On 32bit machines
-	- On 64bit machines
-- Test on 64bit versions of Outlook
+	- <s>On 32bit machines</s>[0.6.0.5]
+	- <s>On 64bit machines</s>[0.6.0.5]
+- <s>Test on 64bit versions of Outlook</s>[0.6.0.5]
 - Ask someone to give us a certificate rather than the temp one we have.
 - Languages
 - Add copyright notice in front of all the files...
