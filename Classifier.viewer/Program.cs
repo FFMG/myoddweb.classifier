@@ -145,6 +145,14 @@ namespace myoddweb.viewer
         dllInteropPath = Path.Combine(directoryName, "x64\\Classifier.Interop.dll");
         dllEnginePath = Path.Combine(directoryName, "x64\\Classifier.Engine.dll");
       }
+      else
+      {
+        if (!File.Exists(dllInteropPath))
+        {
+          dllInteropPath = Path.Combine(directoryName, "win32\\Classifier.Interop.dll");
+          dllEnginePath = Path.Combine(directoryName, "win32\\Classifier.Engine.dll");
+        }
+      }
 
       // look for the 
       Assembly asm;
@@ -218,7 +226,7 @@ namespace myoddweb.viewer
       }
 
       // the text
-      const string text = @"Blah";
+      const string text = @"blah";
       string lastError;
       var engine = InitialiseEngine(directoryName, databasePath, out lastError);
       Application.Run(new DetailsForm( engine, text ));

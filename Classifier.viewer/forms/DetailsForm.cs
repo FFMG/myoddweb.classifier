@@ -11,7 +11,7 @@ namespace myoddweb.viewer.forms
     //  the html string parser to get the html code.
     private HtmlDisplay HtmlDisplay;
 
-    public DetailsForm(IClassify1 classifyEngine, string rawText)
+    public DetailsForm(IClassify1 classifyEngine, string rawText )
     {
       HtmlDisplay = new HtmlDisplay(classifyEngine, rawText);
 
@@ -34,7 +34,7 @@ namespace myoddweb.viewer.forms
         var html = HtmlDisplay.GetHtml();
 
         // display it.
-        DisplayHtml(html);
+        DisplayHtml( html );
       }
 
       // restore the cursor.
@@ -82,16 +82,16 @@ namespace myoddweb.viewer.forms
     /// Redraw the form with the (new) size.
     /// </summary>
     private void RedrawFormSize()
-    {
+    { 
       const int padding = 5;
 
       buttonPaste.Location = new Point(ClientRectangle.Right - padding - buttonPaste.Width, buttonPaste.Location.Y);
 
       var top = buttonPaste.Bottom + padding;
-      webBrowserDetails.Location = new Point(ClientRectangle.X + padding, top);
+      webBrowserDetails.Location = new Point(ClientRectangle.X + padding, top );
 
       webBrowserDetails.Width = ClientRectangle.Right - (2 * padding);
-      webBrowserDetails.Height = ClientRectangle.Bottom + -(2 * padding);
+      webBrowserDetails.Height = ClientRectangle.Bottom + - (2*padding);
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
