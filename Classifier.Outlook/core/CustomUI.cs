@@ -139,7 +139,7 @@ namespace myoddweb.classifier.core
     /// The user wants us to categorise this mail item.
     /// </summary>
     /// <param name="control"></param>
-    public async void OnSelectCategory(Office.IRibbonControl control)
+    public async Task OnSelectCategory(Office.IRibbonControl control)
     {
       // get all the mail items.
       var mailItems = GetMultipleMailItemFromRibbonControl(control);
