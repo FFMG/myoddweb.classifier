@@ -5,6 +5,7 @@ using System.Reflection;
 using Classifier.Interfaces;
 using myoddweb.classifier.utils;
 using System.Linq;
+using Classifier.Interfaces.Helpers;
 
 namespace myoddweb.classifier.core
 {

@@ -37,7 +37,7 @@ public:
   bool Train(String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
   bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
   int Categorize(String^ textToCategorise, unsigned int minPercentage);
-  int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities );
+  int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::Helpers::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities );
 
   //
   //  Information / Manipulation
@@ -54,7 +54,7 @@ public:
   int CreateMagnet(String^ magnetName, int ruleType, int categoryTarget);
   bool UpdateMagnet(int id, String^ magnetName, int ruleType, int categoryTarget);
   bool DeleteMagnet(int id);
-  int GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets );
+  int GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets );
 
 protected:
   typedef bool(__stdcall *f_Initialise)(const char*);

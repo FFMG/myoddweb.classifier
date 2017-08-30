@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Classifier.Interfaces;
 using myoddweb.classifier.core;
+using Classifier.Interfaces.Helpers;
 
 namespace myoddweb.classifier.forms
 {

@@ -445,7 +445,7 @@ bool ClassifyEngine::UnTrain( String^ uniqueIdentifier, String^ textToCategorise
  * @param Dictionary<int, double> ^% categoryProbabilities the probabilities for each category.
  * @return int the probable category ... or -1
  */
-int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities )
+int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::Helpers::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities )
 {
   // sanity check.
   if (wordsCategory == nullptr)
@@ -487,7 +487,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
     ++it)
   {
     // create the category.
-    Classifier::Interfaces::WordCategory^ wordCategory = gcnew Classifier::Interfaces::WordCategory();
+    Classifier::Interfaces::Helpers::WordCategory^ wordCategory = gcnew Classifier::Interfaces::Helpers::WordCategory();
 
     // re-create it in managed c++ so we can pass it along.
     const std::wstring ws = (const wchar_t*)it->first.c_str();
@@ -710,10 +710,10 @@ bool ClassifyEngine::DeleteMagnet(int id)
   return funci( id );
 }
 
-int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets )
+int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets )
 {
   // whatever happens, empty the list.
-  magnets = gcnew List<Classifier::Interfaces::Magnet^>();
+  magnets = gcnew List<Classifier::Interfaces::Helpers::Magnet^>();
 
   f_GetMagnets funci = (f_GetMagnets)GetUnmanagedFunction(ProcType::procGetMagnets);
 
@@ -737,7 +737,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets 
        it != magnetsInfo.end();
        ++it)
   {
-    Classifier::Interfaces::Magnet^ magnet = gcnew Classifier::Interfaces::Magnet();
+    Classifier::Interfaces::Helpers::Magnet^ magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
     magnet->Id = it->first;
     magnet->Rule = it->second.ruleType;
     magnet->Category = it->second.categoryTarget;

@@ -1,66 +1,8 @@
-﻿
+﻿using Classifier.Interfaces.Helpers;
 using System.Collections.Generic;
 
 namespace Classifier.Interfaces
 {
-  public class WordCategory
-  {
-    public WordCategory()
-    {
-      Word = "";
-      Category = -1;
-      Probability = 0;
-    }
-
-    /// <summary>
-    /// The word been categoried.
-    /// </summary>
-    public string Word;
-
-    /// <summary>
-    /// The word category
-    /// </summary>
-    public int Category;
-
-    /// <summary>
-    /// The word probability percentage.
-    /// </summary>
-    public double Probability;
-  };
-
-  public class Magnet
-  {
-    /// <summary>
-    /// The constructor.
-    /// </summary>
-    public Magnet()
-    {
-      // reset all the values.
-      Id = Rule = Category = -1;
-      Name = "";
-    }
-
-    /// <summary>
-    /// The magnet id
-    /// </summary>
-    public int Id;
-
-    /// <summary>
-    /// The magnet name
-    /// </summary>
-    public string Name;
-
-    /// <summary>
-    /// The magnet rule type, only specific to the client.
-    /// </summary>
-    public int Rule;
-
-    /// <summary>
-    /// The magnet category, (if the magnet is triggered).
-    /// </summary>
-    public int Category;
-  }
-
   public interface IClassify1
   {
     /// <summary>

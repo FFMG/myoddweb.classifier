@@ -44,7 +44,7 @@ namespace Classifier
       virtual bool Train( String^ categoryName, String^ textToCategorise, String^ uniqueIdentifier, int weight );
       virtual bool UnTrain( String^ uniqueIdentifier, String^ textToCategorise);
       virtual int Categorize( String^ textToCategorise, unsigned int minPercentage);
-      virtual int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities);
+      virtual int Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::Helpers::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities);
 
       //
       //  Information / Manipulation
@@ -61,7 +61,7 @@ namespace Classifier
       virtual int CreateMagnet(String^ magnetName, int ruleType, int categoryTarget);
       virtual bool UpdateMagnet(int id, String^ magnetName, int ruleType, int categoryTarget);
       virtual bool DeleteMagnet(int id);
-      virtual int GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets );
+      virtual int GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets );
 
     protected:
       ClassifyEngine* _iEngine;

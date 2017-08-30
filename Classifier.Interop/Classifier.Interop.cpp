@@ -65,7 +65,7 @@ namespace Classifier
       return _iEngine->Categorize(textToCategorise, minPercentage);
     }
 
-    int Classify::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities)
+    int Classify::Categorize(String^ textToCategorise, unsigned int minPercentage, List<Classifier::Interfaces::Helpers::WordCategory^> ^% wordsCategory, Dictionary<int, double> ^% categoryProbabilities)
     {
       return _iEngine->Categorize(textToCategorise, minPercentage, wordsCategory, categoryProbabilities);
     }
@@ -110,7 +110,7 @@ namespace Classifier
       return _iEngine->DeleteMagnet(id);
     }
 
-    int Classify::GetMagnets(List<Classifier::Interfaces::Magnet^> ^% magnets )
+    int Classify::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets )
     {
       return _iEngine->GetMagnets( magnets );
     }
