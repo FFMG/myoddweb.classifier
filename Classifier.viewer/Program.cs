@@ -230,11 +230,6 @@ namespace myoddweb.viewer
       string lastError;
       var engine = InitialiseEngine(directoryName, databasePath, out lastError);
 
-      var id = engine?.Log($"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.Info", "Started Details form.");
-
-      var unixTimestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-      var deleted  = engine?.ClearLogEntries(unixTimestamp);
-
       Application.Run(new DetailsForm( engine, text ));
 
       // release it then.
