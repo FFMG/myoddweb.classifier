@@ -93,7 +93,7 @@ namespace Classifier.Interfaces
     /// <summary>
     /// Get all the categories currently on record.
     /// </summary>
-    /// <param name="categories">out Dictionary<int, string> the list of id => name of categories.</param>
+    /// <param name="categories">out Dictionary the list of id => name of categories.</param>
     /// <returns>int the number of items found or -1 if there was an error</returns>
     int GetCategories(out Dictionary<int, string> categories);
 
@@ -155,5 +155,12 @@ namespace Classifier.Interfaces
     /// <param name="entry">The entry we are logging, max 1024 chars.</param>
     /// <returns>the entry id.</returns>
     int Log(string source, string entry);
+
+    /// <summary>
+    /// Clear log entries that are older than a certain date
+    /// </summary>
+    /// <param name="olderThan"> the date we want to delte.</param>
+    /// <returns>success or not</returns>
+    bool ClearLogEntries(int olderThan);
   }
 }

@@ -115,9 +115,17 @@ namespace Classifier
       return _iEngine->GetMagnets( magnets );
     }
 
+    //
+    // Logs
+    //
     int Classify::Log(String^ source, String^ entry)
     {
       return _iEngine->Log(source, entry );
+    }
+
+    bool Classify::ClearLogEntries(int olderThan)
+    {
+      return _iEngine->ClearLogEntries(olderThan);
     }
 
     //

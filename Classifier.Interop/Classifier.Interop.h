@@ -65,6 +65,7 @@ namespace Classifier
 
       // Log
       virtual int Log(String^ source, String^ entry);
+      virtual bool ClearLogEntries( int olderThan );
 
     protected:
       ClassifyEngine* _iEngine;

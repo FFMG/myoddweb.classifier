@@ -11,7 +11,7 @@ using namespace System::IO;
 const unsigned int MAX_CONFIGVALUE_LEN = 1024;
 
 ClassifyEngine::ClassifyEngine() : 
-  _hGetProcIDDLL( NULL ),
+  _hGetProcIDDLL(nullptr),
   _canUseEventLog( false )
 {
   //  check if we are allowed/able to use the event log.
@@ -21,7 +21,7 @@ ClassifyEngine::ClassifyEngine() :
 void ClassifyEngine::Release()
 {
   // clean up if need be.
-  if (NULL == _hGetProcIDDLL)
+  if (nullptr == _hGetProcIDDLL)
   {
     //  we don't try and create the instance if it was never needed.
     return;
@@ -30,7 +30,7 @@ void ClassifyEngine::Release()
   f_Release funci = (f_Release)GetUnmanagedFunction( ProcType::procRelease );
 
   // did we manage to find the function?
-  if (NULL != funci)
+  if (nullptr != funci)
   {
     try
     {
@@ -49,7 +49,7 @@ void ClassifyEngine::Release()
 
   // we can now free everything.
   FreeLibrary(_hGetProcIDDLL);
-  _hGetProcIDDLL = NULL;
+  _hGetProcIDDLL = nullptr;
 }
 
 /**
@@ -133,12 +133,12 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
 
   //  get the instance.
   HINSTANCE hInstance = GetUnmanagedHinstance();
-  if (NULL == hInstance)
+  if (nullptr == hInstance)
   {
-    return NULL;
+    return nullptr;
   }
 
-  FARPROC procAddress = NULL;
+  FARPROC procAddress = nullptr;
   switch (procType)
   {
   case procRelease:
@@ -217,6 +217,10 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     procAddress = GetProcAddress(hInstance, "Log");
     break;
 
+  case procClearLogEntries:
+    procAddress = GetProcAddress(hInstance, "ClearLogEntries");
+    break;
+
   default:
     break;
   }
@@ -230,12 +234,12 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
 
 /***
  * Get or create the unmanaged instance.
- * @return HINSTANCE the created instance or NULL if it could not be created.
+ * @return HINSTANCE the created instance or nullptr if it could not be created.
  */
 HINSTANCE ClassifyEngine::GetUnmanagedHinstance()
 {
   //  do we have it already?
-  if (NULL != _hGetProcIDDLL)
+  if (nullptr != _hGetProcIDDLL)
   {
     return _hGetProcIDDLL;
   }
@@ -248,11 +252,11 @@ HINSTANCE ClassifyEngine::GetUnmanagedHinstance()
 
   // load the library
   _hGetProcIDDLL = LoadLibraryA( _enginePath.c_str() );
-  if (NULL == _hGetProcIDDLL)
+  if (nullptr == _hGetProcIDDLL)
   {
     //  could not load the dll.
     LogEventError("Could not load the Classifier.Engine.dll, is it in the correct location?");
-    return NULL;
+    return nullptr;
   }
 
   // we are done
@@ -306,7 +310,7 @@ bool ClassifyEngine::Initialise(String^ eventViewSource, String^ enginePath, Str
     f_Initialise funci = (f_Initialise)GetUnmanagedFunction( ProcType::procInitialise );
 
     // did it work?
-    if (NULL == funci)
+    if (nullptr == funci)
     {
       LogEventWarning("Could not locate the Classifier.Engine 'Initialise()' function?");
       return false;
@@ -337,7 +341,7 @@ bool ClassifyEngine::SetConfig(String^ configName, String^ configValue)
   f_SetConfig funci = (f_SetConfig)GetUnmanagedFunction( ProcType::procSetConfig );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'SetConfig()' function?");
     return false;
@@ -361,7 +365,7 @@ bool ClassifyEngine::GetConfig(String^ configName, String^% configValue)
   f_GetConfig funci = (f_GetConfig)GetUnmanagedFunction( ProcType::procGetConfig );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetConfig()' function?");
     return false;
@@ -398,7 +402,7 @@ bool ClassifyEngine::Train(String^ categoryName, String^ textToCategorise, Strin
   f_TrainEx funci = (f_TrainEx)GetUnmanagedFunction( ProcType::procTrainEx );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'TrainEx()' function?");
     return false;
@@ -424,7 +428,7 @@ bool ClassifyEngine::UnTrain( String^ uniqueIdentifier, String^ textToCategorise
   f_UnTrainEx funci = (f_UnTrainEx)GetUnmanagedFunction( ProcType::procUnTrainEx );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'UnTrainEx()' function?");
     return false;
@@ -468,7 +472,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   f_CategorizeWithWordCategory funci = (f_CategorizeWithWordCategory)GetUnmanagedFunction(ProcType::procCategorizeWithInfo);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'CategorizeWithInfo()', function?");
     return -1;
@@ -522,7 +526,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   f_Categorize funci = (f_Categorize)GetUnmanagedFunction( ProcType::procCategorize );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'Categorize()' function?");
     return -1;
@@ -542,7 +546,7 @@ int ClassifyEngine::GetCategoryFromUniqueId(String^ uniqueIdentifier)
   f_GetCategoryFromUniqueId funci = (f_GetCategoryFromUniqueId)GetUnmanagedFunction( ProcType::procGetCategoryFromUniqueId );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetCategoryFromUniqueId()' function?");
     return -1;
@@ -562,7 +566,7 @@ int ClassifyEngine::GetCategory(String^ categoryName)
   f_GetCategory funci = (f_GetCategory)GetUnmanagedFunction( ProcType::procGetCategory );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetCategory()' function?");
     return -1;
@@ -589,7 +593,7 @@ int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
   f_GetCategories funci = (f_GetCategories)GetUnmanagedFunction( ProcType::procGetCategories );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetCategories()' function?");
     return -1;
@@ -628,7 +632,7 @@ bool ClassifyEngine::RenameCategory(String^ oldName, String^ newName)
   f_RenameCategory funci = (f_RenameCategory)GetUnmanagedFunction( ProcType::procRenameCategory );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'RenameCategory()' function?");
     return false;
@@ -649,7 +653,7 @@ bool ClassifyEngine::DeleteCategory(String^ categoryName)
   f_DeleteCategory funci = (f_DeleteCategory)GetUnmanagedFunction( ProcType::procDeleteCategory );
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'DeleteCategory()' function?");
     return false;
@@ -668,7 +672,7 @@ int ClassifyEngine::CreateMagnet(String^ magnetName, int ruleType, int categoryT
   f_CreateMagnet funci = (f_CreateMagnet)GetUnmanagedFunction(ProcType::procCreateMagnet);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'CreateMagnet()' function?");
     return -1;
@@ -686,7 +690,7 @@ bool ClassifyEngine::UpdateMagnet(int id, String^ magnetName, int ruleType, int 
   f_UpdateMagnet funci = (f_UpdateMagnet)GetUnmanagedFunction(ProcType::procUpdateMagnet);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'UpdateMagnet()' function?");
     return false;
@@ -704,7 +708,7 @@ bool ClassifyEngine::DeleteMagnet(int id)
   f_DeleteMagnet funci = (f_DeleteMagnet)GetUnmanagedFunction(ProcType::procDeleteMagnet);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'DeleteMagnet()' function?");
     return false;
@@ -722,7 +726,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
   f_GetMagnets funci = (f_GetMagnets)GetUnmanagedFunction(ProcType::procGetMagnets);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetMagnets()' function?");
     return -1;
@@ -767,7 +771,7 @@ int ClassifyEngine::GetEngineVersion()
   f_GetVersion funci = (f_GetVersion)GetUnmanagedFunction(ProcType::procGetVersion);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetVersion()' function?");
     return -1;
@@ -788,7 +792,7 @@ int ClassifyEngine::Log(String^ source, String^ entry)
   f_Log funci = (f_Log)GetUnmanagedFunction(ProcType::procLog);
 
   // did it work?
-  if (NULL == funci)
+  if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'Log()' function?");
     return -1;
@@ -801,4 +805,24 @@ int ClassifyEngine::Log(String^ source, String^ entry)
   // cast the wide string to a char16_t* for windows.
   // this is the same size/value so no work needs to be done here.
   return funci((const char16_t*)wSource.c_str(), (const char16_t*)wEntry.c_str());
+}
+
+/**
+ * Clear log entries that are older than a certain date
+ * @param olderThan the date we want to delte.
+ * @return success or not
+ */
+bool ClassifyEngine::ClearLogEntries(int olderThan)
+{
+  f_ClearLogEntries funci = (f_ClearLogEntries)GetUnmanagedFunction(ProcType::procClearLogEntries);
+
+  // did it work?
+  if (nullptr == funci)
+  {
+    LogEventWarning("Could not locate the Classifier.Engine 'ClearLogEntries()' function?");
+    return false;
+  }
+
+  // try and clear the data
+  return funci( olderThan );
 }

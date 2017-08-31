@@ -27,13 +27,13 @@ namespace myoddweb.viewer
         return false;
       }
 
-      MessageBox.Show("--h : Display this message box" + Environment.NewLine +
-                      Environment.NewLine +
-                      "--d : Directory that contains the classifier engines, Classifier.Engine.dll)." + Environment.NewLine +
-                      "     The directory must contain 2 sub directories x64 and x86, depending on the version been debuged"+ Environment.NewLine +
-                      Environment.NewLine +
-                      "--db : The full path of the classifier database.",
-                      "Help",
+      MessageBox.Show( $"--h : Display this message box{Environment.NewLine}" +
+                       Environment.NewLine +
+                       $"--d : Directory that contains the classifier engines, Classifier.Engine.dll).{Environment.NewLine}" +
+                       $"     The directory must contain 2 sub directories x64 and x86, depending on the version been debuged{Environment.NewLine}" +
+                       Environment.NewLine +
+                       $"--db : The full path of the classifier database.{Environment.NewLine}",
+                      @"Help",
                       MessageBoxButtons.OK,
                       // display the error icon if we are not asking for help
                       // and we are missing some values.
@@ -226,9 +226,15 @@ namespace myoddweb.viewer
       }
 
       // the text
-      const string text = @"blah";
+      const string text = @"meh";
       string lastError;
       var engine = InitialiseEngine(directoryName, databasePath, out lastError);
+
+      var id = engine?.Log($"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.Info", "Started Details form.");
+
+      var unixTimestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+      var deleted  = engine?.ClearLogEntries(unixTimestamp);
+
       Application.Run(new DetailsForm( engine, text ));
 
       // release it then.

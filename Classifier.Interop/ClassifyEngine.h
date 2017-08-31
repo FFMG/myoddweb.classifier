@@ -58,6 +58,7 @@ public:
 
   // Log
   int Log(String^ source, String^ entry);
+  bool ClearLogEntries(int olderThan);
 
 protected:
   typedef bool(__stdcall *f_Initialise)(const char*);
@@ -101,7 +102,8 @@ protected:
   typedef int(__stdcall *f_GetVersion)();
 
   typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
-
+  typedef bool(__stdcall *f_ClearLogEntries)(int);
+  
   enum ProcType
   {
     procUnk = 0,
@@ -125,6 +127,7 @@ protected:
     procGetVersion,
 
     procLog,
+    procClearLogEntries,
 
     procRelease,
   };
