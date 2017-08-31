@@ -147,5 +147,13 @@ namespace Classifier.Interfaces
     /// <param name="id">The manet id we are trying to delete.</param>
     /// <returns>boolean if the item was delete or false if not.</returns>
     bool DeleteMagnet(int id);
+
+    /// <summary>
+    /// Log a message to the database
+    /// </summary>
+    /// <param name="source">Unique to the souce, something like "myapp.information", max 255 chars</param>
+    /// <param name="entry">The entry we are logging, max 1024 chars.</param>
+    /// <returns>the entry id.</returns>
+    int Log(string source, string entry);
   }
 }

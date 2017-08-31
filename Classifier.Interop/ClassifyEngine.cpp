@@ -213,6 +213,10 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     procAddress = GetProcAddress(hInstance, "GetVersion");
     break;
 
+  case procLog:
+    procAddress = GetProcAddress(hInstance, "Log");
+    break;
+
   default:
     break;
   }
@@ -771,4 +775,30 @@ int ClassifyEngine::GetEngineVersion()
 
   // just call the funtion.
   return funci();
+}
+
+/**
+ * Log a message to the database
+ * @param Unique to the souce, something like "myapp.information", max 255 chars</param>
+ * @param The entry we are logging, max 1024 chars.</param>
+ * @return in the entry id number.
+ */
+int ClassifyEngine::Log(String^ source, String^ entry)
+{
+  f_Log funci = (f_Log)GetUnmanagedFunction(ProcType::procLog);
+
+  // did it work?
+  if (NULL == funci)
+  {
+    LogEventWarning("Could not locate the Classifier.Engine 'Log()' function?");
+    return -1;
+  }
+
+  // call the function
+  std::wstring wSource = marshal_as<std::wstring>(source);
+  std::wstring wEntry = marshal_as<std::wstring>(entry);
+
+  // cast the wide string to a char16_t* for windows.
+  // this is the same size/value so no work needs to be done here.
+  return funci((const char16_t*)wSource.c_str(), (const char16_t*)wEntry.c_str());
 }

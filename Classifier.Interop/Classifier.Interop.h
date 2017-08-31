@@ -63,6 +63,9 @@ namespace Classifier
       virtual bool DeleteMagnet(int id);
       virtual int GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets );
 
+      // Log
+      virtual int Log(String^ source, String^ entry);
+
     protected:
       ClassifyEngine* _iEngine;
     };

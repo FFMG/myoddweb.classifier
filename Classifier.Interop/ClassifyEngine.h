@@ -56,6 +56,9 @@ public:
   bool DeleteMagnet(int id);
   int GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^% magnets );
 
+  // Log
+  int Log(String^ source, String^ entry);
+
 protected:
   typedef bool(__stdcall *f_Initialise)(const char*);
   typedef bool(__stdcall *f_SetConfig)(const char16_t*, const char16_t*);
@@ -97,6 +100,8 @@ protected:
   
   typedef int(__stdcall *f_GetVersion)();
 
+  typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
+
   enum ProcType
   {
     procUnk = 0,
@@ -118,6 +123,8 @@ protected:
     procUpdateMagnet,
     procGetMagnets,
     procGetVersion,
+
+    procLog,
 
     procRelease,
   };

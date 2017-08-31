@@ -115,6 +115,11 @@ namespace Classifier
       return _iEngine->GetMagnets( magnets );
     }
 
+    int Classify::Log(String^ source, String^ entry)
+    {
+      return _iEngine->Log(source, entry );
+    }
+
     //
     // Version
     //
