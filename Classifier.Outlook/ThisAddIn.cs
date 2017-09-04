@@ -62,6 +62,7 @@ namespace myoddweb.classifier
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
+        TheEngine.LogEventError(e.ToString());
         return;
       }
     }
@@ -110,8 +111,10 @@ namespace myoddweb.classifier
         newMail =
           _explorers.Application.Session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
       }
-      catch (System.Runtime.InteropServices.COMException)
+      catch (System.Runtime.InteropServices.COMException e)
       {
+        TheEngine.LogEventError(e.ToString());
+
         // Could not find that message anymore
         // @todo log this entry id could not be located.
         return false;
@@ -186,6 +189,8 @@ namespace myoddweb.classifier
       }
       catch (System.Exception ex)
       {
+        TheEngine.LogEventError(ex.ToString());
+
         watch.Checkpoint( $"Could not move : {newMail.Subject}, {ex.StackTrace} {{0}}");
         return false;
       }
@@ -203,6 +208,8 @@ namespace myoddweb.classifier
       }
       catch (System.Exception ex)
       {
+        TheEngine.LogEventError(ex.ToString());
+
         watch.Checkpoint($"Could not move : {mailItem.Subject} to {itemToFolder.Name}, {ex.StackTrace} {{0}}");
         return false;
       }

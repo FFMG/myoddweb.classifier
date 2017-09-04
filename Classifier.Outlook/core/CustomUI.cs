@@ -346,8 +346,10 @@ namespace myoddweb.classifier.core
           guessCategoryResponse = await categories.CategorizeAsync(mailItem).ConfigureAwait(false);
         }
       }
-      catch (Exception)
+      catch (Exception e)
       {
+        _engine.LogEventError(e.ToString());
+
         // @todo we need to log that there was an issue.
         guessCategoryResponse = new Categories.CategorizeResponse
         {

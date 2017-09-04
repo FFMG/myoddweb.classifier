@@ -240,7 +240,7 @@ namespace myoddweb.classifier.core
         {
           mailAddresses.Add(new MailAddress(address));
         }
-        catch( FormatException )
+        catch( FormatException e)
         {
           // ignore invalid formats
         }
@@ -408,8 +408,9 @@ namespace myoddweb.classifier.core
                   return magnet.Category;
                 }
               }
-              catch (FormatException)
+              catch (FormatException e)
               {
+                _engine.LogEventError(e.ToString());
               }
             }
             break;
@@ -439,8 +440,9 @@ namespace myoddweb.classifier.core
                   return magnet.Category;
                 }
               }
-              catch( FormatException )
+              catch( FormatException e )
               {
+                _engine.LogEventError(e.ToString());
               }
             }
             break;

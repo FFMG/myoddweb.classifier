@@ -212,7 +212,23 @@ namespace myoddweb.classifier.core
       // one last check.
       return InstallAndValidateSource();
     }
-    
+
+    public void LogVerbose(string sEvent)
+    {
+      if( !Options.CanLog( Options.LogLevels.Verbose ))
+      {
+        return;
+      }
+
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
+      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
+      appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Information );
+    }
+
     public void LogEventError(string sEvent)
     {
       if (!InstallAndValidateSource())

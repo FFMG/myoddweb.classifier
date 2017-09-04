@@ -220,5 +220,17 @@ namespace myoddweb.classifier.core
     {
       _engine = engine;
     }
+
+    public bool CanLog(LogLevels level )
+    {
+      if( level == LogLevels.None )
+      {
+        return false;
+      }
+
+      // if the current level if greater or equal
+      // to the level we want to log, then we are good.
+      return (LogLevel >= level);
+    }
   }
 }
