@@ -59,6 +59,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="TestCommon.cs" />
+    <Compile Include="TestLogs.cs" />
     <Compile Include="TestSqlClassify.cs" />
     <Compile Include="TestSqlConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
