@@ -62,7 +62,7 @@ namespace myoddweb.classifier
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
-        TheEngine.LogEventError(e.ToString());
+        TheEngine.LogError(e.ToString());
         return;
       }
     }
@@ -113,7 +113,7 @@ namespace myoddweb.classifier
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
-        TheEngine.LogEventError(e.ToString());
+        TheEngine.LogError(e.ToString());
 
         // Could not find that message anymore
         // @todo log this entry id could not be located.
@@ -189,7 +189,7 @@ namespace myoddweb.classifier
       }
       catch (System.Exception ex)
       {
-        TheEngine.LogEventError(ex.ToString());
+        TheEngine.LogError(ex.ToString());
 
         watch.Checkpoint( $"Could not move : {newMail.Subject}, {ex.StackTrace} {{0}}");
         return false;
@@ -208,7 +208,7 @@ namespace myoddweb.classifier
       }
       catch (System.Exception ex)
       {
-        TheEngine.LogEventError(ex.ToString());
+        TheEngine.LogError(ex.ToString());
 
         watch.Checkpoint($"Could not move : {mailItem.Subject} to {itemToFolder.Name}, {ex.StackTrace} {{0}}");
         return false;

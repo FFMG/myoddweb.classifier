@@ -140,18 +140,18 @@ namespace myoddweb.classifier.core
         asm = Assembly.LoadFrom(dllInteropPath);
         if (null == asm)
         {
-          LogEventError($"Unable to load the interop file. '{dllInteropPath}'.");
+          LogError($"Unable to load the interop file. '{dllInteropPath}'.");
           return false;
         }
       }
       catch (ArgumentException ex)
       {
-        LogEventError($"The interop file name/path does not appear to be valid. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+        LogError($"The interop file name/path does not appear to be valid. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
         return false;
       }
       catch (FileNotFoundException ex)
       {
-        LogEventError($"Unable to load the interop file. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+        LogError($"Unable to load the interop file. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
         return false;
       }
 
@@ -160,7 +160,7 @@ namespace myoddweb.classifier.core
       if (null == ClassifyEngine)
       {
         // could not locate the interface.
-        LogEventError($"Unable to load the IClasify1 interface in the interop file. '{dllInteropPath}'.");
+        LogError($"Unable to load the IClasify1 interface in the interop file. '{dllInteropPath}'.");
         return false;
       }
 
@@ -213,53 +213,84 @@ namespace myoddweb.classifier.core
       return InstallAndValidateSource();
     }
 
-    public void LogVerbose(string sEvent)
+    public void LogVerbose(string message)
     {
+      // can we log this?
       if( !Options.CanLog( Options.LogLevels.Verbose ))
       {
         return;
       }
 
+      ClassifyEngine.Log( LogSource(Options.LogLevels.Verbose), message);
+
+      // log to the event log.
       if (!InstallAndValidateSource())
       {
         return;
       }
 
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Information );
+      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information );
     }
 
-    public void LogEventError(string sEvent)
+    public void LogError(string message)
     {
+      // can we log this?
+      if (!Options.CanLog(Options.LogLevels.Error))
+      {
+        return;
+      }
+
+      ClassifyEngine.Log(LogSource(Options.LogLevels.Error), message);
+
+      // log to the event log.
       if (!InstallAndValidateSource())
       {
         return;
       }
 
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Error);
+      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Error);
     }
 
-    public void LogEventWarning(string sEvent)
+    public void LogEventWarning(string message)
     {
+      // can we log this?
+      if (!Options.CanLog(Options.LogLevels.Warning))
+      {
+        return;
+      }
+
+      ClassifyEngine.Log(LogSource(Options.LogLevels.Warning), message);
+
+      // log to the event log.
       if (!InstallAndValidateSource())
       {
         return;
       }
 
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Warning);
+      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Warning);
     }
 
-    public void LogEventInformation(string sEvent)
+    public void LogInformation(string message)
     {
+      // can we log this?
+      if (!Options.CanLog(Options.LogLevels.Information))
+      {
+        return;
+      }
+
+      ClassifyEngine.Log(LogSource(Options.LogLevels.Information), message);
+
+      // log to the event log.
       if (!InstallAndValidateSource())
       {
         return;
       }
 
       var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(sEvent, System.Diagnostics.EventLogEntryType.Information);
+      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
     }
 
     /// <summary>
@@ -467,6 +498,11 @@ namespace myoddweb.classifier.core
     {
       List<Magnet> magnets;
       return -1 == ClassifyEngine.GetMagnets(out magnets) ? null : magnets;
+    }
+
+    private static string LogSource( Options.LogLevels level )
+    {
+      return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
     }
   }
 }

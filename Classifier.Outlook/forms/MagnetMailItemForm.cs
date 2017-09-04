@@ -236,13 +236,13 @@ namespace myoddweb.classifier.forms
       {
         // the given magnet seem to exist already
         // we just need to update it now.
-        _engine.LogEventInformation( $"Updating magnet {currentMagnet.Id}/{currentMagnet.Name}" );
+        _engine.LogInformation( $"Updating magnet {currentMagnet.Id}/{currentMagnet.Name}" );
 
         // try and do the update
         if (!_engine.UpdateMagnet(currentMagnet, magnetText, (int) ruleType, categoryId))
         {
           // there was a problem updating the data.
-          _engine.LogEventError($"Unable to update magnet {currentMagnet.Id}/{currentMagnet.Name}");
+          _engine.LogError($"Unable to update magnet {currentMagnet.Id}/{currentMagnet.Name}");
 
           // display a message.
           MessageBox.Show("I was unable to update the given magnet!", "Magnets update", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -267,7 +267,7 @@ namespace myoddweb.classifier.forms
       if( -1 == newMagnetId )
       {
         // success
-        _engine.LogEventError($"Unable to create a new magnet : {magnetText}.");
+        _engine.LogError($"Unable to create a new magnet : {magnetText}.");
 
         // display a message.
         MessageBox.Show("I was unable to create the given magnet!", "Create magnets", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -277,7 +277,7 @@ namespace myoddweb.classifier.forms
       }
 
       // log that it worked.
-      _engine.LogEventInformation( $"Created a new magnet : {newMagnetId}/{magnetText}." );
+      _engine.LogInformation( $"Created a new magnet : {newMagnetId}/{magnetText}." );
 
       // success
       MessageBox.Show("The magnet was successfuly created!", "Magnets created", MessageBoxButtons.OK, MessageBoxIcon.Information);

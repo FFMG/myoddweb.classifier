@@ -410,7 +410,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.LogEventError(e.ToString());
+                _engine.LogError(e.ToString());
               }
             }
             break;
@@ -442,13 +442,13 @@ namespace myoddweb.classifier.core
               }
               catch( FormatException e )
               {
-                _engine.LogEventError(e.ToString());
+                _engine.LogError(e.ToString());
               }
             }
             break;
 
           default:
-            _engine.LogEventError( $"Unknown magnet rule : {magnet.Rule}." );
+            _engine.LogError( $"Unknown magnet rule : {magnet.Rule}." );
             break;
         }
       }
