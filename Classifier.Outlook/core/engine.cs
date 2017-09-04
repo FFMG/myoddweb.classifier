@@ -23,6 +23,16 @@ namespace myoddweb.classifier.core
     private const string EventViewSource = "myoddweb.classifier";
 
     /// <summary>
+    /// All the options
+    /// </summary>
+    private Options _options;
+
+    /// <summary>
+    /// Public accessor of the options.
+    /// </summary>
+    public Options Options => _options ?? (_options = new Options(this));
+
+    /// <summary>
     /// The classification engine.
     /// </summary>
     public IClassify1 ClassifyEngine { get; private set; }

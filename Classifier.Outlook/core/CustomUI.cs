@@ -33,27 +33,19 @@ namespace myoddweb.classifier.core
     private readonly Categories _categories;
 
     /// <summary>
-    /// All the options
-    /// </summary>
-    private readonly Options _options;
-
-    /// <summary>
     /// The engine that does the classification.
     /// </summary>
     private readonly Engine _engine;
 
     private Office.IRibbonUI _ribbon;
 
-    public CustomUI(Engine engine, Categories categories, Options options )
+    public CustomUI(Engine engine, Categories categories )
     {
       // the engine.
       _engine = engine;
 
       // the categories.
       _categories = categories;
-
-      // the options
-      _options = options;
     }
 
     #region IRibbonExtensibility Members
@@ -235,7 +227,7 @@ namespace myoddweb.classifier.core
 
       // we know this is a user selected item
       // so we can get the weight from the options.
-      return await categories.ClassifyAsync(mailItem, id, _options.UserWeight).ConfigureAwait(false);
+      return await categories.ClassifyAsync(mailItem, id, _engine.Options.UserWeight).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -244,12 +236,12 @@ namespace myoddweb.classifier.core
     /// <param name="control"></param>
     public void OnManageMore(Office.IRibbonControl control)
     {
-      if (null == _options)
+      if (null == _engine.Options )
       {
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: _engine, options: _options, categories: _categories ))
+      using (var optionsForm = new OptionsForm( engine: _engine, options: _engine.Options, categories: _categories ))
       {
         optionsForm.ShowDialog();
       }
@@ -332,17 +324,17 @@ namespace myoddweb.classifier.core
         WasMagnetUsed = false
       };
 
-      if ( !_options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
+      if ( !_engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
       {
         // if we do not want to check options, then we don't want to do that.
-        if ( !_options.ReCheckCategories )
+        if ( !_engine.Options.ReCheckCategories )
         {
           return guessCategoryResponse;
         }
 
         // if we currently have a category and we only want to check the
         // unknown categories, then we musn't check.
-        if (currentCategoryId != -1 && _options.CheckIfUnownCategory)
+        if (currentCategoryId != -1 && _engine.Options.CheckIfUnownCategory)
         {
           return guessCategoryResponse;
         }

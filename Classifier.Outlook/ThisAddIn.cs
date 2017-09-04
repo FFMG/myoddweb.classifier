@@ -18,11 +18,6 @@ namespace myoddweb.classifier
     /// </summary>
     private Categories _categories;
 
-    /// <summary>
-    /// All the options
-    /// </summary>
-    private Options _options;
-
     private Outlook.Explorers _explorers;
 
     private Outlook.Folders _folders;
@@ -30,8 +25,6 @@ namespace myoddweb.classifier
     private Engine TheEngine => _engine ?? (_engine = new Engine());
 
     private Categories TheCategories => _categories ?? (_categories = new Categories(TheEngine));
-
-    private Options TheOptions => _options ?? (_options = new Options(TheEngine));
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
@@ -92,7 +85,7 @@ namespace myoddweb.classifier
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI(TheEngine, TheCategories, TheOptions);
+      return new CustomUI(TheEngine, TheCategories);
     }
 
     #region VSTO generated code
@@ -164,10 +157,11 @@ namespace myoddweb.classifier
 
       //
       // Do we want to train this
-      if( _options.ReAutomaticallyTrainMessages || (wasMagnetUsed && _options.ReAutomaticallyTrainMagnetMessages ))
+      var options = TheEngine.Options;
+      if(options.ReAutomaticallyTrainMessages || (wasMagnetUsed && options.ReAutomaticallyTrainMagnetMessages ))
       {
         // get the weight
-        var weight = (wasMagnetUsed ? _options.MagnetsWeight : 1);
+        var weight = (wasMagnetUsed ? options.MagnetsWeight : 1);
 
         // we can now classify it.
         await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait( false );

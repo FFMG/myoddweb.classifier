@@ -175,12 +175,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (LogLevels)(_logLevel ??
-                       (_logLevel = (LogLevels)(Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogLevels", Convert.ToString((uint)DefaultOptions.LogLevel))))));
+                       (_logLevel = (LogLevels)(int.Parse(_engine?.GetConfigWithDefault("Option.LogLevels", $"{(uint)DefaultOptions.LogLevel}")))));
       }
       set
       {
-        _logLevel = (LogLevels)value;
-        _engine?.SetConfig("Option.LogLevels", Convert.ToString(value));
+        _logLevel = value;
+        _engine?.SetConfig("Option.LogLevels", Convert.ToString( (int)value));
       }
     }
 
