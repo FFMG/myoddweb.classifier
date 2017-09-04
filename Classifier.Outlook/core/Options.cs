@@ -4,11 +4,22 @@ namespace myoddweb.classifier.core
 {
   public class Options
   {
+    public enum LogLevels
+    {
+      None,
+      Error,
+      Warning,
+      Information,
+      Verbose
+    }
+
     public enum DefaultOptions
     {
       UserWeight = 10,
       MagnetsWeight = 2,
-      CommonWordsMinPercent = 50
+      CommonWordsMinPercent = 50,
+      LogLevel = (int)LogLevels.Error,
+      LogRetention = 30
     }
 
     private readonly Engine _engine;
@@ -26,6 +37,10 @@ namespace myoddweb.classifier.core
     internal uint? _magnetsWeight;
 
     internal uint? _userWeight;
+
+    internal LogLevels? _logLevel;
+
+    internal uint? _logRetention;
 
     internal uint? _commonWordsMinPercent;
 
@@ -132,6 +147,40 @@ namespace myoddweb.classifier.core
       {
         _userWeight = value;
         _engine?.SetConfig("Option.UserWeight", Convert.ToString(value));
+      }
+    }
+
+    /// <summary>
+    /// Get or set the log retention policy
+    /// </summary>
+    public uint LogRetention
+    {
+      get
+      {
+        return (uint)(_logRetention ??
+                       (_logRetention = Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogRetention", Convert.ToString((uint)DefaultOptions.LogRetention)))));
+      }
+      set
+      {
+        _logRetention = value;
+        _engine?.SetConfig("Option.LogRetention", Convert.ToString(value));
+      }
+    }
+    
+    /// <summary>
+    /// Get or set the log level
+    /// </summary>
+    public LogLevels LogLevel
+    {
+      get
+      {
+        return (LogLevels)(_logLevel ??
+                       (_logLevel = (LogLevels)(Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogLevels", Convert.ToString((uint)DefaultOptions.LogLevel))))));
+      }
+      set
+      {
+        _logLevel = (LogLevels)value;
+        _engine?.SetConfig("Option.LogLevels", Convert.ToString(value));
       }
     }
 

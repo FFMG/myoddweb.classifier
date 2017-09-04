@@ -44,16 +44,24 @@
       this.labelUserTrained = new System.Windows.Forms.Label();
       this.labelMagnets = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.checkAutomaticallyMagnetTrain = new System.Windows.Forms.CheckBox();
       this.checkAutomaticallyTrain = new System.Windows.Forms.CheckBox();
       this.numericCommonPercent = new System.Windows.Forms.NumericUpDown();
       this.label4 = new System.Windows.Forms.Label();
       this.labelCommonWord = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.checkAutomaticallyMagnetTrain = new System.Windows.Forms.CheckBox();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.comboLogLevel = new System.Windows.Forms.ComboBox();
+      this.labelDefaultLogLevel = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
+      this.comboRetention = new System.Windows.Forms.ComboBox();
+      this.labelDefaultRetention = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).BeginInit();
+      this.groupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // reCheckCategories
@@ -70,7 +78,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(271, 310);
+      this.ok.Location = new System.Drawing.Point(271, 391);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -81,7 +89,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(352, 310);
+      this.button1.Location = new System.Drawing.Point(352, 391);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(75, 23);
       this.button1.TabIndex = 9;
@@ -156,7 +164,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(12, 310);
+      this.Categories.Location = new System.Drawing.Point(12, 391);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -166,7 +174,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(97, 310);
+      this.Magnets.Location = new System.Drawing.Point(97, 391);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -192,7 +200,7 @@
       // labelUserTrained
       // 
       this.labelUserTrained.AutoSize = true;
-      this.labelUserTrained.Location = new System.Drawing.Point(254, 53);
+      this.labelUserTrained.Location = new System.Drawing.Point(254, 48);
       this.labelUserTrained.Name = "labelUserTrained";
       this.labelUserTrained.Size = new System.Drawing.Size(45, 13);
       this.labelUserTrained.TabIndex = 9;
@@ -215,12 +223,22 @@
       this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.labelCommonWord);
       this.groupBox3.Controls.Add(this.label1);
-      this.groupBox3.Location = new System.Drawing.Point(12, 209);
+      this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(414, 95);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
+      // 
+      // checkAutomaticallyMagnetTrain
+      // 
+      this.checkAutomaticallyMagnetTrain.AutoSize = true;
+      this.checkAutomaticallyMagnetTrain.Location = new System.Drawing.Point(23, 68);
+      this.checkAutomaticallyMagnetTrain.Name = "checkAutomaticallyMagnetTrain";
+      this.checkAutomaticallyMagnetTrain.Size = new System.Drawing.Size(298, 17);
+      this.checkAutomaticallyMagnetTrain.TabIndex = 14;
+      this.checkAutomaticallyMagnetTrain.Text = "Automatically use new messages with magnets for training";
+      this.checkAutomaticallyMagnetTrain.UseVisualStyleBackColor = true;
       // 
       // checkAutomaticallyTrain
       // 
@@ -277,21 +295,79 @@
       this.label1.TabIndex = 8;
       this.label1.Text = "Common word prct";
       // 
-      // checkAutomaticallyMagnetTrain
+      // groupBox4
       // 
-      this.checkAutomaticallyMagnetTrain.AutoSize = true;
-      this.checkAutomaticallyMagnetTrain.Location = new System.Drawing.Point(23, 68);
-      this.checkAutomaticallyMagnetTrain.Name = "checkAutomaticallyMagnetTrain";
-      this.checkAutomaticallyMagnetTrain.Size = new System.Drawing.Size(298, 17);
-      this.checkAutomaticallyMagnetTrain.TabIndex = 14;
-      this.checkAutomaticallyMagnetTrain.Text = "Automatically use new messages with magnets for training";
-      this.checkAutomaticallyMagnetTrain.UseVisualStyleBackColor = true;
+      this.groupBox4.Controls.Add(this.labelDefaultRetention);
+      this.groupBox4.Controls.Add(this.comboRetention);
+      this.groupBox4.Controls.Add(this.label7);
+      this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
+      this.groupBox4.Controls.Add(this.comboLogLevel);
+      this.groupBox4.Controls.Add(this.label5);
+      this.groupBox4.Location = new System.Drawing.Point(13, 308);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(414, 77);
+      this.groupBox4.TabIndex = 15;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Log";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(6, 19);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(33, 13);
+      this.label5.TabIndex = 0;
+      this.label5.Text = "Level";
+      // 
+      // comboLogLevel
+      // 
+      this.comboLogLevel.FormattingEnabled = true;
+      this.comboLogLevel.Location = new System.Drawing.Point(115, 16);
+      this.comboLogLevel.Name = "comboLogLevel";
+      this.comboLogLevel.Size = new System.Drawing.Size(121, 21);
+      this.comboLogLevel.TabIndex = 1;
+      // 
+      // labelDefaultLogLevel
+      // 
+      this.labelDefaultLogLevel.AutoSize = true;
+      this.labelDefaultLogLevel.Location = new System.Drawing.Point(254, 19);
+      this.labelDefaultLogLevel.Name = "labelDefaultLogLevel";
+      this.labelDefaultLogLevel.Size = new System.Drawing.Size(45, 13);
+      this.labelDefaultLogLevel.TabIndex = 15;
+      this.labelDefaultLogLevel.Text = "[default]";
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(6, 46);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(83, 13);
+      this.label7.TabIndex = 16;
+      this.label7.Text = "Retention policy";
+      // 
+      // comboRetention
+      // 
+      this.comboRetention.FormattingEnabled = true;
+      this.comboRetention.Location = new System.Drawing.Point(115, 43);
+      this.comboRetention.Name = "comboRetention";
+      this.comboRetention.Size = new System.Drawing.Size(98, 21);
+      this.comboRetention.TabIndex = 17;
+      // 
+      // labelDefaultRetention
+      // 
+      this.labelDefaultRetention.AutoSize = true;
+      this.labelDefaultRetention.Location = new System.Drawing.Point(254, 46);
+      this.labelDefaultRetention.Name = "labelDefaultRetention";
+      this.labelDefaultRetention.Size = new System.Drawing.Size(45, 13);
+      this.labelDefaultRetention.TabIndex = 18;
+      this.labelDefaultRetention.Text = "[default]";
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(435, 341);
+      this.ClientSize = new System.Drawing.Size(441, 425);
+      this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.Magnets);
@@ -314,6 +390,8 @@
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).EndInit();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -342,5 +420,12 @@
     private System.Windows.Forms.NumericUpDown numericCommonPercent;
     private System.Windows.Forms.CheckBox checkAutomaticallyTrain;
     private System.Windows.Forms.CheckBox checkAutomaticallyMagnetTrain;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.Label labelDefaultRetention;
+    private System.Windows.Forms.ComboBox comboRetention;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.Label labelDefaultLogLevel;
+    private System.Windows.Forms.ComboBox comboLogLevel;
+    private System.Windows.Forms.Label label5;
   }
 }

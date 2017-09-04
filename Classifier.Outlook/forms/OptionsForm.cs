@@ -15,6 +15,20 @@ namespace myoddweb.classifier.forms
       public override string ToString() { return Convert.ToString(  Weight ); }
     }
 
+    public class ComboboxLogLevelValue
+    {
+      public Options.LogLevels Level { get; set; }
+      public override string ToString() { return Convert.ToString(Level); }
+    }
+
+    public class ComboboxRetentionValue
+    {
+      public uint Days { get; set; }
+      public override string ToString() {
+        return $"{Days} days";
+      }
+    }
+
     // all the options.
     private readonly Options _options;
 
@@ -32,13 +46,102 @@ namespace myoddweb.classifier.forms
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Rebuild all the combos.
+    /// </summary>
     private void RebuildCombos()
     {
       // the categories
       RebuildMagnetsCombo();
 
-      // the combos
+      // the users combos
       RebuildUsersCombos();
+
+      // the logs combo
+      RebuildLogCombos();
+    }
+
+    /// <summary>
+    /// Rebuild the log combos.
+    /// </summary>
+    private void RebuildLogCombos()
+    {
+      // log levels
+      RebuildLogLevelCombo();
+
+      // retention policy
+      RebuildRetentionPolicyCombo();
+    }
+
+    /// <summary>
+    /// The log level combo.
+    /// </summary>
+    private void RebuildLogLevelCombo()
+    {
+      // remove everything
+      comboLogLevel.Items.Clear();
+
+      // and set the folder values.
+      var items = new List<ComboboxLogLevelValue>();
+
+      // select the first item
+      var selectedIndex = 0;
+
+      // guess what the category could be
+      var currentLogLevel = (Options.LogLevels)_options.LogLevel;
+
+      // go around all the folders.
+      foreach( Options.LogLevels i in Enum.GetValues( typeof(Options.LogLevels)))
+      {
+        // is that our current one?
+        if (i == currentLogLevel)
+        {
+          selectedIndex = items.Count;
+        }
+        items.Add(new ComboboxLogLevelValue { Level = (Options.LogLevels)i });
+      }
+
+      // the data source.
+      comboLogLevel.DataSource = items;
+
+      // select our current one.
+      comboLogLevel.SelectedIndex = selectedIndex;
+    }
+
+    /// <summary>
+    /// Add the retention policy combo.
+    /// </summary>
+    private void RebuildRetentionPolicyCombo()
+    {
+      // remove everything
+      comboRetention.Items.Clear();
+
+      // and set the folder values.
+      var items = new List<ComboboxRetentionValue>();
+
+      // select the first item
+      var selectedIndex = 0;
+
+      // guess what the category could be
+      var currentRetention = _options.LogRetention;
+
+      // go around all the folders.
+      uint[] days = { 1, 5, 10, 30, 90 };
+      foreach(var i in days )
+      {
+        // is that our current one?
+        if (i == currentRetention)
+        {
+          selectedIndex = items.Count;
+        }
+        items.Add(new ComboboxRetentionValue { Days = i });
+      }
+
+      // the data source.
+      comboRetention.DataSource = items;
+
+      // select our current one.
+      comboRetention.SelectedIndex = selectedIndex;
     }
 
     /// <summary>
@@ -136,6 +239,36 @@ namespace myoddweb.classifier.forms
 
       // automatically train messages?
       _options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
+
+      // set the log level
+      _options.LogLevel = GetLogLevel();
+
+      // set the retention policy
+      _options.LogRetention = GetLogRetentionPolicy();
+    }
+
+    private uint GetLogRetentionPolicy()
+    {
+      // did we select anything at all?
+      if (comboRetention.SelectedIndex == -1)
+      {
+        return (uint)Options.DefaultOptions.LogRetention;
+      }
+
+      // otherwise get the id
+      return ((ComboboxRetentionValue)comboRetention.SelectedItem).Days;
+    }
+
+    private Options.LogLevels GetLogLevel()
+    {
+      // did we select anything at all?
+      if (comboLogLevel.SelectedIndex == -1)
+      {
+        return (Options.LogLevels)Options.DefaultOptions.LogLevel;
+      }
+
+      // otherwise get the id
+      return ((ComboboxLogLevelValue)comboLogLevel.SelectedItem).Level;
     }
 
     private uint GetCommonWordsMinPercent()
