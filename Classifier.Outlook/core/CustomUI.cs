@@ -28,24 +28,16 @@ namespace myoddweb.classifier.core
     private const int MaxNumberOfItemsToClassify = 100;
 
     /// <summary>
-    /// all the categories.
-    /// </summary>
-    private readonly Categories _categories;
-
-    /// <summary>
     /// The engine that does the classification.
     /// </summary>
     private readonly Engine _engine;
 
     private Office.IRibbonUI _ribbon;
 
-    public CustomUI(Engine engine, Categories categories )
+    public CustomUI(Engine engine )
     {
       // the engine.
       _engine = engine;
-
-      // the categories.
-      _categories = categories;
     }
 
     #region IRibbonExtensibility Members
@@ -241,7 +233,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: _engine, options: _engine.Options, categories: _categories ))
+      using (var optionsForm = new OptionsForm( engine: _engine, options: _engine.Options, categories: _engine.Categories ))
       {
         optionsForm.ShowDialog();
       }
@@ -281,7 +273,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // update the magnets list.
-      using (var magnetMailItemForm = new MagnetMailItemForm( _engine, mailItem, _categories ))
+      using (var magnetMailItemForm = new MagnetMailItemForm( _engine, mailItem ))
       {
         magnetMailItemForm.ShowDialog();
       }
@@ -504,7 +496,7 @@ namespace myoddweb.classifier.core
 
     private Categories GetAllCategories()
     {
-      return _categories;
+      return _engine.Categories;
     }
 
     /// <summary>

@@ -28,9 +28,16 @@ namespace myoddweb.classifier.core
     private Options _options;
 
     /// <summary>
+    /// all the categories.
+    /// </summary>
+    private Categories _categories;
+
+    /// <summary>
     /// Public accessor of the options.
     /// </summary>
     public Options Options => _options ?? (_options = new Options(this));
+
+    public Categories Categories => _categories ?? (_categories = new Categories(this));
 
     /// <summary>
     /// The classification engine.

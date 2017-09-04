@@ -13,18 +13,11 @@ namespace myoddweb.classifier
     /// </summary>
     private Engine _engine;
 
-    /// <summary>
-    /// all the categories.
-    /// </summary>
-    private Categories _categories;
-
     private Outlook.Explorers _explorers;
 
     private Outlook.Folders _folders;
 
     private Engine TheEngine => _engine ?? (_engine = new Engine());
-
-    private Categories TheCategories => _categories ?? (_categories = new Categories(TheEngine));
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
@@ -85,7 +78,7 @@ namespace myoddweb.classifier
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI(TheEngine, TheCategories);
+      return new CustomUI(TheEngine);
     }
 
     #region VSTO generated code
@@ -139,7 +132,7 @@ namespace myoddweb.classifier
       var watch = StopWatch.Start();
 
       // look for the category
-      var guessCategoryResponse = await TheCategories.CategorizeAsync(newMail).ConfigureAwait( false );
+      var guessCategoryResponse = await TheEngine.Categories.CategorizeAsync(newMail).ConfigureAwait( false );
 
       // 
       var categoryId = guessCategoryResponse.CategoryId;
@@ -164,11 +157,11 @@ namespace myoddweb.classifier
         var weight = (wasMagnetUsed ? options.MagnetsWeight : 1);
 
         // we can now classify it.
-        await TheCategories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait( false );
+        await TheEngine.Categories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait( false );
       }
 
       // get the posible folder.
-      var folder = TheCategories.FindFolderByCategoryId(categoryId);
+      var folder = TheEngine.Categories.FindFolderByCategoryId(categoryId);
       if (null == folder)
       {
         //  the user does not want to move to another folder.

@@ -31,25 +31,17 @@ namespace myoddweb.classifier.forms
     private readonly Engine _engine;
 
     /// <summary>
-    /// All the categories
-    /// </summary>
-    private readonly Categories _categories;
-
-    /// <summary>
     /// The current email we are checking.
     /// </summary>
     private readonly Outlook._MailItem _mailItem;
 
-    public MagnetMailItemForm( Engine engine, Outlook._MailItem mailItem, Categories categories )
+    public MagnetMailItemForm( Engine engine, Outlook._MailItem mailItem )
     {
       // 
       InitializeComponent();
 
       // the engine to create new categories.
       _engine = engine;
-
-      // the categories
-      _categories = categories;
 
       // the mail item
       _mailItem = mailItem;
@@ -76,7 +68,7 @@ namespace myoddweb.classifier.forms
     /// <returns>number the posible category id or -1 if we don't know.</returns>
     private int GuessCategoryFromMailItem()
     {
-      foreach (var category in _categories.List() )
+      foreach (var category in _engine.Categories.List() )
       {
         // is that our current one?
         if (category?.FolderId == ((Outlook.Folder)_mailItem?.Parent).EntryID)
@@ -107,7 +99,7 @@ namespace myoddweb.classifier.forms
       var guessedCategory = GuessCategoryFromMailItem();
 
       // go around all the folders.
-      foreach (var category in _categories.List() )
+      foreach (var category in _engine.Categories.List() )
       {
         // is that our current one?
         if (category?.Id == guessedCategory)
@@ -124,7 +116,7 @@ namespace myoddweb.classifier.forms
       comboBoxCategories.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_categories.Count == 0)
+      if (_engine.Categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
@@ -193,7 +185,7 @@ namespace myoddweb.classifier.forms
       comboMagnetAndRules.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_categories.Count == 0)
+      if (_engine.Categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
