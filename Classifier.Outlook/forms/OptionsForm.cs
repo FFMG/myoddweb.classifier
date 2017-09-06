@@ -384,6 +384,12 @@ namespace myoddweb.classifier.forms
 
       labelCommonWord.Text = $"[ {(int)Options.DefaultOptions.CommonWordsMinPercent}% ]";
       labelCommonWord.ForeColor = Color.DarkGray;
+
+      labelDefaultLogLevel.Text = $"[ {(Options.LogLevels)Options.DefaultOptions.LogLevel} ]";
+      labelDefaultLogLevel.ForeColor = Color.DarkGray;
+
+      labelDefaultRetention.Text = $"[ {(int)Options.DefaultOptions.LogRetention} Days ]";
+      labelCommonWord.ForeColor = Color.DarkGray;
     }
 
     private void RebuildSpinner()
