@@ -144,6 +144,7 @@ namespace myoddweb.classifier
       // did we find a category?
       if (-1 == categoryId)
       {
+        TheEngine.LogVerbose($"I could not classify the new message {entryIdItem} into any categories. ('{newMail.Subject}')");
         watch.Checkpoint("I could not classify the new message into any categories: (in: {0})");
         return false;
       }
@@ -205,6 +206,7 @@ namespace myoddweb.classifier
       try
       {
         mailItem.Move(itemToFolder);
+        TheEngine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
       }
       catch (System.Exception ex)
       {
