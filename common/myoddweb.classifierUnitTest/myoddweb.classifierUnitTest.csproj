@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="TestCommon.cs" />
     <Compile Include="TestGeneral.cs" />
+    <Compile Include="TestHelpers.cs" />
     <Compile Include="TestSqlClassify.cs" />
     <Compile Include="TestSqlConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

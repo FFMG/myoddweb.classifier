@@ -66,6 +66,7 @@
     <Compile Include="TestCategories.cs" />
     <Compile Include="TestSqlMagnets.cs" />
     <Compile Include="TestSqlUniqueIds.cs" />
+    <Compile Include="TestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Classifier.Interfaces\Classifier.Interfaces.csproj">

@@ -6,6 +6,7 @@ using Classifier.Interfaces;
 using myoddweb.classifier.utils;
 using System.Linq;
 using Classifier.Interfaces.Helpers;
+using System.Timers;
 
 namespace myoddweb.classifier.core
 {
@@ -44,28 +45,12 @@ namespace myoddweb.classifier.core
     /// </summary>
     public IClassify1 ClassifyEngine { get; private set; }
 
-    internal uint? _minPercentage;
-
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
-    /// (re) Check all the categories all the time.
-    /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
-    /// The net effect of that would be to only check if we don't already know the value.
+    /// The timer we use to call the clean log function.
     /// </summary>
-    public uint MinPercentage
-    {
-      get
-      {
-        return (uint)(_minPercentage ??
-                       (_minPercentage = ( Convert.ToUInt32( GetConfigWithDefault("Option.MinPercentage", "75")))));
-      }
-      set
-      {
-        _minPercentage = value;
-        SetConfig("Option.MinPercentage", Convert.ToString(value) );
-      }
-    }
+    System.Timers.Timer LogTimer { get; set; }
 
     public Engine()
     {
@@ -73,6 +58,9 @@ namespace myoddweb.classifier.core
       {
         throw new Exception("I was unable to load the engine. Check the event log for errors.");
       }
+
+      // start the 'cleanup' timer.
+      StartLogCleanupTimer();
     }
 
     public Engine(string directoryName, string databasePath)
@@ -81,15 +69,58 @@ namespace myoddweb.classifier.core
       {
         throw new Exception( "One or more parameters given are invalid." );
       }
+
+      // start the 'cleanup' timer.
+      StartLogCleanupTimer();
     }
 
     ~Engine()
     {
+      // release the engine
       ReleaseEngine();
+
+      // stop the log
+      StopLogCleanupTimer();
     }
-    
+
+          // start the 'cleanup' timer.
+    private void StartLogCleanupTimer()
+    {
+      //  stop the timer if need be.
+      StopLogCleanupTimer();
+
+      // start the new time
+      LogTimer = new System.Timers.Timer();
+      LogTimer.Elapsed += OnTimedLogEvent;
+      LogTimer.Interval = 60 * 60 * 1000;  // one hour
+      LogTimer.Enabled = true;
+    }
+
+    private void StopLogCleanupTimer()
+    {
+      LogTimer?.Stop();
+      LogTimer?.Dispose();
+      LogTimer = null;
+    }
+
+    private void OnTimedLogEvent(object source, ElapsedEventArgs e)
+    {
+      // days of retention
+      var daysRetention = Options.LogRetention;
+
+      // the oldest log date
+      var date = DateTime.UtcNow.AddDays(daysRetention * -1);
+
+      // delete old entries.
+      ClassifyEngine.ClearLogEntries(Helpers.DateTimeToUnix(date));
+    }
+
     public void Release()
     {
+      // stop the time
+      StopLogCleanupTimer();
+
+      // release the engine
       ReleaseEngine();
     }
 
@@ -405,7 +436,7 @@ namespace myoddweb.classifier.core
 
     public int Categorize(Dictionary< Categories.MailStringCategories, string> categoryList)
     {
-      return Categorize(string.Join(";", categoryList.Select(x => x.Value) ), MinPercentage );
+      return Categorize(string.Join(";", categoryList.Select(x => x.Value) ), Options.MinPercentage );
     }
 
     public Dictionary<int, string> GetCategories( )

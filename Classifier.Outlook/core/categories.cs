@@ -240,7 +240,7 @@ namespace myoddweb.classifier.core
         {
           mailAddresses.Add(new MailAddress(address));
         }
-        catch( FormatException e)
+        catch( FormatException)
         {
           // ignore invalid formats
         }

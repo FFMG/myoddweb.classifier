@@ -239,6 +239,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="utils\Helpers.cs" />
     <Compile Include="utils\StopWatch.cs" />
     <Compile Include="utils\typeloader.cs" />
     <EmbeddedResource Include="forms\DetailsForm.resx">

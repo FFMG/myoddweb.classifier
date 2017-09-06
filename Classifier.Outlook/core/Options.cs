@@ -44,6 +44,27 @@ namespace myoddweb.classifier.core
 
     internal uint? _commonWordsMinPercent;
 
+    internal uint? _minPercentage;
+
+    /// <summary>
+    /// (re) Check all the categories all the time.
+    /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
+    /// The net effect of that would be to only check if we don't already know the value.
+    /// </summary>
+    public uint MinPercentage
+    {
+      get
+      {
+        return (uint)(_minPercentage ??
+                       (_minPercentage = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.MinPercentage", "75")))));
+      }
+      set
+      {
+        _minPercentage = value;
+        _engine?.SetConfig("Option.MinPercentage", Convert.ToString(value));
+      }
+    }
+
     /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.

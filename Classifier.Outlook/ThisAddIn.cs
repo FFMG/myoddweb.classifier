@@ -37,7 +37,7 @@ namespace myoddweb.classifier
         folder.Items.ItemAdd += ItemAdd;
       }
     }
-
+    
     private void ItemAdd(object item )
     {
       try
