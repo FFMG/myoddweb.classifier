@@ -7,6 +7,7 @@ using myoddweb.classifier.utils;
 using System.Linq;
 using Classifier.Interfaces.Helpers;
 using System.Timers;
+using Newtonsoft.Json;
 
 namespace myoddweb.classifier.core
 {
@@ -244,15 +245,35 @@ namespace myoddweb.classifier.core
       return InstallAndValidateSource();
     }
 
-    public void LogVerbose(string message)
+    /// <summary>
+    /// Log a message to the engine
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="level"></param>
+    private void LogMessageToEngine( string message, Options.LogLevels level )
     {
       // can we log this?
-      if( !Options.CanLog( Options.LogLevels.Verbose ))
+      if (!Options.CanLog(level))
       {
         return;
       }
 
-      ClassifyEngine.Log( LogSource(Options.LogLevels.Verbose), message);
+      //  create the json string.
+      var lm = new LogData { Level = level, Message = message };
+      string json = JsonConvert.SerializeObject(lm, Formatting.None);
+
+      // log the string now.
+      ClassifyEngine.Log(LogSource(level), json);
+    }
+
+    /// <summary>
+    /// Log a verbose message
+    /// </summary>
+    /// <param name="message"></param>
+    public void LogVerbose(string message)
+    {
+      // log it
+      LogMessageToEngine(message, Options.LogLevels.Verbose);
 
       // log to the event log.
       if (!InstallAndValidateSource())
@@ -264,15 +285,14 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information );
     }
 
+    /// <summary>
+    /// Log an error message
+    /// </summary>
+    /// <param name="message"></param>
     public void LogError(string message)
     {
-      // can we log this?
-      if (!Options.CanLog(Options.LogLevels.Error))
-      {
-        return;
-      }
-
-      ClassifyEngine.Log(LogSource(Options.LogLevels.Error), message);
+      // log it
+      LogMessageToEngine(message, Options.LogLevels.Error);
 
       // log to the event log.
       if (!InstallAndValidateSource())
@@ -284,15 +304,14 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Error);
     }
 
-    public void LogEventWarning(string message)
+    /// <summary>
+    /// Log a warning message
+    /// </summary>
+    /// <param name="message"></param>
+    public void LogWarning(string message)
     {
-      // can we log this?
-      if (!Options.CanLog(Options.LogLevels.Warning))
-      {
-        return;
-      }
-
-      ClassifyEngine.Log(LogSource(Options.LogLevels.Warning), message);
+      // log it
+      LogMessageToEngine(message, Options.LogLevels.Warning);
 
       // log to the event log.
       if (!InstallAndValidateSource())
@@ -304,15 +323,14 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Warning);
     }
 
+    /// <summary>
+    /// Log an information message
+    /// </summary>
+    /// <param name="message"></param>
     public void LogInformation(string message)
     {
-      // can we log this?
-      if (!Options.CanLog(Options.LogLevels.Information))
-      {
-        return;
-      }
-
-      ClassifyEngine.Log(LogSource(Options.LogLevels.Information), message);
+      // log it
+      LogMessageToEngine(message, Options.LogLevels.Information);
 
       // log to the event log.
       if (!InstallAndValidateSource())

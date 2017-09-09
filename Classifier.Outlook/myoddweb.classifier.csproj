@@ -132,6 +132,10 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -240,6 +244,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="utils\Helpers.cs" />
+    <Compile Include="utils\LogData.cs" />
     <Compile Include="utils\StopWatch.cs" />
     <Compile Include="utils\typeloader.cs" />
     <EmbeddedResource Include="forms\DetailsForm.resx">
@@ -274,6 +279,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="myodd.classifier.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
