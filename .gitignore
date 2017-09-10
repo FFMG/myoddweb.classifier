@@ -4,6 +4,7 @@
 debug/
 release/
 packages/
+ipch/
 *.opensdf
 *.opendb
 *.pdb
