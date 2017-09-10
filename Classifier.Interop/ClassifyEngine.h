@@ -87,8 +87,8 @@ protected:
   };
 
   // all the magnets, the id => MagnetInfo
-  typedef std::unordered_map<int, MagnetInfo> magnets_info;
-  typedef int(__stdcall *f_GetMagnets)(magnets_info&);
+  typedef std::unordered_map<int, MagnetInfo> MagnetsInfo;
+  typedef int(__stdcall *f_GetMagnets)(MagnetsInfo&);
 
   struct WordCategoryInfo
   {

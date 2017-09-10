@@ -732,7 +732,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
     return -1;
   }
 
-  magnets_info magnetsInfo;
+  MagnetsInfo magnetsInfo;
   int numberOfMagnets = funci(magnetsInfo);
   if (numberOfMagnets == -1)
   {
@@ -741,7 +741,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
   }
 
   // add them all to the list.
-  for (magnets_info::const_iterator it = magnetsInfo.begin();
+  for (MagnetsInfo::const_iterator it = magnetsInfo.begin();
        it != magnetsInfo.end();
        ++it)
   {
