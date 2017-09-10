@@ -343,6 +343,18 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
+    /// Get up to 'max' log entries.
+    /// </summary>
+    /// <param name="max">The max number of log entries we want to get.</param>
+    /// <returns></returns>
+    public List<LogEntry> GetLogEntries( int max )
+    {
+      // get the log entries,
+      List<LogEntry> entries;
+      return -1 == ClassifyEngine.GetLogEntries(out entries, max ) ? null : entries;
+    }
+
+    /// <summary>
     /// Get the current version number of the engine.
     /// </summary>
     /// <returns>int the engine version number</returns>

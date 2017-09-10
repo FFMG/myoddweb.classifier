@@ -221,6 +221,10 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     procAddress = GetProcAddress(hInstance, "ClearLogEntries");
     break;
 
+  case procGetLogEntries:
+    procAddress = GetProcAddress(hInstance, "GetLogEntries");
+    break;
+
   default:
     break;
   }
@@ -745,7 +749,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
        it != magnetsInfo.end();
        ++it)
   {
-    Classifier::Interfaces::Helpers::Magnet^ magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
+    auto magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
     magnet->Id = it->first;
     magnet->Rule = it->second.ruleType;
     magnet->Category = it->second.categoryTarget;
@@ -825,4 +829,47 @@ bool ClassifyEngine::ClearLogEntries(int olderThan)
 
   // try and clear the data
   return funci( olderThan );
+}
+
+int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry^> ^% entries, int max)
+{
+  // whatever happens, empty the list.
+  entries = gcnew List<Classifier::Interfaces::Helpers::LogEntry^>();
+
+  f_GetLogEntries funci = (f_GetLogEntries)GetUnmanagedFunction(ProcType::procGetLogEntries );
+
+  // did it work?
+  if (nullptr == funci)
+  {
+    LogEventWarning("Could not locate the Classifier.Engine 'GetLogEntries( ... )' function?");
+    return -1;
+  }
+
+  LogEntries logEntries;
+  int numberOfEntries = funci(logEntries, max );
+  if (numberOfEntries == -1)
+  {
+    //  nothing was found.
+    return -1;
+  }
+
+  // add them all to the list.
+  for (auto it = logEntries.begin(); it != logEntries.end(); ++it)
+  {
+    auto entry = gcnew Classifier::Interfaces::Helpers::LogEntry();
+
+    const std::wstring wsource = (const wchar_t*)it->second.source.c_str();
+    entry->Source = gcnew System::String(wsource.c_str());
+
+    const std::wstring wentry = (const wchar_t*)it->second.entry.c_str();
+    entry->Entry = gcnew System::String(wentry.c_str());
+
+    entry->Unixtime = it->second.unixtime;
+
+    // add it to the list.
+    entries->Add(entry);
+  }
+
+  // return what we found.
+  return numberOfEntries;
 }

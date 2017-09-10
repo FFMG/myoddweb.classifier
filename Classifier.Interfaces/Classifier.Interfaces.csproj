@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\LogEntry.cs" />
     <Compile Include="Helpers\Magnet.cs" />
     <Compile Include="Helpers\WordCategory.cs" />
     <Compile Include="IClassify1.cs" />

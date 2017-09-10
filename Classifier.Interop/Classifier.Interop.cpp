@@ -128,6 +128,11 @@ namespace Classifier
       return _iEngine->ClearLogEntries(olderThan);
     }
 
+    int Classify::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry^> ^% entries, int max )
+    {
+      return _iEngine->GetLogEntries(entries, max);
+    }
+
     //
     // Version
     //
