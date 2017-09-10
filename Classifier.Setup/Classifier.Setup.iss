@@ -48,6 +48,10 @@ Source: "{#APP_SOURCE}myoddweb.classifier.dll"; DestDir: "{app}"; Flags: ignorev
 Source: "{#APP_SOURCE}myoddweb.classifier.dll.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#APP_SOURCE}myoddweb.classifier.vsto"; DestDir: "{app}"; Flags: ignoreversion
 
+; Newtonsoft
+Source: "{#APP_SOURCE}Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#APP_SOURCE}Newtonsoft.Json.xml"; DestDir: "{app}"; Flags: ignoreversion
+
 ; https://msdn.microsoft.com/en-us/library/ee712616.aspx
 Source: "{#APP_SOURCE}Microsoft.Office.Tools.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#APP_SOURCE}Microsoft.Office.Tools.Outlook.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -215,7 +219,7 @@ begin
    else
    begin 
      if not IsDotNetDetected('v4.5', 0) then begin
-         MsgBox('MyApp requires Microsoft .NET Framework 4.0.x'#13#13
+         MsgBox('MyOdd Classifier requires Microsoft .NET Framework 4.5.x'#13#13
                 'Please use Windows Update to install this version,'#13
                 'and then re-run the setup program.', mbInformation, MB_OK);
                 result := false;

@@ -3,6 +3,7 @@
 *.sdf
 debug/
 release/
+packages/
 *.opensdf
 *.opendb
 *.pdb
