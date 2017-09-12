@@ -399,5 +399,13 @@ namespace myoddweb.classifier.forms
       numericCommonPercent.ReadOnly = false;
       numericCommonPercent.Value = _options.CommonWordsMinPercent;
     }
+
+    private void Log_Click(object sender, EventArgs e)
+    {
+      using (var logForm = new LogForm(engine: _engine))
+      {
+        logForm.ShowDialog();
+      }
+    }
   }
 }

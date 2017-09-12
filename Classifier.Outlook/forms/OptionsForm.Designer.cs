@@ -51,12 +51,13 @@
       this.labelCommonWord = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.comboLogLevel = new System.Windows.Forms.ComboBox();
-      this.labelDefaultLogLevel = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.comboRetention = new System.Windows.Forms.ComboBox();
       this.labelDefaultRetention = new System.Windows.Forms.Label();
+      this.comboRetention = new System.Windows.Forms.ComboBox();
+      this.label7 = new System.Windows.Forms.Label();
+      this.labelDefaultLogLevel = new System.Windows.Forms.Label();
+      this.comboLogLevel = new System.Windows.Forms.ComboBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.Log = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -78,7 +79,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(271, 391);
+      this.ok.Location = new System.Drawing.Point(261, 390);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -89,9 +90,9 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(352, 391);
+      this.button1.Location = new System.Drawing.Point(342, 390);
       this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 23);
+      this.button1.Size = new System.Drawing.Size(79, 23);
       this.button1.TabIndex = 9;
       this.button1.Text = "&Cancel";
       this.button1.UseVisualStyleBackColor = true;
@@ -164,7 +165,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(12, 391);
+      this.Categories.Location = new System.Drawing.Point(12, 390);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -174,7 +175,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(97, 391);
+      this.Magnets.Location = new System.Drawing.Point(97, 390);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -297,6 +298,7 @@
       // 
       // groupBox4
       // 
+      this.groupBox4.Controls.Add(this.Log);
       this.groupBox4.Controls.Add(this.labelDefaultRetention);
       this.groupBox4.Controls.Add(this.comboRetention);
       this.groupBox4.Controls.Add(this.label7);
@@ -310,31 +312,22 @@
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Log";
       // 
-      // label5
+      // labelDefaultRetention
       // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(6, 19);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(33, 13);
-      this.label5.TabIndex = 0;
-      this.label5.Text = "Level";
+      this.labelDefaultRetention.AutoSize = true;
+      this.labelDefaultRetention.Location = new System.Drawing.Point(254, 46);
+      this.labelDefaultRetention.Name = "labelDefaultRetention";
+      this.labelDefaultRetention.Size = new System.Drawing.Size(45, 13);
+      this.labelDefaultRetention.TabIndex = 18;
+      this.labelDefaultRetention.Text = "[default]";
       // 
-      // comboLogLevel
+      // comboRetention
       // 
-      this.comboLogLevel.FormattingEnabled = true;
-      this.comboLogLevel.Location = new System.Drawing.Point(115, 16);
-      this.comboLogLevel.Name = "comboLogLevel";
-      this.comboLogLevel.Size = new System.Drawing.Size(121, 21);
-      this.comboLogLevel.TabIndex = 1;
-      // 
-      // labelDefaultLogLevel
-      // 
-      this.labelDefaultLogLevel.AutoSize = true;
-      this.labelDefaultLogLevel.Location = new System.Drawing.Point(254, 19);
-      this.labelDefaultLogLevel.Name = "labelDefaultLogLevel";
-      this.labelDefaultLogLevel.Size = new System.Drawing.Size(45, 13);
-      this.labelDefaultLogLevel.TabIndex = 15;
-      this.labelDefaultLogLevel.Text = "[default]";
+      this.comboRetention.FormattingEnabled = true;
+      this.comboRetention.Location = new System.Drawing.Point(115, 43);
+      this.comboRetention.Name = "comboRetention";
+      this.comboRetention.Size = new System.Drawing.Size(98, 21);
+      this.comboRetention.TabIndex = 17;
       // 
       // label7
       // 
@@ -345,22 +338,41 @@
       this.label7.TabIndex = 16;
       this.label7.Text = "Retention policy";
       // 
-      // comboRetention
+      // labelDefaultLogLevel
       // 
-      this.comboRetention.FormattingEnabled = true;
-      this.comboRetention.Location = new System.Drawing.Point(115, 43);
-      this.comboRetention.Name = "comboRetention";
-      this.comboRetention.Size = new System.Drawing.Size(98, 21);
-      this.comboRetention.TabIndex = 17;
+      this.labelDefaultLogLevel.AutoSize = true;
+      this.labelDefaultLogLevel.Location = new System.Drawing.Point(254, 19);
+      this.labelDefaultLogLevel.Name = "labelDefaultLogLevel";
+      this.labelDefaultLogLevel.Size = new System.Drawing.Size(45, 13);
+      this.labelDefaultLogLevel.TabIndex = 15;
+      this.labelDefaultLogLevel.Text = "[default]";
       // 
-      // labelDefaultRetention
+      // comboLogLevel
       // 
-      this.labelDefaultRetention.AutoSize = true;
-      this.labelDefaultRetention.Location = new System.Drawing.Point(254, 46);
-      this.labelDefaultRetention.Name = "labelDefaultRetention";
-      this.labelDefaultRetention.Size = new System.Drawing.Size(45, 13);
-      this.labelDefaultRetention.TabIndex = 18;
-      this.labelDefaultRetention.Text = "[default]";
+      this.comboLogLevel.FormattingEnabled = true;
+      this.comboLogLevel.Location = new System.Drawing.Point(115, 16);
+      this.comboLogLevel.Name = "comboLogLevel";
+      this.comboLogLevel.Size = new System.Drawing.Size(121, 21);
+      this.comboLogLevel.TabIndex = 1;
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(6, 19);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(33, 13);
+      this.label5.TabIndex = 0;
+      this.label5.Text = "Level";
+      // 
+      // Log
+      // 
+      this.Log.Location = new System.Drawing.Point(329, 41);
+      this.Log.Name = "Log";
+      this.Log.Size = new System.Drawing.Size(79, 23);
+      this.Log.TabIndex = 16;
+      this.Log.Text = "&Log ...";
+      this.Log.UseVisualStyleBackColor = true;
+      this.Log.Click += new System.EventHandler(this.Log_Click);
       // 
       // OptionsForm
       // 
@@ -427,5 +439,6 @@
     private System.Windows.Forms.Label labelDefaultLogLevel;
     private System.Windows.Forms.ComboBox comboLogLevel;
     private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.Button Log;
   }
 }
