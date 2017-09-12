@@ -44,11 +44,14 @@
       // 
       // listLog
       // 
+      this.listLog.FullRowSelect = true;
+      this.listLog.GridLines = true;
       this.listLog.Location = new System.Drawing.Point(12, 12);
       this.listLog.Name = "listLog";
       this.listLog.Size = new System.Drawing.Size(644, 341);
-      this.listLog.TabIndex = 3;
+      this.listLog.TabIndex = 1;
       this.listLog.UseCompatibleStateImageBehavior = false;
+      this.listLog.View = System.Windows.Forms.View.List;
       // 
       // LogForm
       // 
