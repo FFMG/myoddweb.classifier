@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
+using System.Drawing;
 
 namespace myoddweb.classifier.forms
 {
@@ -12,12 +13,16 @@ namespace myoddweb.classifier.forms
 
     public LogForm( Engine engine)
     {
+      Padding = new Padding(5);
       _engine = engine;
       InitializeComponent();
     }
 
     private void LogForm_Load(object sender, EventArgs e)
     {
+      // make sure that we have the right size.
+      RedrawFormSize();
+
       // create the columns
       CreateColumns();
 
@@ -35,10 +40,10 @@ namespace myoddweb.classifier.forms
 
       // set up the widhts.
       var width = listLog.Width;
-      var widthSections = width / 6;
-      var widthOfDateTime = 1* widthSections -1;
-      var widthOfSource = 2* widthSections - 1;
-      var widthOfEntry = 3 * widthSections;
+      var widthSections = width / 12;
+      var widthOfDateTime = 2* widthSections -1;
+      var widthOfSource = 3* widthSections - 1;
+      var widthOfEntry = 7 * widthSections;
 
       // 
       listLog.View = View.Details;
@@ -89,6 +94,44 @@ namespace myoddweb.classifier.forms
     {
       DialogResult = DialogResult.OK;
       Close();
+    }
+
+    /// <summary>
+    /// Redraw the form with the (new) size.
+    /// </summary>
+    private void RedrawFormSize()
+    {
+      var top = Padding.Top;
+      ok.Location = new Point(
+        ClientRectangle.Right -(Padding.Right) - ok.Width,
+        ClientRectangle.Bottom - (Padding.Bottom) - ok.Height);
+
+      listLog.Location = new Point(ClientRectangle.X + Padding.Left, top);
+      listLog.Width = ok.Right - listLog.Left;
+      listLog.Height = ok.Top - Padding.Top - listLog.Top;
+
+      // only update the columns if we have created them already
+      if (listLog.Columns.Count > 2)
+      {
+        listLog.BeginUpdate();
+        // save the new width
+        var width = listLog.Width;
+        var widthOfDateTime = listLog.Columns[0].Width;
+        var widthOfSource = listLog.Columns[2].Width;
+        listLog.Columns[1].Width =  width - widthOfDateTime - widthOfSource - Padding.Right;
+        listLog.EndUpdate();
+      }
+    }
+
+
+    /// <summary>
+    /// Called when the form is resized.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void LogForm_Resize(object sender, EventArgs e)
+    {
+      RedrawFormSize();
     }
   }
 }

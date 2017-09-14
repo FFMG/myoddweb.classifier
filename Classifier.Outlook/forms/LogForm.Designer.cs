@@ -61,15 +61,14 @@
       this.Controls.Add(this.listLog);
       this.Controls.Add(this.ok);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-      this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "LogForm";
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.Text = "Log";
       this.Load += new System.EventHandler(this.LogForm_Load);
+      this.Resize += new System.EventHandler(this.LogForm_Resize);
       this.ResumeLayout(false);
-
     }
 
     #endregion
