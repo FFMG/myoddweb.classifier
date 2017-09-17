@@ -43,6 +43,11 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.7.0.1 (17/09/2017)
+- Updated to 1.6.* engine.
+- Added log options, (level + retention time)
+- Added log viewer.
+
 #### 0.6.0.1 - 0.6.0.5 (20/04/2017)
 - Added debug log messages to time how slow classification is.
 - Updated to classifier engine 1.5.7.0, (faster)
