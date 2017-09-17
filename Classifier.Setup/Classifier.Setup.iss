@@ -87,6 +87,13 @@ Root: HKCU32; Subkey: "Software\Microsoft\Office\Outlook\Addins\{#APP_REG_NAME}"
 // check if we have the vsto 64 bit installed
 function IsOutlookVSTOInstalled64Bit() : boolean;
 begin
+  // if we are not x64 then we cannot check any x64 values.
+  if not IsWin64 then
+  begin
+   Result := false;
+   exit;
+  end
+
   if RegKeyExists( HKLM64, 'SOFTWARE\Microsoft\VSTO Runtime Setup\v4' ) then 
   begin
     Result := true;

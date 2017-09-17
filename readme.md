@@ -47,6 +47,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - Updated to 1.6.* engine.
 - Added log options, (level + retention time)
 - Added log viewer.
+- Fixed setup to we don't check x64 registry.
 
 #### 0.6.0.1 - 0.6.0.5 (20/04/2017)
 - Added debug log messages to time how slow classification is.
