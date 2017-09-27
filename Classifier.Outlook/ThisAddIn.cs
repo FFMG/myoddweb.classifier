@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using myoddweb.classifier.core;
+﻿using myoddweb.classifier.core;
 using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
@@ -17,7 +16,11 @@ namespace myoddweb.classifier
 
     private Outlook.Folders _folders;
 
+    private MailProcessor _mailProcessor;
+
     private Engine TheEngine => _engine ?? (_engine = new Engine());
+
+    private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor( TheEngine, _explorers.Application.Session));
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
@@ -63,7 +66,6 @@ namespace myoddweb.classifier
       catch (System.Runtime.InteropServices.COMException e)
       {
         TheEngine.LogError(e.ToString());
-        return;
       }
     }
 
@@ -108,8 +110,8 @@ namespace myoddweb.classifier
       try
       {
         // new email has arrived, we need to try and classify it.
-        newMail =
-          _explorers.Application.Session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
+        var session = _explorers.Application.Session;
+        newMail = session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
@@ -132,7 +134,7 @@ namespace myoddweb.classifier
       }
 
       // start the watch
-      var watch = StopWatch.Start();
+      var watch = StopWatch.Start(TheEngine);
 
       // look for the category
       var guessCategoryResponse = await TheEngine.Categories.CategorizeAsync(newMail).ConfigureAwait( false );
@@ -164,29 +166,11 @@ namespace myoddweb.classifier
         await TheEngine.Categories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait( false );
       }
 
-      // get the posible folder.
-      var folder = TheEngine.Categories.FindFolderByCategoryId(categoryId);
-      if (null == folder)
-      {
-        //  the user does not want to move to another folder.
-        return true;
-      }
-
       try
       {
-        // don't move it if we don't need to.
-        var currentFolder = (Outlook.Folder) newMail.Parent;
-
-        // if they are not the same, we can move it.
-        if (currentFolder.EntryID != folder.OutlookFolder.EntryID)
-        {
-          // if this is an ignored conversation, we will not move it.
-          if (!IsIgnored(newMail))
-          {
-            // try and move 
-            return TryMove(folder.OutlookFolder, newMail );
-          }
-        }
+        // try and move 
+        // add it to the mail processor.
+        TheMailProcessor.Add(categoryId, entryIdItem);
       }
       catch (System.Exception ex)
       {
@@ -196,47 +180,6 @@ namespace myoddweb.classifier
         return false;
       }
       return true;
-    }
-
-    private bool TryMove( Outlook.Folder itemToFolder, Outlook.MailItem mailItem )
-    {
-      // start the watch
-      var watch = StopWatch.Start();
-
-      try
-      {
-        mailItem.Move(itemToFolder);
-        TheEngine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
-      }
-      catch (System.Exception ex)
-      {
-        TheEngine.LogError(ex.ToString());
-
-        watch.Checkpoint($"Could not move : {mailItem.Subject} to {itemToFolder.Name}, {ex.StackTrace} {{0}}");
-        return false;
-      }
-      return true;
-    }
-
-    private bool IsIgnored(Outlook._MailItem mailItem)
-    {
-      // does the folder allow conversations?
-      var folder = mailItem.Parent as Outlook.Folder;
-      var store = folder?.Store;
-      if (store?.IsConversationEnabled != true)
-      {
-        return false;
-      }
-
-      // get that conversation
-      var conv = mailItem.GetConversation();
-      if (conv == null)
-      {
-        return false;
-      }
-
-      // 
-      return false;
     }
   }
 }

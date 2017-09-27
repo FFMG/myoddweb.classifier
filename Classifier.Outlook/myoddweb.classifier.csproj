@@ -188,6 +188,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="core\mailprocessor.cs" />
     <Compile Include="core\options.cs" />
     <Compile Include="core\Rule.cs" />
     <Compile Include="core\Rules.cs" />

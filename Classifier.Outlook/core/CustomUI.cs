@@ -169,7 +169,7 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          var watch = StopWatch.Start();
+          var watch = StopWatch.Start(_engine);
 
           // log a message to indicate when we are trying to do.
           Debug.WriteLine($"Classifying message id {mailItem.EntryID} to category {categoryId}");
@@ -336,7 +336,7 @@ namespace myoddweb.classifier.core
       Cursor.Current = Cursors.WaitCursor;
 
       // start the wath
-      var watch = StopWatch.Start();
+      var watch = StopWatch.Start(_engine);
 
       try
       {

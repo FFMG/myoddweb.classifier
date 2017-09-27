@@ -58,7 +58,7 @@ namespace myoddweb.classifier.forms
       var wordsCategory = new List<WordCategory>();
       var categoryProbabilities = new Dictionary<int, double>();
 
-      var sw = StopWatch.Start();
+      var sw = StopWatch.Start( null );
       var category = _classifyEngine == null ? -1 : _classifyEngine.Categorize(_rawText, 75, out wordsCategory, out categoryProbabilities);
       sw.Stop(@"Done : {0}.");
 
