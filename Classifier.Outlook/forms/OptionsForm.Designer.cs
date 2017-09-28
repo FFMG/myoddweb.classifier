@@ -51,18 +51,23 @@
       this.labelCommonWord = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.Log = new System.Windows.Forms.Button();
       this.labelDefaultRetention = new System.Windows.Forms.Label();
       this.comboRetention = new System.Windows.Forms.ComboBox();
       this.label7 = new System.Windows.Forms.Label();
       this.labelDefaultLogLevel = new System.Windows.Forms.Label();
       this.comboLogLevel = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.Log = new System.Windows.Forms.Button();
+      this.numericUpDownClassifyDelay = new System.Windows.Forms.NumericUpDown();
+      this.label6 = new System.Windows.Forms.Label();
+      this.labelDefaultClassifyDelay = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).BeginInit();
       this.groupBox4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClassifyDelay)).BeginInit();
       this.SuspendLayout();
       // 
       // reCheckCategories
@@ -79,7 +84,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(261, 390);
+      this.ok.Location = new System.Drawing.Point(261, 418);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -90,7 +95,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(342, 390);
+      this.button1.Location = new System.Drawing.Point(342, 418);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(79, 23);
       this.button1.TabIndex = 9;
@@ -165,7 +170,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(12, 390);
+      this.Categories.Location = new System.Drawing.Point(9, 418);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -175,7 +180,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(97, 390);
+      this.Magnets.Location = new System.Drawing.Point(94, 418);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -218,6 +223,10 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.label8);
+      this.groupBox3.Controls.Add(this.labelDefaultClassifyDelay);
+      this.groupBox3.Controls.Add(this.label6);
+      this.groupBox3.Controls.Add(this.numericUpDownClassifyDelay);
       this.groupBox3.Controls.Add(this.checkAutomaticallyMagnetTrain);
       this.groupBox3.Controls.Add(this.checkAutomaticallyTrain);
       this.groupBox3.Controls.Add(this.numericCommonPercent);
@@ -226,7 +235,7 @@
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(414, 95);
+      this.groupBox3.Size = new System.Drawing.Size(414, 122);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
@@ -290,11 +299,11 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(113, 22);
+      this.label1.Location = new System.Drawing.Point(112, 22);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(95, 13);
+      this.label1.Size = new System.Drawing.Size(130, 13);
       this.label1.TabIndex = 8;
-      this.label1.Text = "Common word prct";
+      this.label1.Text = "Delay before classification";
       // 
       // groupBox4
       // 
@@ -305,12 +314,22 @@
       this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
       this.groupBox4.Controls.Add(this.comboLogLevel);
       this.groupBox4.Controls.Add(this.label5);
-      this.groupBox4.Location = new System.Drawing.Point(13, 308);
+      this.groupBox4.Location = new System.Drawing.Point(13, 335);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(414, 77);
       this.groupBox4.TabIndex = 15;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Log";
+      // 
+      // Log
+      // 
+      this.Log.Location = new System.Drawing.Point(329, 41);
+      this.Log.Name = "Log";
+      this.Log.Size = new System.Drawing.Size(79, 23);
+      this.Log.TabIndex = 16;
+      this.Log.Text = "&Log ...";
+      this.Log.UseVisualStyleBackColor = true;
+      this.Log.Click += new System.EventHandler(this.Log_Click);
       // 
       // labelDefaultRetention
       // 
@@ -364,21 +383,55 @@
       this.label5.TabIndex = 0;
       this.label5.Text = "Level";
       // 
-      // Log
+      // numericUpDownClassifyDelay
       // 
-      this.Log.Location = new System.Drawing.Point(329, 41);
-      this.Log.Name = "Log";
-      this.Log.Size = new System.Drawing.Size(79, 23);
-      this.Log.TabIndex = 16;
-      this.Log.Text = "&Log ...";
-      this.Log.UseVisualStyleBackColor = true;
-      this.Log.Click += new System.EventHandler(this.Log_Click);
+      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 91);
+      this.numericUpDownClassifyDelay.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownClassifyDelay.Name = "numericUpDownClassifyDelay";
+      this.numericUpDownClassifyDelay.Size = new System.Drawing.Size(72, 20);
+      this.numericUpDownClassifyDelay.TabIndex = 15;
+      this.numericUpDownClassifyDelay.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(112, 93);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(130, 13);
+      this.label6.TabIndex = 16;
+      this.label6.Text = "Delay before classification";
+      // 
+      // labelDefaultClassifyDelay
+      // 
+      this.labelDefaultClassifyDelay.AutoSize = true;
+      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(255, 93);
+      this.labelDefaultClassifyDelay.Name = "labelDefaultClassifyDelay";
+      this.labelDefaultClassifyDelay.Size = new System.Drawing.Size(45, 13);
+      this.labelDefaultClassifyDelay.TabIndex = 17;
+      this.labelDefaultClassifyDelay.Text = "[default]";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(84, 93);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(27, 13);
+      this.label8.TabIndex = 18;
+      this.label8.Text = "sec.";
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(441, 425);
+      this.ClientSize = new System.Drawing.Size(437, 448);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
@@ -404,6 +457,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).EndInit();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClassifyDelay)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -440,5 +494,9 @@
     private System.Windows.Forms.ComboBox comboLogLevel;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Button Log;
+    private System.Windows.Forms.NumericUpDown numericUpDownClassifyDelay;
+    private System.Windows.Forms.Label labelDefaultClassifyDelay;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label label8;
   }
 }

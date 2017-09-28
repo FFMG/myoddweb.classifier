@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -34,6 +35,17 @@ namespace myoddweb.classifier.core
 
     public MailProcessor(Engine engine, Outlook.NameSpace session )
     {
+      // can't be null
+      if (engine == null)
+      {
+        throw new ArgumentNullException(nameof(engine));
+      }
+
+      if (session == null)
+      {
+        throw new ArgumentNullException(nameof(session));
+      }
+
       _engine = engine;
       _session = session;
       _mailItems = new Dictionary<string, int>();
@@ -64,7 +76,7 @@ namespace myoddweb.classifier.core
         StopTimer();
 
         // recreate it.
-        _ticker = new Timer(20000);
+        _ticker = new Timer(_engine.Options.ClassifyDelaySeconds);
         _ticker.Elapsed += async (sender, e) => await HandleTimer();
         _ticker.AutoReset = true;
         _ticker.Enabled = true;
@@ -141,7 +153,7 @@ namespace myoddweb.classifier.core
         catch (System.Runtime.InteropServices.COMException e)
         {
           // log it.
-          _engine.LogError($"Could not locate mail item {entryIdItem} to move, an exception was thrown, {e.ToString()}.");
+          _engine.LogError($"Could not locate mail item {entryIdItem} to move, an exception was thrown, {e}.");
 
           // Could not find that message anymore
           return Task.FromResult(false);
@@ -174,7 +186,7 @@ namespace myoddweb.classifier.core
           _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
         }
       }
-      catch (System.Exception ex)
+      catch (Exception ex)
       {
         _engine.LogError(ex.ToString());
         return Task.FromResult(false);

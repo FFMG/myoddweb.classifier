@@ -46,6 +46,7 @@ namespace myoddweb.classifier.forms
       InitializeComponent();
     }
 
+    #region Combos
     /// <summary>
     /// Rebuild all the combos.
     /// </summary>
@@ -88,7 +89,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentLogLevel = (Options.LogLevels)_options.LogLevel;
+      var currentLogLevel = _options.LogLevel;
 
       // go around all the folders.
       foreach( Options.LogLevels i in Enum.GetValues( typeof(Options.LogLevels)))
@@ -98,7 +99,7 @@ namespace myoddweb.classifier.forms
         {
           selectedIndex = items.Count;
         }
-        items.Add(new ComboboxLogLevelValue { Level = (Options.LogLevels)i });
+        items.Add(new ComboboxLogLevelValue { Level = i });
       }
 
       // the data source.
@@ -214,6 +215,8 @@ namespace myoddweb.classifier.forms
       comboMagnets.SelectedIndex = selectedIndex;
     }
 
+    #endregion
+
     private void Ok_Click(object sender, EventArgs e)
     {
       // we want to save our new settings.
@@ -245,6 +248,9 @@ namespace myoddweb.classifier.forms
 
       // set the retention policy
       _options.LogRetention = GetLogRetentionPolicy();
+
+      // the classification delay in seconds.
+      _options.ClassifyDelaySeconds = GetClassifyDelaySeconds();
     }
 
     private uint GetLogRetentionPolicy()
@@ -274,6 +280,11 @@ namespace myoddweb.classifier.forms
     private uint GetCommonWordsMinPercent()
     {
       return (uint)numericCommonPercent.Value;
+    }
+
+    private uint GetClassifyDelaySeconds()
+    {
+      return (uint)numericUpDownClassifyDelay.Value;
     }
 
     private uint GetMagnetsWeight()
@@ -368,7 +379,10 @@ namespace myoddweb.classifier.forms
       RebuildCombos();
 
       // the spinner
-      RebuildSpinner();
+      RebuildPercentSpinner();
+
+      // the classify delay in seconds.
+      RebuildClassifyDelay();
 
       // the defaults.
       RebuildDefaults();
@@ -390,14 +404,25 @@ namespace myoddweb.classifier.forms
 
       labelDefaultRetention.Text = $"[ {(int)Options.DefaultOptions.LogRetention} Days ]";
       labelCommonWord.ForeColor = Color.DarkGray;
+
+      labelDefaultClassifyDelay.Text = $"[ {(int)Options.DefaultOptions.ClassifyDelaySeconds} Seconds ]";
+      labelDefaultClassifyDelay.ForeColor = Color.DarkGray;
     }
 
-    private void RebuildSpinner()
+    private void RebuildPercentSpinner()
     {
       numericCommonPercent.Maximum = 100;
       numericCommonPercent.Minimum = 1;
       numericCommonPercent.ReadOnly = false;
       numericCommonPercent.Value = _options.CommonWordsMinPercent;
+    }
+
+    private void RebuildClassifyDelay()
+    {
+      numericUpDownClassifyDelay.Maximum = 100;
+      numericUpDownClassifyDelay.Minimum = 0;
+      numericUpDownClassifyDelay.ReadOnly = false;
+      numericUpDownClassifyDelay.Value = _options.ClassifyDelaySeconds;
     }
 
     private void Log_Click(object sender, EventArgs e)

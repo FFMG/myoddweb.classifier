@@ -8,11 +8,11 @@ namespace myoddweb.classifier.forms
   public partial class DetailsForm : Form
   {
     //  the html string parser to get the html code.
-    private HtmlDisplay HtmlDisplay;
+    private readonly HtmlDisplay _htmlDisplay;
 
     public DetailsForm(IClassify1 classifyEngine, string rawText )
     {
-      HtmlDisplay = new HtmlDisplay(classifyEngine, rawText);
+      _htmlDisplay = new HtmlDisplay(classifyEngine, rawText);
 
       // we can now init everything.
       InitializeComponent();
@@ -30,7 +30,7 @@ namespace myoddweb.classifier.forms
       Cursor.Current = Cursors.WaitCursor;
       {
         // get the html
-        var html = HtmlDisplay.GetHtml();
+        var html = _htmlDisplay.GetHtml();
 
         // display it.
         DisplayHtml(html);

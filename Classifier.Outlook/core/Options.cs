@@ -18,33 +18,36 @@ namespace myoddweb.classifier.core
       UserWeight = 10,
       MagnetsWeight = 2,
       CommonWordsMinPercent = 50,
-      LogLevel = (int)LogLevels.Error,
-      LogRetention = 30
+      LogLevel = LogLevels.Error,
+      LogRetention = 30,
+      ClassifyDelaySeconds = 1
     }
 
     private readonly Engine _engine;
 
-    internal bool? _reAutomaticallyTrainMagnetMessages;
+    private bool? _reAutomaticallyTrainMagnetMessages;
 
-    internal bool? _reAutomaticallyTrainMessages;
+    private bool? _reAutomaticallyTrainMessages;
 
-    internal bool? _reCheckCategories;
+    private bool? _reCheckCategories;
 
-    internal bool? _checkIfUnownCategory;
+    private bool? _checkIfUnownCategory;
 
-    internal bool? _reCheckIfCtrlIsDown;
+    private bool? _reCheckIfCtrlIsDown;
 
-    internal uint? _magnetsWeight;
+    private uint? _magnetsWeight;
 
-    internal uint? _userWeight;
+    private uint? _userWeight;
 
-    internal LogLevels? _logLevel;
+    private LogLevels? _logLevel;
 
-    internal uint? _logRetention;
+    private uint? _logRetention;
 
-    internal uint? _commonWordsMinPercent;
+    private uint? _commonWordsMinPercent;
 
-    internal uint? _minPercentage;
+    private uint? _minPercentage;
+
+    private uint? _classifyDelaySeconds;
 
     /// <summary>
     /// (re) Check all the categories all the time.
@@ -65,6 +68,24 @@ namespace myoddweb.classifier.core
       }
     }
 
+    /// <summary>
+    /// The number of seconds we want to wait before we classify a message.
+    /// This delay is needed to let outlook apply its own rules.
+    /// </summary>
+    public uint ClassifyDelaySeconds
+    {
+      get
+      {
+        return (uint)(_classifyDelaySeconds ??
+                       (_classifyDelaySeconds = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.ClassifyDelaySeconds", "1")))));
+      }
+      set
+      {
+        _classifyDelaySeconds = value;
+        _engine?.SetConfig("Option.ClassifyDelaySeconds", Convert.ToString(value));
+      }
+    }
+    
     /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
