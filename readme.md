@@ -1,4 +1,4 @@
-# MyOddWeb.Classifier [![release](https://img.shields.io/badge/release-v0.7.0.1-brightgreen.png?style=default)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
+# MyOddWeb.Classifier [![release](https://img.shields.io/badge/release-v0.7.0.2-brightgreen.png?style=default)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
 
 <!---
 Mono does not work currently...
@@ -43,6 +43,9 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.7.0.2 (28/09/2017)
+- Added option to delay the classification, (to allow rules to fire).
+
 #### 0.7.0.1 (17/09/2017)
 - Updated to 1.6.* engine.
 - Added log options, (level + retention time)
