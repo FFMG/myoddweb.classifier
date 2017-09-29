@@ -43,11 +43,13 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.2 (28/09/2017)
+#### 0.7.0.2 (29/09/2017)
+- Updated to 1.6.3 engine.
 - Added option to delay the classification, (to allow rules to fire).
+- Changed GetLogEntries( ... ) to now return the entry ID as well.
 
 #### 0.7.0.1 (17/09/2017)
-- Updated to 1.6.* engine.
+- Updated to 1.6.2 engine.
 - Added log options, (level + retention time)
 - Added log viewer.
 - Fixed setup to we don't check x64 registry.
