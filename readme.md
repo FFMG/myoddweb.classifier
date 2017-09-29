@@ -28,7 +28,8 @@ But it does not take that long, really, invest a couple of day creating good Mag
 ## Setup
 ### From setup
 
-- Download the setup app, (in the [Classifier.Setup/Output](https://github.com/FFMG/myoddweb.classifier/releases/latest) sub folder for now)
+- Download the setup app, (get the [latest release](https://github.com/FFMG/myoddweb.classifier/releases/latest))
+  - Make sure outlook is not running.
 - Run it
 - Start outlook
 	- You will need to accept the certificate, (only first time).
