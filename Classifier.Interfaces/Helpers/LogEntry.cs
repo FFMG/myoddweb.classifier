@@ -4,9 +4,14 @@
   {
     public LogEntry()
     {
-      Unixtime = 0;
+      Id = Unixtime = 0;
       Source = Entry = "";
     }
+
+    /// <summary>
+    /// The log entry id.
+    /// </summary>
+    public int Id { get; set; }
 
     /// <summary>
     /// The source of the log

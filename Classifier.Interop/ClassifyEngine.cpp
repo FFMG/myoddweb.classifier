@@ -858,6 +858,8 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
   {
     auto entry = gcnew Classifier::Interfaces::Helpers::LogEntry();
 
+    entry->Id = it->second.id;
+
     const std::wstring wsource = (const wchar_t*)it->second.source.c_str();
     entry->Source = gcnew System::String(wsource.c_str());
 

@@ -107,6 +107,7 @@ protected:
 
   struct LogEntry
   {
+    int id;
     std::u16string source;
     std::u16string entry;
     int unixtime;
