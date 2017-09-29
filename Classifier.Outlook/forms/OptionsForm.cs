@@ -9,6 +9,12 @@ namespace myoddweb.classifier.forms
 {
   public partial class OptionsForm : Form
   {
+    public class ComboboxLogSizeValue
+    {
+      public uint Size { get; set; }
+      public override string ToString() { return Convert.ToString(Size); }
+    }
+
     public class ComboboxWeightValue
     {
       public uint Weight { get; set; }
@@ -72,6 +78,9 @@ namespace myoddweb.classifier.forms
 
       // retention policy
       RebuildRetentionPolicyCombo();
+
+      // the number of items we want to display
+      RebuildDisplayLogSize();
     }
 
     /// <summary>
@@ -81,6 +90,9 @@ namespace myoddweb.classifier.forms
     {
       // remove everything
       comboLogLevel.Items.Clear();
+
+      // make the list read only
+      comboLogLevel.DropDownStyle = ComboBoxStyle.DropDownList;
 
       // and set the folder values.
       var items = new List<ComboboxLogLevelValue>();
@@ -116,6 +128,9 @@ namespace myoddweb.classifier.forms
     {
       // remove everything
       comboRetention.Items.Clear();
+
+      // make the list read only
+      comboRetention.DropDownStyle = ComboBoxStyle.DropDownList;
 
       // and set the folder values.
       var items = new List<ComboboxRetentionValue>();
@@ -153,6 +168,9 @@ namespace myoddweb.classifier.forms
       // remove everything
       comboUser.Items.Clear();
 
+      // make the list read only
+      comboUser.DropDownStyle = ComboBoxStyle.DropDownList;
+
       // and set the folder values.
       var items = new List<ComboboxWeightValue>();
 
@@ -188,6 +206,9 @@ namespace myoddweb.classifier.forms
       // remove everything
       comboMagnets.Items.Clear();
 
+      // make the list read only
+      comboMagnets.DropDownStyle = ComboBoxStyle.DropDownList;
+
       // and set the folder values.
       var items = new List<ComboboxWeightValue>();
 
@@ -215,6 +236,40 @@ namespace myoddweb.classifier.forms
       comboMagnets.SelectedIndex = selectedIndex;
     }
 
+    private void RebuildDisplayLogSize()
+    {
+      comboDisplaySize.Items.Clear();
+
+      // make the list read only
+      comboDisplaySize.DropDownStyle = ComboBoxStyle.DropDownList;
+
+      // and set the folder values.
+      var items = new List<ComboboxLogSizeValue>();
+
+      // select the first item
+      var selectedIndex = 0;
+
+      // guess what the category could be
+      var currentDisplaySize = _options.LogDisplaySize;
+
+      // go around all the folders.
+      uint[] displaySizes = { 10, 50, 100, 200, 500 };
+      foreach (var i in displaySizes)
+      {
+        // is that our current one?
+        if (i == currentDisplaySize )
+        {
+          selectedIndex = items.Count;
+        }
+        items.Add(new ComboboxLogSizeValue() { Size = i });
+      }
+
+      // the data source.
+      comboDisplaySize.DataSource = items;
+
+      // select our current one.
+      comboDisplaySize.SelectedIndex = selectedIndex;
+    }
     #endregion
 
     private void Ok_Click(object sender, EventArgs e)
@@ -251,6 +306,9 @@ namespace myoddweb.classifier.forms
 
       // the classification delay in seconds.
       _options.ClassifyDelaySeconds = GetClassifyDelaySeconds();
+
+      // the number of items we want to display in the log.
+      _options.LogDisplaySize = GetNumberOfEntriesToDisplay();
     }
 
     private uint GetLogRetentionPolicy()
@@ -285,6 +343,17 @@ namespace myoddweb.classifier.forms
     private uint GetClassifyDelaySeconds()
     {
       return (uint)numericUpDownClassifyDelay.Value;
+    }
+
+    private uint GetNumberOfEntriesToDisplay()
+    {
+      if (comboDisplaySize.SelectedIndex == -1)
+      {
+        return (uint)Options.DefaultOptions.LogDisplaySize;
+      }
+
+      // otherwise get the log size
+      return ((ComboboxLogSizeValue)comboDisplaySize.SelectedItem).Size;
     }
 
     private uint GetMagnetsWeight()
@@ -407,6 +476,9 @@ namespace myoddweb.classifier.forms
 
       labelDefaultClassifyDelay.Text = $"[ {(int)Options.DefaultOptions.ClassifyDelaySeconds} Seconds ]";
       labelDefaultClassifyDelay.ForeColor = Color.DarkGray;
+
+      labelDisplaySizeDefault.Text = $"[ {(int)Options.DefaultOptions.LogDisplaySize} ]";
+      labelDisplaySizeDefault.ForeColor = Color.DarkGray;
     }
 
     private void RebuildPercentSpinner()
@@ -427,7 +499,7 @@ namespace myoddweb.classifier.forms
 
     private void Log_Click(object sender, EventArgs e)
     {
-      using (var logForm = new LogForm(engine: _engine))
+      using (var logForm = new LogForm(engine: _engine, numberOfItemsToDisplay: GetNumberOfEntriesToDisplay() ))
       {
         logForm.ShowDialog();
       }

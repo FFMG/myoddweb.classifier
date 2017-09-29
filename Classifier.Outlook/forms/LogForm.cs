@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
 using System.Drawing;
+using System.Linq;
 
 namespace myoddweb.classifier.forms
 {
@@ -11,10 +12,13 @@ namespace myoddweb.classifier.forms
     // the classifier engine
     private readonly Engine _engine;
 
-    public LogForm( Engine engine)
+    private readonly uint _numberOfItemsToDisplay;
+
+    public LogForm( Engine engine, uint numberOfItemsToDisplay )
     {
       Padding = new Padding(5);
       _engine = engine;
+      _numberOfItemsToDisplay = numberOfItemsToDisplay;
       InitializeComponent();
     }
 
@@ -40,16 +44,18 @@ namespace myoddweb.classifier.forms
 
       // set up the widhts.
       var width = listLog.Width;
-      var widthSections = width / 12;
+      var widthSections = width / 13;
       var widthOfDateTime = 2* widthSections -1;
       var widthOfSource = 3* widthSections - 1;
       var widthOfEntry = 7 * widthSections;
+      var widthOfEntryId = 1 * widthSections;
 
       // 
       listLog.View = View.Details;
       listLog.Columns.Add("Time", widthOfDateTime, HorizontalAlignment.Left);
       listLog.Columns.Add("Entry", widthOfEntry, HorizontalAlignment.Left);
       listLog.Columns.Add("Source", widthOfSource, HorizontalAlignment.Left);
+      listLog.Columns.Add("Id", widthOfEntryId, HorizontalAlignment.Left); 
     }
 
     private void ReloadLog()
@@ -60,9 +66,10 @@ namespace myoddweb.classifier.forms
       // remove everything
       listLog.Items.Clear();
 
-      // get the Log.
+      // get the Log and make sure that it is ordered by date.
       listLog.BeginUpdate();
-      var logEntries = _engine.GetLogEntries(NumberOfEntriesToGet() );
+      var logEntries = _engine.GetLogEntries( (int)_numberOfItemsToDisplay );
+      logEntries = logEntries.OrderByDescending(o => o.Unixtime).ToList();
       foreach (var entry in logEntries )
       {
         var item = new ListViewItem()
@@ -70,7 +77,7 @@ namespace myoddweb.classifier.forms
           Text = Helpers.UnixToDateTime(entry.Unixtime ).ToString("MM/dd/yyyy HH:mm:ss"),
           ToolTipText = entry.Source,
           Tag = entry,
-          SubItems = { entry.Entry, entry.Source }
+          SubItems = { entry.Entry, entry.Source, entry.Id.ToString() }
         };
         listLog.Items.Add(item);
       }
@@ -83,11 +90,6 @@ namespace myoddweb.classifier.forms
         listLog.Items[0].Selected = true;
         listLog.Select();
       }
-    }
-
-    private static int NumberOfEntriesToGet()
-    {
-      return 100;
     }
 
     private void Ok_Click(object sender, EventArgs e)
@@ -118,7 +120,8 @@ namespace myoddweb.classifier.forms
         var width = listLog.Width;
         var widthOfDateTime = listLog.Columns[0].Width;
         var widthOfSource = listLog.Columns[2].Width;
-        listLog.Columns[1].Width =  width - widthOfDateTime - widthOfSource - Padding.Right;
+        var widthOfEntryId = listLog.Columns[3].Width;
+        listLog.Columns[1].Width =  width - (widthOfDateTime + widthOfSource + widthOfEntryId) - Padding.Right;
         listLog.EndUpdate();
       }
     }

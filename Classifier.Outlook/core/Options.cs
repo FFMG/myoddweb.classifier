@@ -20,6 +20,7 @@ namespace myoddweb.classifier.core
       CommonWordsMinPercent = 50,
       LogLevel = LogLevels.Error,
       LogRetention = 30,
+      LogDisplaySize = 100,
       ClassifyDelaySeconds = 1
     }
 
@@ -42,6 +43,8 @@ namespace myoddweb.classifier.core
     private LogLevels? _logLevel;
 
     private uint? _logRetention;
+
+    private uint? _logDisplaySize;
 
     private uint? _commonWordsMinPercent;
 
@@ -208,7 +211,24 @@ namespace myoddweb.classifier.core
         _engine?.SetConfig("Option.LogRetention", Convert.ToString(value));
       }
     }
-    
+
+    /// <summary>
+    /// Get the number of log entries we want to display
+    /// </summary>
+    public uint LogDisplaySize
+    {
+      get
+      {
+        return (uint)( _logDisplaySize ??
+                       (_logDisplaySize = Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogDisplaySize", Convert.ToString((uint)DefaultOptions.LogDisplaySize)))));
+      }
+      set
+      {
+        _logDisplaySize = value;
+        _engine?.SetConfig("Option.LogDisplaySize", Convert.ToString(value));
+      }
+    }
+
     /// <summary>
     /// Get or set the log level
     /// </summary>
