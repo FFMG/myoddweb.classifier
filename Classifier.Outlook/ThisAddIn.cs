@@ -1,5 +1,4 @@
 ﻿using myoddweb.classifier.core;
-using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 
@@ -104,82 +103,19 @@ namespace myoddweb.classifier
       Application_NewMailExAsync(entryIdItem).Wait();
     }
 
-    private async Task<bool> Application_NewMailExAsync(string entryIdItem)
+    private Task<bool> Application_NewMailExAsync(string entryIdItem)
     {
-      Outlook.MailItem newMail;
       try
       {
-        // new email has arrived, we need to try and classify it.
-        var session = _explorers.Application.Session;
-        newMail = session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
-      }
-      catch (System.Runtime.InteropServices.COMException e)
-      {
-        TheEngine.LogError(e.ToString());
-
-        // Could not find that message anymore
-        // @todo log this entry id could not be located.
-        return false;
-      }
-
-      if (newMail == null)
-      {
-        return false;
-      }
-
-      // the message note.
-      if( !Categories.IsUsableClassNameForClassification(newMail?.MessageClass) )
-      {
-        return false;
-      }
-
-      // start the watch
-      var watch = StopWatch.Start(TheEngine);
-
-      // look for the category
-      var guessCategoryResponse = await TheEngine.Categories.CategorizeAsync(newMail).ConfigureAwait( false );
-
-      // 
-      var categoryId = guessCategoryResponse.CategoryId;
-      var wasMagnetUsed = guessCategoryResponse.WasMagnetUsed;
-
-      // did we find a category?
-      if (-1 == categoryId)
-      {
-        TheEngine.LogVerbose($"I could not classify the new message {entryIdItem} into any categories. ('{newMail.Subject}')");
-        watch.Checkpoint("I could not classify the new message into any categories: (in: {0})");
-        return false;
-      }
-
-      // 
-      watch.Checkpoint( $"I classified the new message category : {categoryId} (in: {{0}})");
-
-      //
-      // Do we want to train this
-      var options = TheEngine.Options;
-      if(options.ReAutomaticallyTrainMessages || (wasMagnetUsed && options.ReAutomaticallyTrainMagnetMessages ))
-      {
-        // get the weight
-        var weight = (wasMagnetUsed ? options.MagnetsWeight : 1);
-
-        // we can now classify it.
-        await TheEngine.Categories.ClassifyAsync(newMail, (uint) categoryId, weight ).ConfigureAwait( false );
-      }
-
-      try
-      {
-        // try and move 
         // add it to the mail processor.
-        TheMailProcessor.Add(categoryId, entryIdItem);
+        TheMailProcessor.Add( entryIdItem );
       }
       catch (System.Exception ex)
       {
         TheEngine.LogError(ex.ToString());
-
-        watch.Checkpoint( $"Could not move : {newMail.Subject}, {ex.StackTrace} {{0}}");
-        return false;
+        return Task.FromResult(false);
       }
-      return true;
+      return Task.FromResult(true);
     }
   }
 }

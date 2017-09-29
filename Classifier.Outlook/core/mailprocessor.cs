@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
+using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
@@ -26,7 +27,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The mail items we want to move and the categories we are moving them to.
     /// </summary>
-    private Dictionary<string, int> _mailItems;
+    private List<string> _mailItems;
 
     /// <summary>
     /// Our lock...
@@ -48,20 +49,19 @@ namespace myoddweb.classifier.core
 
       _engine = engine;
       _session = session;
-      _mailItems = new Dictionary<string, int>();
+      _mailItems = new List<string>();
     }
 
     /// <summary>
     /// Add a mail item to be moved to the folder.
     /// </summary>
-    /// <param name="categoryId">Where we want to move this to</param>
     /// <param name="entryIdItem">The item we are moving.</param>
-    public void Add(int categoryId, string entryIdItem)
+    public void Add(string entryIdItem)
     {
       lock (_lock)
       {
         //  add this item to our list.
-        _mailItems[entryIdItem] = categoryId;
+        _mailItems.Add( entryIdItem );
 
         // start the timer
         StartTimer();
@@ -117,20 +117,79 @@ namespace myoddweb.classifier.core
         var tasks = new List<Task>();
         foreach (var mailItem in _mailItems)
         {
-          tasks.Add( HandleItem(mailItem.Value, mailItem.Key) );
+          tasks.Add( HandleItem(mailItem ) );
         }
 
         // wait for all the tasks now.
         Task.WaitAll(tasks.ToArray());
 
         // clear the list.
-        _mailItems = new Dictionary<string, int>();
+        _mailItems = new List<string>();
       }
       return Task.FromResult(true);
     }
 
-    private Task<bool> HandleItem(int categoryId, string entryIdItem)
-    { 
+    private async Task<bool> HandleItem( string entryIdItem)
+    {
+      Outlook.MailItem mailItem = null;
+      try
+      {
+        // new email has arrived, we need to try and classify it.
+        mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
+      }
+      catch (System.Runtime.InteropServices.COMException e)
+      {
+        _engine.LogError(e.ToString());
+
+        // Could not find that message anymore
+        // @todo log this entry id could not be located.
+      }
+
+      if (mailItem == null)
+      {
+        _engine.LogWarning($"Could not locate mail item {entryIdItem} to move.");
+        return false;
+      }
+
+      // the message note.
+      if (!Categories.IsUsableClassNameForClassification(mailItem?.MessageClass))
+      {
+        return false;
+      }
+
+      // start the watch
+      var watch = StopWatch.Start(_engine);
+
+      // look for the category
+      var guessCategoryResponse = await _engine.Categories.CategorizeAsync(mailItem).ConfigureAwait(false);
+
+      // 
+      var categoryId = guessCategoryResponse.CategoryId;
+      var wasMagnetUsed = guessCategoryResponse.WasMagnetUsed;
+
+      // did we find a category?
+      if (-1 == categoryId)
+      {
+        _engine.LogVerbose($"I could not classify the new message {entryIdItem} into any categories. ('{mailItem.Subject}')");
+        watch.Checkpoint("I could not classify the new message into any categories: (in: {0})");
+        return false;
+      }
+
+      // 
+      watch.Checkpoint($"I classified the new message category : {categoryId} (in: {{0}})");
+
+      //
+      // Do we want to train this
+      var options = _engine.Options;
+      if (options.ReAutomaticallyTrainMessages || (wasMagnetUsed && options.ReAutomaticallyTrainMagnetMessages))
+      {
+        // get the weight
+        var weight = (wasMagnetUsed ? options.MagnetsWeight : 1);
+
+        // we can now classify it.
+        await _engine.Categories.ClassifyAsync(mailItem, (uint)categoryId, weight).ConfigureAwait(false);
+      }
+
       try
       {
         // get the posible folder.
@@ -141,28 +200,7 @@ namespace myoddweb.classifier.core
           _engine.LogWarning($"Could not locate folder for category {categoryId}, cannot move item.");
 
           //  the user does not want to move to another folder.
-          return Task.FromResult( false );
-        }
-
-        Outlook.MailItem mailItem;
-        try
-        {
-          // new email has arrived, we need to try and classify it.
-          mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
-        }
-        catch (System.Runtime.InteropServices.COMException e)
-        {
-          // log it.
-          _engine.LogError($"Could not locate mail item {entryIdItem} to move, an exception was thrown, {e}.");
-
-          // Could not find that message anymore
-          return Task.FromResult(false);
-        }
-
-        if (mailItem == null)
-        {
-          _engine.LogWarning($"Could not locate mail item {entryIdItem} to move.");
-          return Task.FromResult(false);
+          return false;
         }
 
         // this is where we want to move to.
@@ -175,7 +213,7 @@ namespace myoddweb.classifier.core
         if (currentFolder.EntryID == folder.OutlookFolder.EntryID)
         {
           _engine.LogVerbose($"No need to move mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}', already in folder");
-          return Task.FromResult(true);
+          return true;
         }
 
         // if this is an ignored conversation, we will not move it.
@@ -189,9 +227,9 @@ namespace myoddweb.classifier.core
       catch (Exception ex)
       {
         _engine.LogError(ex.ToString());
-        return Task.FromResult(false);
+        return false;
       }
-      return Task.FromResult(true);
+      return true;
     }
 
     private static bool IsIgnored(Outlook._MailItem mailItem)
