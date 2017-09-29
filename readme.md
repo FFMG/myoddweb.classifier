@@ -45,8 +45,10 @@ But it does not take that long, really, invest a couple of day creating good Mag
 
 ## Versions
 #### 0.7.0.2 (29/09/2017)
-- Updated to 1.6.3 engine.
+- Updated to 1.6.3 engine + interface.
 - Added option to delay the classification, (to allow rules to fire).
+- Added option to set the number of entries we want to display.
+- Changed the behaviour of some option values to be read only, (you could not change the value anyway, so it was a bit misleading)
 - Changed GetLogEntries( ... ) to now return the entry ID as well.
   - The log summary now has the log id in it to make it easier to find.
 - Fixed an issue with the _order_ of the last 'x' log entries been displayed, (was mostly un-ordered).
