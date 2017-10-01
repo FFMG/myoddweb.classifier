@@ -4,11 +4,14 @@ using System.Threading.Tasks;
 using System.Timers;
 using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using myoddweb.classifier.utils;
 
 namespace myoddweb.classifier.core
 {
   internal class MailProcessor
   {
+    private const string ConfigName = "Processor.LastEmail";
+
     /// <summary>
     /// Our timer
     /// </summary>
@@ -33,6 +36,25 @@ namespace myoddweb.classifier.core
     /// Our lock...
     /// </summary>
     private readonly object _lock = new object();
+
+    /// <summary>
+    /// Get the last time we processed an email
+    /// Or the current time we we don't have a valid value.
+    /// </summary>
+    public DateTime LastProcessed {
+      get
+      {
+        lock(_lock)
+        {
+          var last = Convert.ToInt32(_engine.GetConfigWithDefault(ConfigName, "-1"));
+          if( -1 == last )
+          {
+            return DateTime.Now;
+          }
+          return Helpers.UnixToDateTime(last);
+        }
+      }
+    }
 
     public MailProcessor(Engine engine, Outlook.NameSpace session )
     {
@@ -129,13 +151,41 @@ namespace myoddweb.classifier.core
       return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Update the last actually process email.
+    /// </summary>
+    /// <param name="mailItem"></param>
+    private void HandleLastProcessedEmail(Outlook._MailItem mailItem)
+    {
+      lock (_lock)
+      {
+        // the current time
+        var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime);
+
+        // get the last processed time
+        var last = Convert.ToInt32(_engine.GetConfigWithDefault(ConfigName, "0"));
+
+        // did we handle something older?
+        if (last > when)
+        {
+          return;
+        }
+        _engine.SetConfig(ConfigName, Convert.ToString(when));
+      }
+    }
+
+    /// <summary>
+    /// Handle the email
+    /// </summary>
+    /// <param name="entryIdItem">The email we want to handle.</param>
+    /// <returns></returns>
     private async Task<bool> HandleItem( string entryIdItem)
     {
-      Outlook.MailItem mailItem = null;
+      Outlook._MailItem mailItem = null;
       try
       {
         // new email has arrived, we need to try and classify it.
-        mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook.MailItem;
+        mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook._MailItem;
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
@@ -150,6 +200,16 @@ namespace myoddweb.classifier.core
         _engine.LogWarning($"Could not locate mail item {entryIdItem} to move.");
         return false;
       }
+
+      // did we send this email?
+      if( MailWasSentByUs(mailItem))
+      {
+        _engine.LogWarning($"Mail item {entryIdItem} was sent by us and will not be classified.");
+        return false;
+      }
+
+      // either way, this is a valid 'processed' email
+      HandleLastProcessedEmail(mailItem);
 
       // the message note.
       if (!Categories.IsUsableClassNameForClassification(mailItem?.MessageClass))
@@ -207,7 +267,7 @@ namespace myoddweb.classifier.core
         var itemToFolder = folder.OutlookFolder;
 
         // don't move it if we don't need to.
-        var currentFolder = (Outlook.Folder)mailItem.Parent;
+        var currentFolder = (Outlook.MAPIFolder)mailItem.Parent;
 
         // if they are not the same, we can move it.
         if (currentFolder.EntryID == folder.OutlookFolder.EntryID)
@@ -230,6 +290,18 @@ namespace myoddweb.classifier.core
         return false;
       }
       return true;
+    }
+
+    /// <summary>
+    /// Check if a certain email was sent by us.
+    /// </summary>
+    /// <param name="mailItem">The mail item we are looking at.</param>
+    /// <returns></returns>
+    private bool MailWasSentByUs(Outlook._MailItem mailItem)
+    {
+      // if the received by name is null, then it means we did not receive it
+      // and if we did not receive it then we must have sent it...
+      return mailItem?.ReceivedByName == null;
     }
 
     private static bool IsIgnored(Outlook._MailItem mailItem)

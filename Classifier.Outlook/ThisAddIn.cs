@@ -1,6 +1,7 @@
 ﻿using myoddweb.classifier.core;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace myoddweb.classifier
 {
@@ -17,14 +18,19 @@ namespace myoddweb.classifier
 
     private MailProcessor _mailProcessor;
 
+    // all the ongoing tasks.
+    private List<Task> _tasks;
+
     private Engine TheEngine => _engine ?? (_engine = new Engine());
 
     private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor( TheEngine, _explorers.Application.Session));
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
+      _tasks = new List<Task>();
+
       // tell the engine what the folders are.
-      TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder() );
+      TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
 
       // get the explorers.
       _explorers = this.Application.Explorers;
@@ -34,7 +40,72 @@ namespace myoddweb.classifier
 
       // monitor for folder changes
       _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
-      foreach(Outlook.Folder folder in _folders )
+
+      // listen for new folders
+      RegisterAllFolders();
+
+      // get the old emails.
+      _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
+    }
+
+    // parse all the unprocessed emails.
+    private void ParseUnprocessedEmails()
+    {
+      // get the last time we processed an email and create a filter for it.
+      var lastProccessed = TheMailProcessor.LastProcessed;
+      var filter = $"[ReceivedTime]>'{lastProccessed.ToString("G")}'";
+
+      // then parse all the folders.
+      ParseUnprocessedEmailsInFolders(_folders, filter);
+    }
+
+    private void ParseUnprocessedEmailsInFolders( Outlook._Folders folders, string restrictFolder )
+    {
+      try
+      {
+        // do we have any folders? should never be null...
+        if( folders == null )
+        {
+          return;
+        }
+
+        foreach (Outlook.MAPIFolder folder in folders )
+        {
+          ParseUnprocessedEmailsInFolder(folder, restrictFolder);
+        }
+      }
+      catch (System.Exception e)
+      {
+        TheEngine.LogError($"There was an exception looking at unprocessed folders : {e}");
+      }
+    }
+
+    private void ParseUnprocessedEmailsInFolder(Outlook.MAPIFolder folder, string restrictFolder)
+    {
+      // do the sub folders.
+      ParseUnprocessedEmailsInFolders(folder.Folders, restrictFolder);
+
+      // is it a mail folder?
+      if (folder.DefaultItemType != Outlook.OlItemType.olMailItem)
+      {
+        return;
+      }
+
+      var restrictedItems = folder.Items.Restrict(restrictFolder);
+      foreach (var item in restrictedItems)
+      {
+        // get the mail item
+        var mailItem = item as Outlook._MailItem;
+        if (mailItem != null)
+        {
+          TheMailProcessor.Add(mailItem.EntryID);
+        }
+      }
+    }
+
+    private void RegisterAllFolders()
+    {
+      foreach (Outlook.Folder folder in _folders)
       {
         folder.Items.ItemAdd += ItemAdd;
       }
@@ -70,6 +141,7 @@ namespace myoddweb.classifier
 
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
     {
+      Task.WaitAll(_tasks?.ToArray() );
       // Note: Outlook no longer raises this event. If you have code that 
       //    must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
     }
