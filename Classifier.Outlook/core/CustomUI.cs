@@ -326,7 +326,7 @@ namespace myoddweb.classifier.core
 
         // if we currently have a category and we only want to check the
         // unknown categories, then we musn't check.
-        if (currentCategoryId != -1 && _engine.Options.CheckIfUnownCategory)
+        if (currentCategoryId != -1 && _engine.Options.CheckIfUnKnownCategory)
         {
           return guessCategoryResponse;
         }

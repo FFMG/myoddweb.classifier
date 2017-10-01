@@ -32,7 +32,9 @@ namespace myoddweb.classifier.core
 
     private bool? _reCheckCategories;
 
-    private bool? _checkIfUnownCategory;
+    private bool? _checkIfUnknownCategory;
+
+    private bool? _checkUnProcessedEmailsOnStartUp;
 
     private bool? _reCheckIfCtrlIsDown;
 
@@ -54,7 +56,7 @@ namespace myoddweb.classifier.core
 
     /// <summary>
     /// (re) Check all the categories all the time.
-    /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
+    /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
     /// The net effect of that would be to only check if we don't already know the value.
     /// </summary>
     public uint MinPercentage
@@ -88,10 +90,10 @@ namespace myoddweb.classifier.core
         _engine?.SetConfig("Option.ClassifyDelaySeconds", Convert.ToString(value));
       }
     }
-    
+
     /// <summary>
     /// (re) Check all the categories all the time.
-    /// This is on by default as we have the other default option "CheckIfUnownCategory" also set to on.
+    /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
     /// The net effect of that would be to only check if we don't already know the value.
     /// </summary>
     public bool ReCheckCategories
@@ -247,20 +249,38 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
-    /// Check the category only if we don't currently have a valid value.
-    /// The default is to get the value if the value is not known.
+    /// Mainly used for exchange, when outlook starts we want to check unprocessed emails.
+    /// In some cases emails are 'received' even if outlook is not running.
     /// </summary>
-    public bool CheckIfUnownCategory
+    public bool CheckUnProcessedEmailsOnStartUp
     {
       get
       {
-        return (bool)(_checkIfUnownCategory ??
-                       (_checkIfUnownCategory = ("1" == _engine?.GetConfigWithDefault("Option.CheckIfUnownCategory", "1"))));
+        return (bool)(_checkUnProcessedEmailsOnStartUp ??
+                       (_checkUnProcessedEmailsOnStartUp = ("1" == _engine?.GetConfigWithDefault("Option.CheckUnProcessedEmailsOnStartUp", "1"))));
       }
       set
       {
-        _checkIfUnownCategory = value;
-        _engine?.SetConfig("Option.CheckIfUnownCategory", (value ? "1" : "0"));
+        _checkUnProcessedEmailsOnStartUp = value;
+        _engine?.SetConfig("Option.CheckUnProcessedEmailsOnStartUp", (value ? "1" : "0"));
+      }
+    }
+
+    /// <summary>
+    /// Check the category only if we don't currently have a valid value.
+    /// The default is to get the value if the value is not known.
+    /// </summary>
+    public bool CheckIfUnKnownCategory
+    {
+      get
+      {
+        return (bool)(_checkIfUnknownCategory ??
+                       (_checkIfUnknownCategory = ("1" == _engine?.GetConfigWithDefault("Option.CheckIfUnKnownCategory", "1"))));
+      }
+      set
+      {
+        _checkIfUnknownCategory = value;
+        _engine?.SetConfig("Option.CheckIfUnKnownCategory", (value ? "1" : "0"));
       }
     }
 

@@ -46,6 +46,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 ## Versions
 #### 0.7.0.2 (29/09/2017)
 - We now 'timestamp' the last received time, that way, we can check emails that arrived while the classifier was not running, (in Exchanges for example).
+  - Added CheckUnProcessedEmailsOnStartUp option in case you don't want that check, (if you are happy with the Exchange rules been applied or if you have another outlook applying rules already). 
 - Updated to 1.6.3 engine + interface.
 - Added option to delay the classification, (to allow rules to fire).
 - Added option to set the number of entries we want to display.
@@ -53,6 +54,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - Changed GetLogEntries( ... ) to now return the entry ID as well.
   - The log summary now has the log id in it to make it easier to find.
 - Fixed an issue with the _order_ of the last 'x' log entries been displayed, (was mostly un-ordered).
+- Fixed a option spelling mistake, "CheckIfUnownCategory" > "CheckIfUnKnownCategory".
 
 #### 0.7.0.1 (17/09/2017)
 - Updated to 1.6.2 engine.

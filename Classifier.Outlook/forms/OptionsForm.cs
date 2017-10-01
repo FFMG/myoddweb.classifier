@@ -278,7 +278,10 @@ namespace myoddweb.classifier.forms
       _options.ReCheckCategories = reCheckCategories.Checked;
 
       // and if we want to check unknown categories.
-      _options.CheckIfUnownCategory = checkCategoryIfUnknown.Checked;
+      _options.CheckIfUnKnownCategory = checkCategoryIfUnknown.Checked;
+
+      // do we want to check unprocessed emails on startup
+      _options.CheckUnProcessedEmailsOnStartUp = checkUnProcessedEmails.Checked;
 
       // if we want to check only if the ctrl key is down.
       _options.ReCheckIfCtrlKeyIsDown = reCheckIfCtrl.Checked;
@@ -430,7 +433,10 @@ namespace myoddweb.classifier.forms
       reCheckCategories.Checked = _options.ReCheckCategories;
 
       // and if we only want to check unknown categories.
-      checkCategoryIfUnknown.Checked = _options.CheckIfUnownCategory;
+      checkCategoryIfUnknown.Checked = _options.CheckIfUnKnownCategory;
+
+      // do we want to check unprocessed emails on startup
+      checkUnProcessedEmails.Checked = _options.CheckUnProcessedEmailsOnStartUp;
 
       // we only check unknown categories if we check categories.
       checkCategoryIfUnknown.Enabled = reCheckCategories.Checked;

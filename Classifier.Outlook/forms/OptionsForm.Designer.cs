@@ -55,6 +55,9 @@
       this.labelCommonWord = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.labelDisplaySizeDefault = new System.Windows.Forms.Label();
+      this.comboDisplaySize = new System.Windows.Forms.ComboBox();
+      this.label9 = new System.Windows.Forms.Label();
       this.Log = new System.Windows.Forms.Button();
       this.labelDefaultRetention = new System.Windows.Forms.Label();
       this.comboRetention = new System.Windows.Forms.ComboBox();
@@ -62,9 +65,7 @@
       this.labelDefaultLogLevel = new System.Windows.Forms.Label();
       this.comboLogLevel = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.comboDisplaySize = new System.Windows.Forms.ComboBox();
-      this.labelDisplaySizeDefault = new System.Windows.Forms.Label();
+      this.checkUnProcessedEmails = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -87,7 +88,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(265, 444);
+      this.ok.Location = new System.Drawing.Point(267, 465);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -98,7 +99,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(346, 444);
+      this.button1.Location = new System.Drawing.Point(348, 465);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(79, 23);
       this.button1.TabIndex = 9;
@@ -173,7 +174,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(12, 444);
+      this.Categories.Location = new System.Drawing.Point(12, 465);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -183,7 +184,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(97, 444);
+      this.Magnets.Location = new System.Drawing.Point(97, 465);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -226,6 +227,7 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.checkUnProcessedEmails);
       this.groupBox3.Controls.Add(this.label8);
       this.groupBox3.Controls.Add(this.labelDefaultClassifyDelay);
       this.groupBox3.Controls.Add(this.label6);
@@ -238,7 +240,7 @@
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(414, 122);
+      this.groupBox3.Size = new System.Drawing.Size(414, 143);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
@@ -364,12 +366,38 @@
       this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
       this.groupBox4.Controls.Add(this.comboLogLevel);
       this.groupBox4.Controls.Add(this.label5);
-      this.groupBox4.Location = new System.Drawing.Point(13, 335);
+      this.groupBox4.Location = new System.Drawing.Point(13, 356);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(414, 103);
       this.groupBox4.TabIndex = 15;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Log";
+      // 
+      // labelDisplaySizeDefault
+      // 
+      this.labelDisplaySizeDefault.AutoSize = true;
+      this.labelDisplaySizeDefault.Location = new System.Drawing.Point(254, 73);
+      this.labelDisplaySizeDefault.Name = "labelDisplaySizeDefault";
+      this.labelDisplaySizeDefault.Size = new System.Drawing.Size(45, 13);
+      this.labelDisplaySizeDefault.TabIndex = 21;
+      this.labelDisplaySizeDefault.Text = "[default]";
+      // 
+      // comboDisplaySize
+      // 
+      this.comboDisplaySize.FormattingEnabled = true;
+      this.comboDisplaySize.Location = new System.Drawing.Point(115, 70);
+      this.comboDisplaySize.Name = "comboDisplaySize";
+      this.comboDisplaySize.Size = new System.Drawing.Size(98, 21);
+      this.comboDisplaySize.TabIndex = 20;
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(6, 73);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(85, 13);
+      this.label9.TabIndex = 19;
+      this.label9.Text = "Display Log Size";
       // 
       // Log
       // 
@@ -433,37 +461,21 @@
       this.label5.TabIndex = 0;
       this.label5.Text = "Level";
       // 
-      // label9
+      // checkUnProcessedEmails
       // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(6, 73);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(85, 13);
-      this.label9.TabIndex = 19;
-      this.label9.Text = "Display Log Size";
-      // 
-      // comboDisplaySize
-      // 
-      this.comboDisplaySize.FormattingEnabled = true;
-      this.comboDisplaySize.Location = new System.Drawing.Point(115, 70);
-      this.comboDisplaySize.Name = "comboDisplaySize";
-      this.comboDisplaySize.Size = new System.Drawing.Size(98, 21);
-      this.comboDisplaySize.TabIndex = 20;
-      // 
-      // labelDisplaySizeDefault
-      // 
-      this.labelDisplaySizeDefault.AutoSize = true;
-      this.labelDisplaySizeDefault.Location = new System.Drawing.Point(254, 73);
-      this.labelDisplaySizeDefault.Name = "labelDisplaySizeDefault";
-      this.labelDisplaySizeDefault.Size = new System.Drawing.Size(45, 13);
-      this.labelDisplaySizeDefault.TabIndex = 21;
-      this.labelDisplaySizeDefault.Text = "[default]";
+      this.checkUnProcessedEmails.AutoSize = true;
+      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 117);
+      this.checkUnProcessedEmails.Name = "checkUnProcessedEmails";
+      this.checkUnProcessedEmails.Size = new System.Drawing.Size(203, 17);
+      this.checkUnProcessedEmails.TabIndex = 19;
+      this.checkUnProcessedEmails.Text = "Check unprocessed emails on startup";
+      this.checkUnProcessedEmails.UseVisualStyleBackColor = true;
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(437, 475);
+      this.ClientSize = new System.Drawing.Size(437, 497);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
@@ -533,5 +545,6 @@
     private System.Windows.Forms.Label labelDisplaySizeDefault;
     private System.Windows.Forms.ComboBox comboDisplaySize;
     private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.CheckBox checkUnProcessedEmails;
   }
 }

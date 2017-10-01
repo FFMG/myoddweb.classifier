@@ -44,8 +44,11 @@ namespace myoddweb.classifier
       // listen for new folders
       RegisterAllFolders();
 
-      // get the old emails.
-      _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
+      // do we want to check unprocessed emails?
+      if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
+      {
+        _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
+      }
     }
 
     // parse all the unprocessed emails.
@@ -98,6 +101,7 @@ namespace myoddweb.classifier
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
     {
       Task.WaitAll(_tasks?.ToArray() );
+      _tasks = null;
       // Note: Outlook no longer raises this event. If you have code that 
       //    must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
     }
