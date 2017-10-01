@@ -5,6 +5,7 @@ using System.Timers;
 using myoddweb.viewer.utils;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.utils;
+using System.Linq;
 
 namespace myoddweb.classifier.core
 {
@@ -80,10 +81,25 @@ namespace myoddweb.classifier.core
     /// <param name="entryIdItem">The item we are moving.</param>
     public void Add(string entryIdItem)
     {
+      Add(new List<string> { entryIdItem });
+    }
+
+    /// <summary>
+    /// Add a range of mail entry ids to our list.
+    /// </summary>
+    /// <param name="ids"></param>
+    public void Add(List<string> ids)
+    {
+      //  anything to do?
+      if( !ids.Any() )
+      {
+        return;
+      }
+
       lock (_lock)
       {
         //  add this item to our list.
-        _mailItems.Add( entryIdItem );
+        _mailItems.AddRange( ids );
 
         // start the timer
         StartTimer();

@@ -194,6 +194,7 @@
     <Compile Include="core\Rules.cs" />
     <Compile Include="core\folder.cs" />
     <Compile Include="core\folders.cs" />
+    <Compile Include="core\unprocessedfolders.cs" />
     <Compile Include="forms\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>

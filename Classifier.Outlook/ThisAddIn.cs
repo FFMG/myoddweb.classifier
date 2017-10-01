@@ -51,71 +51,27 @@ namespace myoddweb.classifier
     // parse all the unprocessed emails.
     private void ParseUnprocessedEmails()
     {
-      // get the last time we processed an email and create a filter for it.
-      var lastProccessed = TheMailProcessor.LastProcessed;
-      var filter = $"[ReceivedTime]>'{lastProccessed.ToString("G")}'";
-
-      // then parse all the folders.
-      ParseUnprocessedEmailsInFolders(_folders, filter);
-    }
-
-    private void ParseUnprocessedEmailsInFolders( Outlook._Folders folders, string restrictFolder )
-    {
-      try
-      {
-        // do we have any folders? should never be null...
-        if( folders == null )
-        {
-          return;
-        }
-
-        foreach (Outlook.MAPIFolder folder in folders )
-        {
-          ParseUnprocessedEmailsInFolder(folder, restrictFolder);
-        }
-      }
-      catch (System.Exception e)
-      {
-        TheEngine.LogError($"There was an exception looking at unprocessed folders : {e}");
-      }
-    }
-
-    private void ParseUnprocessedEmailsInFolder(Outlook.MAPIFolder folder, string restrictFolder)
-    {
-      // do the sub folders.
-      ParseUnprocessedEmailsInFolders(folder.Folders, restrictFolder);
-
-      // is it a mail folder?
-      if (folder.DefaultItemType != Outlook.OlItemType.olMailItem)
-      {
-        return;
-      }
-
-      var restrictedItems = folder.Items.Restrict(restrictFolder);
-      foreach (var item in restrictedItems)
-      {
-        // get the mail item
-        var mailItem = item as Outlook._MailItem;
-        if (mailItem != null)
-        {
-          TheMailProcessor.Add(mailItem.EntryID);
-        }
-      }
+      var folders = new UnProcessedFolders(TheEngine, TheMailProcessor);
+      folders.Process(_folders);
     }
 
     private void RegisterAllFolders()
     {
       foreach (Outlook.Folder folder in _folders)
       {
-        folder.Items.ItemAdd += ItemAdd;
+        folder.Items.ItemAdd += FolderItemAdd;
       }
     }
     
-    private void ItemAdd(object item )
+    /// <summary>
+    /// Called when an item is added to a folder.
+    /// </summary>
+    /// <param name="item">What is been added.</param>
+    private void FolderItemAdd(object item )
     {
       try
       {
-        var mailItem = (Outlook.MailItem)item;
+        var mailItem = (Outlook._MailItem)item;
         if (mailItem == null)
         {
           return;
