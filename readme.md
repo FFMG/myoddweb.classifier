@@ -1,4 +1,4 @@
-# MyOddWeb.Classifier [![release](https://img.shields.io/badge/release-v0.7.0.2-brightgreen.png?style=default)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
+# MyOddWeb.Classifier [![release](https://img.shields.io/badge/release-v0.7.0.3-brightgreen.png?style=default)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
 
 <!---
 Mono does not work currently...
@@ -44,6 +44,10 @@ But it does not take that long, really, invest a couple of day creating good Mag
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.7.0.3 (02/10/2017)
+- Added Minimum category percent.
+- Fixed wording of "Common word percent", (functionality is ok, just wording).
+
 #### 0.7.0.2 (02/10/2017)
 - We now 'timestamp' the last received time, that way, we can check emails that arrived while the classifier was not running, (in Exchanges for example).
   - Added CheckUnProcessedEmailsOnStartUp option in case you don't want that check, (if you are happy with the Exchange rules been applied or if you have another outlook applying rules already). 
