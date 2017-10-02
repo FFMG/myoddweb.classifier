@@ -18,6 +18,7 @@ namespace myoddweb.classifier.core
       UserWeight = 10,
       MagnetsWeight = 2,
       CommonWordsMinPercent = 50,
+      MinPercentage = 75,
       LogLevel = LogLevels.Error,
       LogRetention = 30,
       LogDisplaySize = 100,
@@ -64,7 +65,7 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_minPercentage ??
-                       (_minPercentage = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.MinPercentage", "75")))));
+                       (_minPercentage = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.MinPercentage", Convert.ToString((uint)DefaultOptions.MinPercentage))))));
       }
       set
       {

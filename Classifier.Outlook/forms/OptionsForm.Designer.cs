@@ -44,6 +44,7 @@
       this.labelUserTrained = new System.Windows.Forms.Label();
       this.labelMagnets = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.checkUnProcessedEmails = new System.Windows.Forms.CheckBox();
       this.label8 = new System.Windows.Forms.Label();
       this.labelDefaultClassifyDelay = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
@@ -65,13 +66,17 @@
       this.labelDefaultLogLevel = new System.Windows.Forms.Label();
       this.comboLogLevel = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.checkUnProcessedEmails = new System.Windows.Forms.CheckBox();
+      this.numericMinPercentage = new System.Windows.Forms.NumericUpDown();
+      this.labelMinPercentage = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label12 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClassifyDelay)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).BeginInit();
       this.groupBox4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).BeginInit();
       this.SuspendLayout();
       // 
       // reCheckCategories
@@ -88,7 +93,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(267, 465);
+      this.ok.Location = new System.Drawing.Point(266, 501);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -99,7 +104,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(348, 465);
+      this.button1.Location = new System.Drawing.Point(347, 501);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(79, 23);
       this.button1.TabIndex = 9;
@@ -174,7 +179,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(12, 465);
+      this.Categories.Location = new System.Drawing.Point(13, 492);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -184,7 +189,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(97, 465);
+      this.Magnets.Location = new System.Drawing.Point(98, 492);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -227,6 +232,10 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.label12);
+      this.groupBox3.Controls.Add(this.numericMinPercentage);
+      this.groupBox3.Controls.Add(this.labelMinPercentage);
+      this.groupBox3.Controls.Add(this.label11);
       this.groupBox3.Controls.Add(this.checkUnProcessedEmails);
       this.groupBox3.Controls.Add(this.label8);
       this.groupBox3.Controls.Add(this.labelDefaultClassifyDelay);
@@ -240,15 +249,25 @@
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(414, 143);
+      this.groupBox3.Size = new System.Drawing.Size(414, 170);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
       // 
+      // checkUnProcessedEmails
+      // 
+      this.checkUnProcessedEmails.AutoSize = true;
+      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 145);
+      this.checkUnProcessedEmails.Name = "checkUnProcessedEmails";
+      this.checkUnProcessedEmails.Size = new System.Drawing.Size(203, 17);
+      this.checkUnProcessedEmails.TabIndex = 19;
+      this.checkUnProcessedEmails.Text = "Check unprocessed emails on startup";
+      this.checkUnProcessedEmails.UseVisualStyleBackColor = true;
+      // 
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(84, 93);
+      this.label8.Location = new System.Drawing.Point(79, 121);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(27, 13);
       this.label8.TabIndex = 18;
@@ -257,7 +276,7 @@
       // labelDefaultClassifyDelay
       // 
       this.labelDefaultClassifyDelay.AutoSize = true;
-      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(255, 93);
+      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(255, 121);
       this.labelDefaultClassifyDelay.Name = "labelDefaultClassifyDelay";
       this.labelDefaultClassifyDelay.Size = new System.Drawing.Size(45, 13);
       this.labelDefaultClassifyDelay.TabIndex = 17;
@@ -266,7 +285,7 @@
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(112, 93);
+      this.label6.Location = new System.Drawing.Point(112, 121);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(130, 13);
       this.label6.TabIndex = 16;
@@ -274,7 +293,7 @@
       // 
       // numericUpDownClassifyDelay
       // 
-      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 91);
+      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 119);
       this.numericUpDownClassifyDelay.Minimum = new decimal(new int[] {
             1,
             0,
@@ -292,7 +311,7 @@
       // checkAutomaticallyMagnetTrain
       // 
       this.checkAutomaticallyMagnetTrain.AutoSize = true;
-      this.checkAutomaticallyMagnetTrain.Location = new System.Drawing.Point(23, 68);
+      this.checkAutomaticallyMagnetTrain.Location = new System.Drawing.Point(23, 96);
       this.checkAutomaticallyMagnetTrain.Name = "checkAutomaticallyMagnetTrain";
       this.checkAutomaticallyMagnetTrain.Size = new System.Drawing.Size(298, 17);
       this.checkAutomaticallyMagnetTrain.TabIndex = 14;
@@ -302,7 +321,7 @@
       // checkAutomaticallyTrain
       // 
       this.checkAutomaticallyTrain.AutoSize = true;
-      this.checkAutomaticallyTrain.Location = new System.Drawing.Point(6, 45);
+      this.checkAutomaticallyTrain.Location = new System.Drawing.Point(6, 73);
       this.checkAutomaticallyTrain.Name = "checkAutomaticallyTrain";
       this.checkAutomaticallyTrain.Size = new System.Drawing.Size(233, 17);
       this.checkAutomaticallyTrain.TabIndex = 13;
@@ -350,9 +369,9 @@
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(112, 22);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(130, 13);
+      this.label1.Size = new System.Drawing.Size(113, 13);
       this.label1.TabIndex = 8;
-      this.label1.Text = "Delay before classification";
+      this.label1.Text = "Common word percent";
       // 
       // groupBox4
       // 
@@ -366,7 +385,7 @@
       this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
       this.groupBox4.Controls.Add(this.comboLogLevel);
       this.groupBox4.Controls.Add(this.label5);
-      this.groupBox4.Location = new System.Drawing.Point(13, 356);
+      this.groupBox4.Location = new System.Drawing.Point(12, 383);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(414, 103);
       this.groupBox4.TabIndex = 15;
@@ -461,21 +480,55 @@
       this.label5.TabIndex = 0;
       this.label5.Text = "Level";
       // 
-      // checkUnProcessedEmails
+      // numericMinPercentage
       // 
-      this.checkUnProcessedEmails.AutoSize = true;
-      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 117);
-      this.checkUnProcessedEmails.Name = "checkUnProcessedEmails";
-      this.checkUnProcessedEmails.Size = new System.Drawing.Size(203, 17);
-      this.checkUnProcessedEmails.TabIndex = 19;
-      this.checkUnProcessedEmails.Text = "Check unprocessed emails on startup";
-      this.checkUnProcessedEmails.UseVisualStyleBackColor = true;
+      this.numericMinPercentage.Location = new System.Drawing.Point(7, 45);
+      this.numericMinPercentage.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericMinPercentage.Name = "numericMinPercentage";
+      this.numericMinPercentage.Size = new System.Drawing.Size(72, 20);
+      this.numericMinPercentage.TabIndex = 22;
+      this.numericMinPercentage.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // labelMinPercentage
+      // 
+      this.labelMinPercentage.AutoSize = true;
+      this.labelMinPercentage.Location = new System.Drawing.Point(256, 48);
+      this.labelMinPercentage.Name = "labelMinPercentage";
+      this.labelMinPercentage.Size = new System.Drawing.Size(45, 13);
+      this.labelMinPercentage.TabIndex = 21;
+      this.labelMinPercentage.Text = "[default]";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(113, 48);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(131, 13);
+      this.label11.TabIndex = 20;
+      this.label11.Text = "Minimum category percent";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(82, 47);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(15, 13);
+      this.label12.TabIndex = 23;
+      this.label12.Text = "%";
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(437, 497);
+      this.ClientSize = new System.Drawing.Size(437, 528);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
@@ -502,6 +555,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).EndInit();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -546,5 +600,9 @@
     private System.Windows.Forms.ComboBox comboDisplaySize;
     private System.Windows.Forms.Label label9;
     private System.Windows.Forms.CheckBox checkUnProcessedEmails;
+    private System.Windows.Forms.Label label12;
+    private System.Windows.Forms.NumericUpDown numericMinPercentage;
+    private System.Windows.Forms.Label labelMinPercentage;
+    private System.Windows.Forms.Label label11;
   }
 }
