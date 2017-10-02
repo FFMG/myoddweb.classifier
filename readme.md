@@ -46,9 +46,6 @@ But it does not take that long, really, invest a couple of day creating good Mag
 ## Versions
 #### 0.7.0.3 (02/10/2017)
 - Added Minimum category percent.
-- Fixed wording of "Common word percent", (functionality is ok, just wording).
-
-#### 0.7.0.2 (02/10/2017)
 - We now 'timestamp' the last received time, that way, we can check emails that arrived while the classifier was not running, (in Exchanges for example).
   - Added CheckUnProcessedEmailsOnStartUp option in case you don't want that check, (if you are happy with the Exchange rules been applied or if you have another outlook applying rules already). 
 - Updated to 1.6.3 engine + interface.
@@ -59,6 +56,7 @@ But it does not take that long, really, invest a couple of day creating good Mag
   - The log summary now has the log id in it to make it easier to find.
 - Fixed an issue with the _order_ of the last 'x' log entries been displayed, (was mostly un-ordered).
 - Fixed a option spelling mistake, "CheckIfUnownCategory" > "CheckIfUnKnownCategory".
+- Fixed wording of "Common word percent", (functionality is ok, just wording).
 
 #### 0.7.0.1 (17/09/2017)
 - Updated to 1.6.2 engine.
