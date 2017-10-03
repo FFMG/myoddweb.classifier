@@ -295,6 +295,9 @@ namespace myoddweb.classifier.forms
       // save the percent option
       _options.CommonWordsMinPercent = GetCommonWordsMinPercent();
 
+      // the min category percent
+      _options.MinPercentage = GetMinPercentage();
+
       // automatically train messages with magnet
       _options.ReAutomaticallyTrainMagnetMessages = checkAutomaticallyMagnetTrain.Checked;
 
@@ -338,6 +341,20 @@ namespace myoddweb.classifier.forms
       return ((ComboboxLogLevelValue)comboLogLevel.SelectedItem).Level;
     }
 
+    /// <summary>
+    /// The minimum percent value a message must be in a category for the classifier to use it.
+    /// </summary>
+    /// <returns></returns>
+    private uint GetMinPercentage()
+    {
+      return (uint)numericMinPercentage.Value;
+    }
+
+    /// <summary>
+    /// Percentage word common before they are ignored.
+    /// If a word is 50% common accross all the categories, then we ignore it.
+    /// </summary>
+    /// <returns></returns>
     private uint GetCommonWordsMinPercent()
     {
       return (uint)numericCommonPercent.Value;
@@ -453,8 +470,9 @@ namespace myoddweb.classifier.forms
       // rebuild the combo
       RebuildCombos();
 
-      // the spinner
-      RebuildPercentSpinner();
+      // the spinners
+      RebuildCommonPercentSpinner();
+      RebuildMinPercentageSpinner();
 
       // the classify delay in seconds.
       RebuildClassifyDelay();
@@ -474,6 +492,9 @@ namespace myoddweb.classifier.forms
       labelCommonWord.Text = $"[ {(int)Options.DefaultOptions.CommonWordsMinPercent}% ]";
       labelCommonWord.ForeColor = Color.DarkGray;
 
+      labelMinPercentage.Text = $"[ {(int)Options.DefaultOptions.MinPercentage}% ]";
+      labelCommonWord.ForeColor = Color.DarkGray;
+
       labelDefaultLogLevel.Text = $"[ {(Options.LogLevels)Options.DefaultOptions.LogLevel} ]";
       labelDefaultLogLevel.ForeColor = Color.DarkGray;
 
@@ -487,12 +508,20 @@ namespace myoddweb.classifier.forms
       labelDisplaySizeDefault.ForeColor = Color.DarkGray;
     }
 
-    private void RebuildPercentSpinner()
+    private void RebuildCommonPercentSpinner()
     {
       numericCommonPercent.Maximum = 100;
       numericCommonPercent.Minimum = 1;
       numericCommonPercent.ReadOnly = false;
       numericCommonPercent.Value = _options.CommonWordsMinPercent;
+    }
+
+    private void RebuildMinPercentageSpinner()
+    {
+      numericMinPercentage.Maximum = 100;
+      numericMinPercentage.Minimum = 1;
+      numericMinPercentage.ReadOnly = false;
+      numericMinPercentage.Value = _options.MinPercentage;
     }
 
     private void RebuildClassifyDelay()
