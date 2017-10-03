@@ -17,6 +17,12 @@ Using the "Work" example above, if Bob from Human Resources sends you a joke ema
 
 ## How does it work
 
+### Documentation
+
+Visit the [wiki](https://github.com/FFMG/myoddweb.classifier/wiki).
+
+### General
+
 MyOddWeb is a [Naive Bayes classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier), in simple terms, it makes an educated guess as to what category the email might belong in considering all the thousand of emails that you might have already received. 
 
 At first, you 'train' your classifier with your own "Categories", what you consider a "joke" might be considered "NSFW" by others.
@@ -24,6 +30,8 @@ At first, you 'train' your classifier with your own "Categories", what you consi
 The more you train it, the better the classifier gets.
 
 But it does not take that long, really, invest a couple of day creating good Magnets and good Categories and in no time your classifier will be self sufficient. 
+
+MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 
 ## Setup
 ### From setup
