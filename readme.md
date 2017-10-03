@@ -53,6 +53,9 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 
 ## Versions
 #### 0.7.0.3 (02/10/2017)
+
+- Started work on the [wiki](https://github.com/FFMG/myoddweb.classifier/wiki).
+
 - Added Minimum category percent.
 - We now 'timestamp' the last received time, that way, we can check emails that arrived while the classifier was not running, (in Exchanges for example).
   - Added CheckUnProcessedEmailsOnStartUp option in case you don't want that check, (if you are happy with the Exchange rules been applied or if you have another outlook applying rules already). 
