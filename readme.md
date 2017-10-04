@@ -52,6 +52,10 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.7.0.5 (04/10/2017)
+
+- Changed the way he handle emails when the wait time is 0, (we handle it right away).
+
 #### 0.7.0.2-0.7.0.4 (04/10/2017)
 
 - Started work on the [wiki](https://github.com/FFMG/myoddweb.classifier/wiki).

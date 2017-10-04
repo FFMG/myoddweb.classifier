@@ -95,7 +95,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Get the classification delay in milliseconds.
     /// </summary>
-    public uint ClassifyDelayMillisecond => (ClassifyDelaySeconds*1000);
+    public uint ClassifyDelayMilliseconds => (ClassifyDelaySeconds*1000);
 
     /// <summary>
     /// (re) Check all the categories all the time.

@@ -99,10 +99,18 @@ namespace myoddweb.classifier.core
       lock (_lock)
       {
         //  add this item to our list.
-        _mailItems.AddRange( ids );
+        _mailItems.AddRange(ids);
 
-        // start the timer
-        StartTimer();
+        //  if the delay is set to 0 then do everything now.
+        if (0 == _engine.Options.ClassifyDelaySeconds)
+        {
+          HandleAllItems().Wait();
+        }
+        else
+        {
+          // start the timer
+          StartTimer();
+        }
       }
     }
 
@@ -114,8 +122,7 @@ namespace myoddweb.classifier.core
         StopTimer();
 
         // recreate the timer, we cannot use a value of 0 in the timer. 
-        // but we still want to use another thread to handle the call.
-        _ticker = new Timer(0 == _engine.Options.ClassifyDelayMillisecond ? 1 : _engine.Options.ClassifyDelayMillisecond);
+        _ticker = new Timer(0 == _engine.Options.ClassifyDelaySeconds ? 1 : _engine.Options.ClassifyDelayMilliseconds);
         _ticker.Elapsed += async (sender, e) => await HandleTimer();
         _ticker.AutoReset = true;
         _ticker.Enabled = true;
@@ -153,14 +160,22 @@ namespace myoddweb.classifier.core
         StopTimer();
 
         // handle all the mail items
-
-        // wait for all the tasks now.
-        Task.WaitAll(_mailItems.Select(HandleItem).Cast<Task>().ToArray());
-
-        // clear the list.
-        _mailItems = new List<string>();
+        HandleAllItems().Wait();
       }
       return Task.FromResult(true);
+    }
+
+    /// <summary>
+    /// Handle all the items that are in the queue.
+    /// </summary>
+    /// <returns></returns>
+    private async Task HandleAllItems()
+    {
+      // wait for all the tasks now.
+      await Task.WhenAll(_mailItems.Select(HandleItem).Cast<Task>().ToArray());
+
+      // clear the list.
+      _mailItems = new List<string>();
     }
 
     /// <summary>
@@ -202,9 +217,6 @@ namespace myoddweb.classifier.core
       catch (System.Runtime.InteropServices.COMException e)
       {
         _engine.LogError(e.ToString());
-
-        // Could not find that message anymore
-        // @todo log this entry id could not be located.
       }
 
       if (mailItem == null)
@@ -224,7 +236,7 @@ namespace myoddweb.classifier.core
       HandleLastProcessedEmail(mailItem);
 
       // the message note.
-      if (!Categories.IsUsableClassNameForClassification(mailItem?.MessageClass))
+      if (!Categories.IsUsableClassNameForClassification(mailItem.MessageClass))
       {
         return false;
       }
