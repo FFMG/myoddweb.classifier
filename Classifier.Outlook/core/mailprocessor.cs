@@ -113,8 +113,9 @@ namespace myoddweb.classifier.core
         //  stop it
         StopTimer();
 
-        // recreate it.
-        _ticker = new Timer(_engine.Options.ClassifyDelayMillisecond );
+        // recreate the timer, we cannot use a value of 0 in the timer. 
+        // but we still want to use another thread to handle the call.
+        _ticker = new Timer(0 == _engine.Options.ClassifyDelayMillisecond ? 1 : _engine.Options.ClassifyDelayMillisecond);
         _ticker.Elapsed += async (sender, e) => await HandleTimer();
         _ticker.AutoReset = true;
         _ticker.Enabled = true;
