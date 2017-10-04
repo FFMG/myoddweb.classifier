@@ -93,6 +93,11 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
+    /// Get the classification delay in milliseconds.
+    /// </summary>
+    public uint ClassifyDelayMillisecond => (ClassifyDelaySeconds*1000);
+
+    /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
     /// The net effect of that would be to only check if we don't already know the value.

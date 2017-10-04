@@ -114,7 +114,7 @@ namespace myoddweb.classifier.core
         StopTimer();
 
         // recreate it.
-        _ticker = new Timer(_engine.Options.ClassifyDelaySeconds);
+        _ticker = new Timer(_engine.Options.ClassifyDelayMillisecond );
         _ticker.Elapsed += async (sender, e) => await HandleTimer();
         _ticker.AutoReset = true;
         _ticker.Enabled = true;

@@ -52,7 +52,7 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.3 (02/10/2017)
+#### 0.7.0.2-0.7.0.4 (04/10/2017)
 
 - Started work on the [wiki](https://github.com/FFMG/myoddweb.classifier/wiki).
 
@@ -61,6 +61,7 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
   - Added CheckUnProcessedEmailsOnStartUp option in case you don't want that check, (if you are happy with the Exchange rules been applied or if you have another outlook applying rules already). 
 - Updated to 1.6.3 engine + interface.
 - Added option to delay the classification, (to allow rules to fire).
+  - Fixed a bug in the delayed emails (0.7.0.4).
 - Added option to set the number of entries we want to display.
 - Changed the behaviour of some option values to be read only, (you could not change the value anyway, so it was a bit misleading)
 - Changed GetLogEntries( ... ) to now return the entry ID as well.
