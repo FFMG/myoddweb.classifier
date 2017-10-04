@@ -152,14 +152,9 @@ namespace myoddweb.classifier.core
         StopTimer();
 
         // handle all the mail items
-        var tasks = new List<Task>();
-        foreach (var mailItem in _mailItems)
-        {
-          tasks.Add( HandleItem(mailItem ) );
-        }
 
         // wait for all the tasks now.
-        Task.WaitAll(tasks.ToArray());
+        Task.WaitAll(_mailItems.Select(HandleItem).Cast<Task>().ToArray());
 
         // clear the list.
         _mailItems = new List<string>();
