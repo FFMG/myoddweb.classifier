@@ -1,4 +1,4 @@
-# MyOddWeb.Classifier [![release](https://img.shields.io/badge/release-v0.7.0.4-brightgreen.png?style=default)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
+# MyOddWeb.Classifier [![Release](https://img.shields.io/badge/release-v0.7.0.4-brightgreen.png?style=flat)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
 
 <!---
 Mono does not work currently...
