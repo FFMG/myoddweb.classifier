@@ -383,8 +383,15 @@ namespace myoddweb.classifier.core
         return false;
       }
 
-      /*
       Outlook.MAPIFolder cas = _session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent.Folders["Conversation Action Settings"];
+      if (cas == null)
+      {
+        return false;
+      }
+
+      /*      
+      Outlook.Table table = cas.GetTable();
+
       foreach (var folderItem in cas.Items )
       {
         var item = folderItem as Outlook._MailItem;
