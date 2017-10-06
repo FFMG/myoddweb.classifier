@@ -359,7 +359,14 @@ namespace myoddweb.classifier.core
       return mailItem?.ReceivedByName == null;
     }
 
-    private static bool IsIgnored(Outlook._MailItem mailItem)
+    /// <summary>
+    /// Check if a mail thread is ignored or not
+    /// If it is ignored then there is nothing for us to do with it.
+    /// Normally another rule kicks in and deletes it.
+    /// </summary>
+    /// <param name="mailItem"></param>
+    /// <returns></returns>
+    private bool IsIgnored(Outlook._MailItem mailItem)
     {
       // does the folder allow conversations?
       var folder = mailItem.Parent as Outlook.Folder;
@@ -370,11 +377,28 @@ namespace myoddweb.classifier.core
       }
 
       // get that conversation
-      var conv = mailItem.GetConversation();
+      Outlook._Conversation conv = mailItem.GetConversation();
       if (conv == null)
       {
         return false;
       }
+
+      /*
+      Outlook.MAPIFolder cas = _session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent.Folders["Conversation Action Settings"];
+      foreach (var folderItem in cas.Items )
+      {
+        var item = folderItem as Outlook._MailItem;
+        if (item == null)
+        {
+          continue;
+        }
+
+        if (item.ConversationID == mailItem.ConversationID)
+        {
+          return true;
+        }
+      }
+      */
 
       // 
       return false;
