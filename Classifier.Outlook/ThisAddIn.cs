@@ -23,7 +23,7 @@ namespace myoddweb.classifier
 
     private Engine TheEngine => _engine ?? (_engine = new Engine());
 
-    private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor( TheEngine, _explorers.Application.Session));
+    private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
@@ -65,12 +65,12 @@ namespace myoddweb.classifier
         folder.Items.ItemAdd += FolderItemAdd;
       }
     }
-    
+
     /// <summary>
     /// Called when an item is added to a folder.
     /// </summary>
     /// <param name="item">What is been added.</param>
-    private void FolderItemAdd(object item )
+    private void FolderItemAdd(object item)
     {
       try
       {
@@ -100,7 +100,7 @@ namespace myoddweb.classifier
 
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
     {
-      Task.WaitAll(_tasks?.ToArray() );
+      Task.WaitAll(_tasks?.ToArray());
       _tasks = null;
       // Note: Outlook no longer raises this event. If you have code that 
       //    must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
@@ -140,7 +140,7 @@ namespace myoddweb.classifier
       try
       {
         // add it to the mail processor.
-        TheMailProcessor.Add( entryIdItem );
+        TheMailProcessor.Add(entryIdItem);
       }
       catch (System.Exception ex)
       {
