@@ -216,7 +216,7 @@ namespace myoddweb.classifier.core
     /// Update the last actually process email.
     /// </summary>
     /// <param name="mailItem"></param>
-    private void HandleLastProcessedEmailInLock(Outlook._MailItem mailItem)
+    private void UpdateLastProcessedEmailInLock(Outlook._MailItem mailItem)
     {
       // the current time
       var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime);
@@ -264,7 +264,7 @@ namespace myoddweb.classifier.core
       }
 
       // either way, this is a valid 'processed' email
-      HandleLastProcessedEmailInLock(mailItem);
+      UpdateLastProcessedEmailInLock(mailItem);
 
       // the message note.
       if (!Categories.IsUsableClassNameForClassification(mailItem.MessageClass))
@@ -332,12 +332,15 @@ namespace myoddweb.classifier.core
         }
 
         // if this is an ignored conversation, we will not move it.
-        if (!IsIgnored(mailItem))
+        if (IsIgnoredConversation(mailItem))
         {
-          // try and move 
-          mailItem.Move(itemToFolder);
-          _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
+          _engine.LogVerbose($"Mail, '{mailItem.Subject}' is part of an ignored conversation and will not be moved." );
+          return true;
         }
+        
+        // try and move 
+        mailItem.Move(itemToFolder);
+        _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
       }
       catch (Exception ex)
       {
@@ -366,7 +369,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mailItem"></param>
     /// <returns></returns>
-    private bool IsIgnored(Outlook._MailItem mailItem)
+    private bool IsIgnoredConversation(Outlook._MailItem mailItem)
     {
       // does the folder allow conversations?
       var folder = mailItem.Parent as Outlook.Folder;
@@ -383,29 +386,12 @@ namespace myoddweb.classifier.core
         return false;
       }
 
-      Outlook.MAPIFolder cas = _session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent.Folders["Conversation Action Settings"];
-      if (cas == null)
+      // get the delete rule.
+      var delete = conv.GetAlwaysDelete(_session.DefaultStore);
+      if( Outlook.OlAlwaysDeleteConversation.olAlwaysDelete == delete )
       {
-        return false;
+        return true;
       }
-
-      /*      
-      Outlook.Table table = cas.GetTable();
-
-      foreach (var folderItem in cas.Items )
-      {
-        var item = folderItem as Outlook._MailItem;
-        if (item == null)
-        {
-          continue;
-        }
-
-        if (item.ConversationID == mailItem.ConversationID)
-        {
-          return true;
-        }
-      }
-      */
 
       // 
       return false;
