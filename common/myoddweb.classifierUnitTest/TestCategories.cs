@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace myoddweb.classifierUnitTest
 {
   /// <summary>
   /// Summary description for UnitTest1
   /// </summary>
-  [TestClass]
+  [TestFixture]
   public class TestCategories : TestCommon
   {
-    [TestCleanup]
+    [TearDown]
     public void TestCleanup()
     {
       ReleaseEngine(false);
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestMethod]
+    [Test]
     public void TestReloadCategories()
     {
       // we should have no categories.
@@ -60,7 +60,7 @@ namespace myoddweb.classifierUnitTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void TestRenameCategoryWithEmptyString()
     {
       // create a category
@@ -71,7 +71,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.RenameCategory(categoryName, ""));
     }
 
-    [TestMethod]
+    [Test]
     public void TestRenameCategoryWithEmptyStringWithSpaces()
     {
       // create a category
@@ -82,7 +82,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.RenameCategory(categoryName, "       "));
     }
 
-    [TestMethod]
+    [Test]
     public void TestRenameCategory()
     {
       // create a category
@@ -104,7 +104,7 @@ namespace myoddweb.classifierUnitTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void TestDeleteCategory()
     {
       // create a category
@@ -126,14 +126,14 @@ namespace myoddweb.classifierUnitTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void TestDeleteCategoryWithEmptyName()
     {
       // delete it.
       Assert.IsFalse(TheEngine.DeleteCategory(""));
     }
 
-    [TestMethod]
+    [Test]
     public void TestDeleteCategoryWithEmptyNameWithSpaces()
     {
       // delete it.

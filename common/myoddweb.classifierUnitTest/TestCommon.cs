@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using myoddweb.classifier.core;
 
 namespace myoddweb.classifierUnitTest
 {
-  [TestClass]
+  [TestFixture]
   public class TestCommon
   {
     // the engine
-    private static Engine _engine;
+    private Engine _engine;
 
     protected static string DbName = "ctest_database.classifier";
     protected static string CleandbName = "clean_ctest_database.classifier";
@@ -97,7 +97,7 @@ namespace myoddweb.classifierUnitTest
       return new Engine(DirectoryPath, DatabaseFullPath);
     }
 
-    protected static void ReleaseEngine( bool removeCleanDb )
+    protected void ReleaseEngine( bool removeCleanDb )
     {
       // don't do it more than once...
       if (null != _engine)

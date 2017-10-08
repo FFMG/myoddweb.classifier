@@ -1,30 +1,29 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace myoddweb.classifierUnitTest
 {
   /// <summary>
   /// Summary description for TestSqlClassify
   /// </summary>
-  [TestClass]
+  [TestFixture]
   public class TestSqlClassify : TestCommon
   {
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void TestCleanup()
     {
       ReleaseEngine(false);
     }
 
-    [TestMethod]
+    [Test]
     public void TestTrainSimpleText()
     {
       var categoryName = RandomString(8);
@@ -33,7 +32,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Train(categoryName, categoryText, uniqueEntryId, 1));
     }
 
-    [TestMethod]
+    [Test]
     public void TestUnTrainSimpleText()
     {
       // this text/category does not exist
@@ -43,7 +42,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.UnTrain( uniqueEntryId, categoryText));
     }
 
-    [TestMethod]
+    [Test]
     public void TestTrainAndUnTrainSimpleText()
     {
       var categoryName = RandomString(8);
@@ -54,7 +53,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.UnTrain( uniqueEntryId, categoryText));
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetCategoryName()
     {
       // the category is created on the fly... #1 is alocated to it.
@@ -62,14 +61,14 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(1, TheEngine.GetCategory(categoryName));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCategoryCannotBeCreatedWithEmptyString()
     {
       Assert.AreEqual(-1, TheEngine.GetCategory(""));
       Assert.AreEqual(-1, TheEngine.GetCategory(""));  //  we ask twice, in case it was inserted.
     }
 
-    [TestMethod]
+    [Test]
     public void TestCategoryCannotBeCreatedWithEmptyStringWithSpaces()
     {
       var random = new Random();
@@ -79,7 +78,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(-1, TheEngine.GetCategory(result));  //  we ask twice, in case it was inserted.
     }
 
-    [TestMethod]
+    [Test]
     public void TestCategoryIsCreatedByTrainning()
     {
       var categoryName = RandomString(8);
@@ -92,7 +91,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(1, TheEngine.GetCategory(categoryName));
     }
 
-    [TestMethod]
+    [Test]
     public void TestSimpleCategorise()
     {
       var categoryName = RandomString(8);
@@ -108,7 +107,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(categoryId, TheEngine.Categorize(categoryText, 0 ));
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetCategories()
     {
       // we should have no categories to start with.
@@ -156,7 +155,7 @@ namespace myoddweb.classifierUnitTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void TestMultipleTrainSimple()
     {
       // this text/category does not exist
@@ -192,7 +191,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(TheEngine.GetCategory("ham"), thisCategory);
     }
 
-    [TestMethod]
+    [Test]
     public void TestThatTheWeightIsUpdated()
     {
       var categoryName1 = RandomString(8);
@@ -233,13 +232,12 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Train(categoryName1, "World", uniqueEntryId21, 3));
     }
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException)) ]
+    [Test]
     public void TryAndCategoriseWithMoreThan100Percent()
     {
       // Cannot be more than 100%
       var random = new Random(Guid.NewGuid().GetHashCode());
-      TheEngine.Categorize("Some text", (uint)random.Next(101, 200));
+      Assert.Throws<ArgumentException>( () => TheEngine.Categorize("Some text", (uint)random.Next(101, 200)));
     }
 
   }

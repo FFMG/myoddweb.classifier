@@ -1,34 +1,31 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
+using NUnit.Framework;
 
 namespace myoddweb.classifierUnitTest
 {
-  [TestClass]
+  [TestFixture]
   public class TestSqlConfig : TestCommon
   {
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void TestCleanup()
     {
       ReleaseEngine( false );
     }
 
-    [TestMethod()]
-    [ExpectedException(typeof(KeyNotFoundException))]
+    [Test]
     public void ConfigvalueDoesNotExist()
     {
       // brand new value.
-      TheEngine.GetConfig( RandomString(8) );
+      Assert.Throws<KeyNotFoundException>(() => TheEngine.GetConfig( RandomString(8) ));
     }
 
-    [TestMethod]
+    [Test]
     public void ConfigvalueWithDefaultDoesNotExist()
     {
       // brand new value.
@@ -37,7 +34,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(defaultValue, returnValue);
     }
 
-    [TestMethod]
+    [Test]
     public void ConfigvalueWithDefaultDoesExist()
     {
       // brand new value.
@@ -50,7 +47,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(savedValue, returnValue);
     }
 
-    [TestMethod]
+    [Test]
     public void MethodSimpleSetAndGetConfig()
     {
       // simple save and load config.
@@ -61,7 +58,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
     }
 
-    [TestMethod]
+    [Test]
     public void MethodSimpleGetConfigWithSpacesInName()
     {
       // simple save and load config.
@@ -72,7 +69,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
     }
 
-    [TestMethod]
+    [Test]
     public void MethodSimpleSetConfigWithSpacesInName()
     {
       // simple save and load config.
@@ -83,21 +80,21 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(u16Value, TheEngine.GetConfig($"   {u16Name}    "));
     }
 
-    [TestMethod]
+    [Test]
     public void EmptyConfigValue()
     {
       // simple save and load config.
       Assert.IsFalse(TheEngine.SetConfig("", RandomString(8)));
     }
 
-    [TestMethod]
+    [Test]
     public void EmptyConfigValueWithSpaces()
     {
       // simple save and load config.
       Assert.IsFalse(TheEngine.SetConfig("        ", RandomString(8)));
     }
 	
-    [TestMethod]
+    [Test]
     public void SetConfigurationWithNonAsciiCharacters()
     {
       // simple save and load config.
@@ -107,7 +104,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual( u16Value, TheEngine.GetConfig(u16Name));
     }
 
-    [TestMethod]
+    [Test]
     public void SetConfigurationNameWithNonAsciiCharacters()
     {
       // simple save and load config.
@@ -117,7 +114,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
     }
 
-    [TestMethod]
+    [Test]
     public void SetConfigurationNameAndValueWithNonAsciiCharacters()
     {
       // simple save and load config.

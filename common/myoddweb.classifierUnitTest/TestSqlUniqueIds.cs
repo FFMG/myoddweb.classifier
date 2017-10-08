@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace myoddweb.classifierUnitTest
 {
-  [TestClass]
+  [TestFixture]
   public class TestSqlUniqueIds : TestCommon
   {
     public TestSqlUniqueIds()
@@ -13,19 +13,19 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void CleanupTest()
     {
       ReleaseEngine(false);
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetCategoryFromUniqueIdNoUpdates()
     {
       //  create a couple of categories
@@ -67,7 +67,7 @@ namespace myoddweb.classifierUnitTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetCategoryFromUniqueIdWithUpdates()
     {
       //  create a couple of categories

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using myoddweb.classifier.core;
 
 namespace myoddweb.classifierUnitTest
@@ -8,7 +8,7 @@ namespace myoddweb.classifierUnitTest
   /// <summary>
   /// Summary description for TestSqlMgnets
   /// </summary>
-  [TestClass]
+  [TestFixture]
   public class TestSqlMagnets : TestCommon
   {
     public TestSqlMagnets()
@@ -16,19 +16,19 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void CleanupTest()
     {
       ReleaseEngine(false);
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestMethod]
+    [Test]
     public void TestSimpleCreate()
     {
       var randomName = RandomString(10);
@@ -37,7 +37,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName, 1, categoryId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateWithInvalidCategoryId()
     {
       var randomName = RandomString(10);
@@ -47,21 +47,21 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(-1, TheEngine.CreateMagnet(randomName, 1, categoryId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateWithEmptyName()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
       Assert.AreEqual(-1, TheEngine.CreateMagnet("", 1, categoryId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateWithEmptyNameWithSpaces()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
       Assert.AreEqual(-1, TheEngine.CreateMagnet("            ", 1, categoryId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestDeleteMagnetThatDoesNotExist()
     {
       var random = new Random(Guid.NewGuid().GetHashCode());
@@ -69,7 +69,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.DeleteMagnet(magnetId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateThenDelete()
     {
       var randomName = RandomString(10);
@@ -78,7 +78,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.DeleteMagnet(magnetId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateMultipleWithSameCategoryThenGetMagnets()
     {
       var randomName1 = RandomString(10);
@@ -103,7 +103,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(magnet2.Rule, 1);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateMultipleWithDifferentCategoryAndRuleThenGetMagnets()
     {
       var randomName1 = RandomString(10);
@@ -133,7 +133,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(magnet2.Rule, ruleId2);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateTheMagnetNameUsingValues()
     {
       // create a magnet
@@ -155,7 +155,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(newRandomName, updatedMagnet.Name);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateTheMagnetNameUsingClass()
     {
       // create a magnet
@@ -180,7 +180,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(newRandomName, updatedMagnet.Name);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateTheMagnetWithEmptyName()
     {
       // create a magnet
@@ -202,7 +202,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(randomName, updatedMagnet.Name);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateMultipleWithDifferentCategoryAndRuleThenGetMagnetsThenAddAnother()
     {
       var randomName1 = RandomString(10);
@@ -253,7 +253,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(magnet2.Rule, ruleId2);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateUpdateMagnetButNothingChanges()
     {
       // create a magnet
@@ -274,7 +274,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(randomName, updatedMagnet.Name);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateUpdateMagnetUsingClassButNothingChanges()
     {
       // create a magnet
@@ -295,7 +295,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateUpdateMagnetNullClass()
     {
       // create a magnet
@@ -306,7 +306,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.UpdateMagnet(null, randomName, ruleId, categoryId));
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateUpdateMagnetUsingClassButNothingChangesNameHasSpaces()
     {
       // create a magnet
@@ -330,7 +330,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateMagnetEmpty()
     {
       // create a magnet
@@ -353,7 +353,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateMagnetWithSpace()
     {
       // create a magnet
@@ -376,7 +376,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateMagnetInvalidCategoryId()
     {
       // create a magnet
@@ -401,7 +401,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
     }
     
-    [TestMethod]
+    [Test]
     public void TestCreateMagnetWithEmtyString()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
@@ -410,7 +410,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(-1, magnetId);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCreateMagnetWithEmtyStringWithSpaces()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
@@ -425,7 +425,7 @@ namespace myoddweb.classifierUnitTest
       return random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
     }
 
-    [TestMethod]
+    [Test]
     public void TestReCreateTheSameMagnet()
     {
       // create a magnet
@@ -441,7 +441,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual( magnetId, newMagnetId);
     }
 
-    [TestMethod]
+    [Test]
     public void TestUpdateAnExistingMagnetWithTheValuesOfAnother()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));

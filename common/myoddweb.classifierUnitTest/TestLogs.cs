@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
 using Newtonsoft.Json;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace myoddweb.classifierUnitTest
 {
-  [TestClass]
+  [TestFixture]
   public class TestLogs : TestCommon
   {
     public TestLogs()
@@ -14,14 +14,14 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void CleanupTest()
     {
       ReleaseEngine(false);
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
@@ -31,14 +31,14 @@ namespace myoddweb.classifierUnitTest
       return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
     }
 
-    [TestMethod]
+    [Test]
     public void TestSetLogLevelInfo()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Information;
       Assert.AreEqual(Options.LogLevels.Information, TheEngine.Options.LogLevel);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCanLogLevelInfo()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Information;
@@ -48,14 +48,14 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
     }
 
-    [TestMethod]
+    [Test]
     public void TestSetLogLevelNone()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.None;
       Assert.AreEqual(Options.LogLevels.None, TheEngine.Options.LogLevel);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCanLogLevelNone()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.None;
@@ -65,14 +65,14 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
     }
 
-    [TestMethod]
+    [Test]
     public void TestSetLogLevelWarning()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Warning;
       Assert.AreEqual(Options.LogLevels.Warning, TheEngine.Options.LogLevel);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCanLogLevelWarning()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Warning;
@@ -82,14 +82,14 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
     }
 
-    [TestMethod]
+    [Test]
     public void TestSetLogLevelVerbose()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Verbose;
       Assert.AreEqual(Options.LogLevels.Verbose, TheEngine.Options.LogLevel);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCanLogLevelVerbose()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Verbose;
@@ -99,14 +99,14 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
     }
 
-    [TestMethod]
+    [Test]
     public void TestSetLogLevelError()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Error;
       Assert.AreEqual(Options.LogLevels.Error, TheEngine.Options.LogLevel);
     }
 
-    [TestMethod]
+    [Test]
     public void TestCanLogLevelError()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Error;
@@ -116,7 +116,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
     }
 
-    [TestMethod]
+    [Test]
     public void TestLogOneErrorItem()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Error;
@@ -134,7 +134,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(LogSource(Options.LogLevels.Error), entries[0].Source);
     }
 
-    [TestMethod]
+    [Test]
     public void TestLogMultipleErrorItems()
     {
       TheEngine.Options.LogLevel = Options.LogLevels.Error;

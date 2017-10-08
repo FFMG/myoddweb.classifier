@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 
 namespace myoddweb.classifierUnitTest
 {
-  [TestClass]
+  [TestFixture]
   public class TestGeneral : TestCommon
   {
     public TestGeneral()
@@ -11,26 +11,26 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(false);
     }
 
-    [TestCleanup]
+    [TearDown]
     public void CleanupTest()
     {
       ReleaseEngine(false);
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [OneTimeTearDown]
+    public void ClassCleanup()
     {
       ReleaseEngine(true);
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetVersionNumber()
     {
       var versionNumber = TheEngine.GetEngineVersionNumber();
       Assert.AreEqual(1006003, versionNumber );
     }
 
-    [TestMethod]
+    [Test]
     public void TestGetVersion()
     {
       var version = TheEngine.GetEngineVersion();
