@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using myoddweb.viewer.utils;
-using Outlook = Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.utils;
 using System.Linq;
 using System.Threading;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
 {
-  internal class MailProcessor
+  public class MailProcessor
   {
     private const string ConfigName = "Processor.LastEmail";
 
@@ -26,7 +26,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The current session
     /// </summary>
-    private readonly Outlook.NameSpace _session;
+    private readonly Outlook._NameSpace _session;
 
     /// <summary>
     /// The mail items we want to move and the categories we are moving them to.
@@ -62,7 +62,7 @@ namespace myoddweb.classifier.core
       }
     }
 
-    public MailProcessor(Engine engine, Outlook.NameSpace session )
+    public MailProcessor(Engine engine, Outlook._NameSpace session )
     {
       // can't be null
       if (engine == null)
