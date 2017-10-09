@@ -28,14 +28,14 @@ namespace myoddweb.classifier.forms
     /// <summary>
     /// The main classifier engine.
     /// </summary>
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     /// <summary>
     /// The current email we are checking.
     /// </summary>
     private readonly Outlook._MailItem _mailItem;
 
-    public MagnetMailItemForm( Engine engine, Outlook._MailItem mailItem )
+    public MagnetMailItemForm( IEngine engine, Outlook._MailItem mailItem )
     {
       // 
       InitializeComponent();

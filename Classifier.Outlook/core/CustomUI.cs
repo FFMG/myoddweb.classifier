@@ -30,11 +30,11 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     private Office.IRibbonUI _ribbon;
 
-    public CustomUI(Engine engine )
+    public CustomUI(IEngine engine )
     {
       // the engine.
       _engine = engine;
@@ -233,7 +233,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: _engine, options: _engine.Options, categories: _engine.Categories ))
+      using (var optionsForm = new OptionsForm( engine: _engine, categories: _engine.Categories ))
       {
         optionsForm.ShowDialog();
       }

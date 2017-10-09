@@ -500,11 +500,23 @@ namespace myoddweb.classifier.core
       return _rootFolder;
     }
 
+    /// <summary>
+    /// Create a magnet.
+    /// </summary>
+    /// <param name="randomName"></param>
+    /// <param name="ruleType"></param>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
     public int CreateMagnet(string randomName, int ruleType, int categoryId)
     {
       return ClassifyEngine.CreateMagnet(randomName, ruleType, categoryId );
     }
 
+    /// <summary>
+    /// Delete a magnet given a magnet id.
+    /// </summary>
+    /// <param name="magnetId"></param>
+    /// <returns></returns>
     public bool DeleteMagnet(int magnetId)
     {
       return ClassifyEngine.DeleteMagnet(magnetId);

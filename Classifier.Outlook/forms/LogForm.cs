@@ -10,11 +10,11 @@ namespace myoddweb.classifier.forms
   public partial class LogForm : Form
   {
     // the classifier engine
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     private readonly uint _numberOfItemsToDisplay;
 
-    public LogForm( Engine engine, uint numberOfItemsToDisplay )
+    public LogForm( IEngine engine, uint numberOfItemsToDisplay )
     {
       Padding = new Padding(5);
       _engine = engine;

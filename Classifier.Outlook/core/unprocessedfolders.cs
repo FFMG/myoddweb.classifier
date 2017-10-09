@@ -5,16 +5,22 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
 {
-  internal class UnProcessedFolders
+  public class UnProcessedFolders
   {
     private readonly MailProcessor _mailprocessor;
 
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
-    public UnProcessedFolders( Engine engine, MailProcessor mailprocessor )
+    public UnProcessedFolders( IEngine engine, MailProcessor mailprocessor )
     {
-      if (engine == null) throw new ArgumentNullException(nameof(engine));
-      if (mailprocessor == null) throw new ArgumentNullException(nameof(mailprocessor));
+      if (engine == null)
+      {
+        throw new ArgumentNullException(nameof(engine));
+      }
+      if (mailprocessor == null)
+      {
+        throw new ArgumentNullException(nameof(mailprocessor));
+      }
 
       _engine = engine;
       _mailprocessor = mailprocessor;

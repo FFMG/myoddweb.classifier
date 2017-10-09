@@ -17,13 +17,13 @@ namespace myoddweb.classifier.forms
       public override string ToString() { return Text; }
     }
 
-    private readonly Engine _engine = null;
+    private readonly IEngine _engine = null;
 
     private Magnet GivenMagnet { get; set; }
 
     private readonly Categories _Categories;
 
-    public MagnetForm( Engine engine, Categories categories, Magnet magnet  )
+    public MagnetForm( IEngine engine, Categories categories, Magnet magnet  )
     {
       // 
       InitializeComponent();

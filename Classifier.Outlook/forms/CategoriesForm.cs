@@ -7,12 +7,12 @@ namespace myoddweb.classifier.forms
   public partial class CategoriesForm : Form
   {
     // the classifier engine
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     // all the categories.
     private readonly Categories _categories;
 
-    public CategoriesForm( Categories categories, Engine engine)
+    public CategoriesForm( Categories categories, IEngine engine)
     {
       _engine = engine;
       _categories = categories;

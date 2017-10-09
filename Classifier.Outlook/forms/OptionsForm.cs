@@ -35,20 +35,16 @@ namespace myoddweb.classifier.forms
       }
     }
 
-    // all the options.
-    private readonly Options _options;
-
     // all the categories.
     private readonly Categories _categories;
 
     // all the engine.
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
-    public OptionsForm( Engine engine, Options options, Categories categories )
+    public OptionsForm( IEngine engine, Categories categories )
     {
       _engine = engine;
       _categories = categories;
-      _options = options;
       InitializeComponent();
     }
 
@@ -101,7 +97,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentLogLevel = _options.LogLevel;
+      var currentLogLevel = _engine.Options.LogLevel;
 
       // go around all the folders.
       foreach( Options.LogLevels i in Enum.GetValues( typeof(Options.LogLevels)))
@@ -139,7 +135,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentRetention = _options.LogRetention;
+      var currentRetention = _engine.Options.LogRetention;
 
       // go around all the folders.
       uint[] days = { 1, 5, 10, 30, 90 };
@@ -178,7 +174,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentWeight = _options.UserWeight;
+      var currentWeight = _engine.Options.UserWeight;
 
       // go around all the folders.
       for (var i = 1; i <= 40; ++i)
@@ -216,7 +212,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentWeight = _options.MagnetsWeight;
+      var currentWeight = _engine.Options.MagnetsWeight;
 
       // go around all the folders.
       for (var i = 1; i <= 20; ++i )
@@ -250,7 +246,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // guess what the category could be
-      var currentDisplaySize = _options.LogDisplaySize;
+      var currentDisplaySize = _engine.Options.LogDisplaySize;
 
       // go around all the folders.
       uint[] displaySizes = { 10, 50, 100, 200, 500 };
@@ -275,46 +271,46 @@ namespace myoddweb.classifier.forms
     private void Ok_Click(object sender, EventArgs e)
     {
       // we want to save our new settings.
-      _options.ReCheckCategories = reCheckCategories.Checked;
+      _engine.Options.ReCheckCategories = reCheckCategories.Checked;
 
       // and if we want to check unknown categories.
-      _options.CheckIfUnKnownCategory = checkCategoryIfUnknown.Checked;
+      _engine.Options.CheckIfUnKnownCategory = checkCategoryIfUnknown.Checked;
 
       // do we want to check unprocessed emails on startup
-      _options.CheckUnProcessedEmailsOnStartUp = checkUnProcessedEmails.Checked;
+      _engine.Options.CheckUnProcessedEmailsOnStartUp = checkUnProcessedEmails.Checked;
 
       // if we want to check only if the ctrl key is down.
-      _options.ReCheckIfCtrlKeyIsDown = reCheckIfCtrl.Checked;
+      _engine.Options.ReCheckIfCtrlKeyIsDown = reCheckIfCtrl.Checked;
 
       // save the weights of the magnets.
-      _options.MagnetsWeight = GetMagnetsWeight();
+      _engine.Options.MagnetsWeight = GetMagnetsWeight();
 
       // save the weights of the magnets.
-      _options.UserWeight = GetUserWeight();
+      _engine.Options.UserWeight = GetUserWeight();
 
       // save the percent option
-      _options.CommonWordsMinPercent = GetCommonWordsMinPercent();
+      _engine.Options.CommonWordsMinPercent = GetCommonWordsMinPercent();
 
       // the min category percent
-      _options.MinPercentage = GetMinPercentage();
+      _engine.Options.MinPercentage = GetMinPercentage();
 
       // automatically train messages with magnet
-      _options.ReAutomaticallyTrainMagnetMessages = checkAutomaticallyMagnetTrain.Checked;
+      _engine.Options.ReAutomaticallyTrainMagnetMessages = checkAutomaticallyMagnetTrain.Checked;
 
       // automatically train messages?
-      _options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
+      _engine.Options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
 
       // set the log level
-      _options.LogLevel = GetLogLevel();
+      _engine.Options.LogLevel = GetLogLevel();
 
       // set the retention policy
-      _options.LogRetention = GetLogRetentionPolicy();
+      _engine.Options.LogRetention = GetLogRetentionPolicy();
 
       // the classification delay in seconds.
-      _options.ClassifyDelaySeconds = GetClassifyDelaySeconds();
+      _engine.Options.ClassifyDelaySeconds = GetClassifyDelaySeconds();
 
       // the number of items we want to display in the log.
-      _options.LogDisplaySize = GetNumberOfEntriesToDisplay();
+      _engine.Options.LogDisplaySize = GetNumberOfEntriesToDisplay();
     }
 
     private uint GetLogRetentionPolicy()
@@ -447,25 +443,25 @@ namespace myoddweb.classifier.forms
       Text = $"Options - [{version.Major}.{version.Minor}.{version.Build}.{version.Revision}] - (Engine [{engineVersion.Major}.{engineVersion.Minor}.{engineVersion.Build}])";
 
       // check if we want to re-check all categories.
-      reCheckCategories.Checked = _options.ReCheckCategories;
+      reCheckCategories.Checked = _engine.Options.ReCheckCategories;
 
       // and if we only want to check unknown categories.
-      checkCategoryIfUnknown.Checked = _options.CheckIfUnKnownCategory;
+      checkCategoryIfUnknown.Checked = _engine.Options.CheckIfUnKnownCategory;
 
       // do we want to check unprocessed emails on startup
-      checkUnProcessedEmails.Checked = _options.CheckUnProcessedEmailsOnStartUp;
+      checkUnProcessedEmails.Checked = _engine.Options.CheckUnProcessedEmailsOnStartUp;
 
       // we only check unknown categories if we check categories.
       checkCategoryIfUnknown.Enabled = reCheckCategories.Checked;
 
       // if we want to check only if the ctrl key is down.
-      reCheckIfCtrl.Checked = _options.ReCheckIfCtrlKeyIsDown;
+      reCheckIfCtrl.Checked = _engine.Options.ReCheckIfCtrlKeyIsDown;
 
       // check if we want to train new messages or not.
-      checkAutomaticallyTrain.Checked = _options.ReAutomaticallyTrainMessages;
+      checkAutomaticallyTrain.Checked = _engine.Options.ReAutomaticallyTrainMessages;
 
       // check if we want to train new messages that used a magnet or not.
-      checkAutomaticallyMagnetTrain.Checked = _options.ReAutomaticallyTrainMagnetMessages;
+      checkAutomaticallyMagnetTrain.Checked = _engine.Options.ReAutomaticallyTrainMagnetMessages;
 
       // rebuild the combo
       RebuildCombos();
@@ -513,7 +509,7 @@ namespace myoddweb.classifier.forms
       numericCommonPercent.Maximum = 100;
       numericCommonPercent.Minimum = 1;
       numericCommonPercent.ReadOnly = false;
-      numericCommonPercent.Value = _options.CommonWordsMinPercent;
+      numericCommonPercent.Value = _engine.Options.CommonWordsMinPercent;
     }
 
     private void RebuildMinPercentageSpinner()
@@ -521,7 +517,7 @@ namespace myoddweb.classifier.forms
       numericMinPercentage.Maximum = 100;
       numericMinPercentage.Minimum = 1;
       numericMinPercentage.ReadOnly = false;
-      numericMinPercentage.Value = _options.MinPercentage;
+      numericMinPercentage.Value = _engine.Options.MinPercentage;
     }
 
     private void RebuildClassifyDelay()
@@ -529,7 +525,7 @@ namespace myoddweb.classifier.forms
       numericUpDownClassifyDelay.Maximum = 100;
       numericUpDownClassifyDelay.Minimum = 0;
       numericUpDownClassifyDelay.ReadOnly = false;
-      numericUpDownClassifyDelay.Value = _options.ClassifyDelaySeconds;
+      numericUpDownClassifyDelay.Value = _engine.Options.ClassifyDelaySeconds;
     }
 
     private void Log_Click(object sender, EventArgs e)

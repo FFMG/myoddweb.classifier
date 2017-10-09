@@ -84,6 +84,7 @@
     <Compile Include="TestSqlMagnets.cs" />
     <Compile Include="TestSqlUniqueIds.cs" />
     <Compile Include="TestLogs.cs" />
+    <Compile Include="TestUnProcessedFolders.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Classifier.Interfaces\Classifier.Interfaces.csproj">

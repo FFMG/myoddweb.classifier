@@ -9,12 +9,12 @@ namespace myoddweb.classifier.forms
   public partial class MagnetsForm : Form
   {
     // the classifier engine
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     // all the categories.
     private readonly Categories _categories;
 
-    public MagnetsForm(Categories categories, Engine engine)
+    public MagnetsForm(Categories categories, IEngine engine)
     {
       _engine = engine;
       _categories = categories;

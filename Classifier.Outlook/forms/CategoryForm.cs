@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using myoddweb.classifier.core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace myoddweb.classifier
 {
   public partial class CategoryForm : Form
   {
-    private readonly Engine _engine = null;
+    private readonly IEngine _engine = null;
 
     /// <summary>
     /// The actual folders
@@ -19,11 +19,11 @@ namespace myoddweb.classifier
     /// The folders we will be using.
     /// </summary>
     /// 
-    private Folders TheFolders => _folders ?? (_folders = new Folders(_engine.GetRootFolder()));
+    private Folders TheFolders => _folders ?? (_folders = new Folders( _engine.GetRootFolder()));
 
     private Category GivenCategory { get; set; }
 
-    public CategoryForm( Engine engine, Category category  )
+    public CategoryForm( IEngine engine, Category category  )
     {
       // 
       InitializeComponent();
