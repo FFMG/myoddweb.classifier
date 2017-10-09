@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace myoddweb.classifier.core
 {
-  public class Engine
+  public class Engine : IEngine
   {
     /// <summary>
     /// If NULL we have not check for event source.

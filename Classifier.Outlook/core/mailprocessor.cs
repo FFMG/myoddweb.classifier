@@ -21,7 +21,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that will help us to process the mail.
     /// </summary>
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     /// <summary>
     /// The current session
@@ -62,7 +62,7 @@ namespace myoddweb.classifier.core
       }
     }
 
-    public MailProcessor(Engine engine, Outlook._NameSpace session )
+    public MailProcessor(IEngine engine, Outlook._NameSpace session )
     {
       // can't be null
       if (engine == null)

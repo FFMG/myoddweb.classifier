@@ -9,9 +9,9 @@ namespace myoddweb.viewer.utils
   {
     private Stopwatch _stopwatch;
 
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
-    private StopWatch( Engine engine )
+    private StopWatch( IEngine engine )
     {
       _stopwatch = Stopwatch.StartNew();
       _engine = engine;
@@ -22,7 +22,7 @@ namespace myoddweb.viewer.utils
       _stopwatch?.Stop();
     }
 
-    public static StopWatch Start(Engine engine)
+    public static StopWatch Start(IEngine engine)
     {
       return new StopWatch(engine);
     }

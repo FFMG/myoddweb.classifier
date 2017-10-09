@@ -7,20 +7,20 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 namespace myoddweb.classifierUnitTest
 {
   [TestFixture]
-  public class TestMailProcessor : TestCommon
+  public class TestMailProcessor
   {
     [Test]
     public void TestConstructorEngineCannotBeNull()
     {
       Mock<Outlook._NameSpace> ns = new Mock<Outlook._NameSpace>();
-      Outlook._NameSpace it = ns.Object;
-      Assert.Throws<ArgumentNullException>( () =>  new MailProcessor(null, it ));
+      Assert.Throws<ArgumentNullException>( () =>  new MailProcessor(null, ns.Object));
     }
 
     [Test]
     public void TestConstructorSessionCannotBeNull()
     {
-      Assert.Throws<ArgumentNullException>(() => new MailProcessor(TheEngine, null));
+      Mock<IEngine> en = new Mock<IEngine>();
+      Assert.Throws<ArgumentNullException>(() => new MailProcessor(en.Object, null));
     }
   }
 }
