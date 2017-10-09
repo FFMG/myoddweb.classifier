@@ -56,6 +56,7 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 
 - Changed the way he handle emails when the wait time is 0, (we handle it right away).
 - Ignored conversations no longer cause messages to be classified, (as they are normally deleted)
+- Changed from MSTest to NUnit, (because of Moq)
 
 #### 0.7.0.2-0.7.0.4 (04/10/2017)
 
