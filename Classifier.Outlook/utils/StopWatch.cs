@@ -1,6 +1,4 @@
 ﻿using myoddweb.classifier.core;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace myoddweb.viewer.utils
@@ -9,12 +7,12 @@ namespace myoddweb.viewer.utils
   {
     private Stopwatch _stopwatch;
 
-    private readonly IEngine _engine;
+    private readonly ILogger _logger;
 
-    private StopWatch( IEngine engine )
+    private StopWatch( ILogger logger)
     {
       _stopwatch = Stopwatch.StartNew();
-      _engine = engine;
+      _logger = logger;
     }
 
     ~StopWatch()
@@ -22,9 +20,9 @@ namespace myoddweb.viewer.utils
       _stopwatch?.Stop();
     }
 
-    public static StopWatch Start(IEngine engine)
+    public static StopWatch Start(ILogger logger)
     {
-      return new StopWatch(engine);
+      return new StopWatch(logger);
     }
 
     public void Stop(string text)
@@ -36,7 +34,7 @@ namespace myoddweb.viewer.utils
     public void Checkpoint(string text)
     {
       Debug.WriteLine(text, Seconds());
-      _engine?.LogVerbose(string.Format(text, Seconds()));
+      _logger?.LogVerbose(string.Format(text, Seconds()));
     }
 
     private double Seconds()

@@ -5,7 +5,7 @@ using Classifier.Interfaces.Helpers;
 
 namespace myoddweb.classifier.core
 {
-  public interface IEngine
+  public interface IEngine : ILogger, IConfig, IClassify
   {
     /// <summary>
     /// Public accessor of the options.
@@ -29,51 +29,11 @@ namespace myoddweb.classifier.core
     Version GetEngineVersion();
 
     /// <summary>
-    /// Same as GetConfig( ... ) but if the value does not exist we will return the default.
-    /// </summary>
-    /// <param name="configName"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
-    string GetConfigWithDefault(string configName, string defaultValue);
-
-    /// <summary>
     /// Get the root folder.
     /// @todo this should not be in this interface... it is to MS Outlook specific.
     /// </summary>
     /// <returns></returns>
     Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder();
-
-    /// <summary>
-    /// Save a configuration value
-    /// </summary>
-    /// <param name="configName"></param>
-    /// <param name="configValue"></param>
-    /// <returns></returns>
-    bool SetConfig(string configName, string configValue);
-
-    /// <summary>
-    /// Log a verbose message
-    /// </summary>
-    /// <param name="message"></param>
-    void LogVerbose(string message);
-
-    /// <summary>
-    /// Log an error message
-    /// </summary>
-    /// <param name="message"></param>
-    void LogError(string message);
-
-    /// <summary>
-    /// Log a warning message
-    /// </summary>
-    /// <param name="message"></param>
-    void LogWarning(string message);
-
-    /// <summary>
-    /// Log an information message
-    /// </summary>
-    /// <param name="message"></param>
-    void LogInformation(string message);
 
     /// <summary>
     /// Create a magnet.
@@ -117,14 +77,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <returns>List of magnets or null</returns>
     List<Magnet> GetMagnets();
-
-    /// <summary>
-    /// Get up to 'max' log entries.
-    /// </summary>
-    /// <param name="max">The max number of log entries we want to get.</param>
-    /// <returns></returns>
-    List<LogEntry> GetLogEntries(int max);
-
+     
     /// <summary>
     /// Get all the categories.
     /// </summary>
@@ -137,6 +90,13 @@ namespace myoddweb.classifier.core
     /// <param name="categoryName"></param>
     /// <returns></returns>
     int GetCategory(string categoryName);
+
+    /// <summary>
+    /// Get a category id given a text unique id.
+    /// </summary>
+    /// <param name="uniqueIdentifier">The unique id is client specific</param>
+    /// <returns></returns>
+    int GetCategoryFromUniqueId(string uniqueIdentifier);
 
     /// <summary>
     /// Rename a category

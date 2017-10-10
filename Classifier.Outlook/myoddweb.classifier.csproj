@@ -188,7 +188,10 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="core\IClassify.cs" />
+    <Compile Include="core\IConfig.cs" />
     <Compile Include="core\IEngine.cs" />
+    <Compile Include="core\ILogger.cs" />
     <Compile Include="core\mailprocessor.cs" />
     <Compile Include="core\options.cs" />
     <Compile Include="core\Rule.cs" />

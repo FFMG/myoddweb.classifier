@@ -44,7 +44,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private readonly Engine _engine;
+    private readonly IEngine _engine;
 
     /// <summary>
     /// The actual folders
@@ -62,7 +62,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     private const string IdentifierKey = "Classifier.Identifier";
 
-    public Categories( Engine engine )
+    public Categories( IEngine engine )
     {
       // the engine.
       _engine = engine;

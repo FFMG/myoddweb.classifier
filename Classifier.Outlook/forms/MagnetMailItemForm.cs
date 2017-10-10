@@ -26,7 +26,7 @@ namespace myoddweb.classifier.forms
     }
 
     /// <summary>
-    /// The main classifier engine.
+    /// The main classifier logger.
     /// </summary>
     private readonly IEngine _engine;
 
