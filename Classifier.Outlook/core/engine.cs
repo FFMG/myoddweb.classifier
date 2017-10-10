@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using Classifier.Interfaces;
 using myoddweb.classifier.utils;
 using System.Linq;
@@ -23,7 +21,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Name for logging in the event viewer,
     /// </summary>
-    private const string EventViewSource = "myoddweb.classifier";
+    private readonly string EventViewSource;
 
     /// <summary>
     /// All the options
@@ -52,28 +50,23 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The timer we use to call the clean log function.
     /// </summary>
-    System.Timers.Timer LogTimer { get; set; }
+    Timer LogTimer { get; set; }
 
-    public Engine()
+    /// <summary>
+    /// The engine constructor.
+    /// </summary>
+    /// <param name="classifyEngine">The classification engine</param>
+    /// <param name="eventViewSource">The event log name.</param>
+    public Engine( IClassify1 classifyEngine, string eventViewSource )
     {
-      if (!InitialiseEngine())
-      {
-        throw new Exception("I was unable to load the engine. Check the event log for errors.");
-      }
+      // save the classify engine.
+      ClassifyEngine = classifyEngine;
 
       // start the 'cleanup' timer.
       StartLogCleanupTimer();
-    }
 
-    public Engine(string directoryName, string databasePath)
-    {
-      if (!InitialiseEngine(directoryName, databasePath))
-      {
-        throw new Exception( "One or more parameters given are invalid." );
-      }
-
-      // start the 'cleanup' timer.
-      StartLogCleanupTimer();
+      // set the event view source.
+      EventViewSource = eventViewSource;
     }
 
     ~Engine()
@@ -92,7 +85,7 @@ namespace myoddweb.classifier.core
       StopLogCleanupTimer();
 
       // start the new time
-      LogTimer = new System.Timers.Timer();
+      LogTimer = new Timer();
       LogTimer.Elapsed += OnTimedLogEvent;
       LogTimer.Interval = 60 * 60 * 1000;  // one hour
       LogTimer.Enabled = true;
@@ -107,6 +100,11 @@ namespace myoddweb.classifier.core
 
     private void OnTimedLogEvent(object source, ElapsedEventArgs e)
     {
+      if( null == ClassifyEngine )
+      {
+        return;
+      }
+
       // days of retention
       var daysRetention = Options.LogRetention;
 
@@ -124,81 +122,6 @@ namespace myoddweb.classifier.core
 
       // release the engine
       ReleaseEngine();
-    }
-
-    /// <summary>
-    /// Initialise the engine and load all the resources neeed.
-    /// Will load the database and so on to get the plugin ready for use.
-    /// </summary>
-    /// <returns>boolean success or not.</returns>
-    private bool InitialiseEngine()
-    {
-      //  reset it all.
-      ClassifyEngine = null;
-
-      // the paths we will be using.
-      var directoryName = AppDomain.CurrentDomain.BaseDirectory;
-
-      //  the database path
-      // %appdata%\MyOddWeb\Classifier
-      var myAppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyOddWeb\\Classifier");
-      System.IO.Directory.CreateDirectory(myAppData);
-      var databasePath = Path.Combine( myAppData, "database.classifier" );
-
-      // initialise the engine.
-      return InitialiseEngine(directoryName, databasePath);
-    }
-
-    /// <summary>
-    /// Initialise the engine and load all the resources neeed.
-    /// Will load the database and so on to get the plugin ready for use.
-    /// </summary>
-    /// <param name="directoryName">string the directory we are loading from.</param>
-    /// <param name="databasePath">string the name/path of the database we will be loading.</param>
-    /// <returns></returns>
-    private bool InitialiseEngine(string directoryName, string databasePath)
-    {
-      var dllInteropPath = Path.Combine( directoryName, "x86\\Classifier.Interop.dll");
-      var dllEnginePath = Path.Combine(directoryName, "x86\\Classifier.Engine.dll" );
-      if (Environment.Is64BitProcess)
-      {
-        dllInteropPath = Path.Combine(directoryName, "x64\\Classifier.Interop.dll");
-        dllEnginePath = Path.Combine(directoryName, "x64\\Classifier.Engine.dll");
-      }
-
-      // look for the 
-      Assembly asm = null;
-      try
-      {
-        asm = Assembly.LoadFrom(dllInteropPath);
-        if (null == asm)
-        {
-          LogError($"Unable to load the interop file. '{dllInteropPath}'.");
-          return false;
-        }
-      }
-      catch (ArgumentException ex)
-      {
-        LogError($"The interop file name/path does not appear to be valid. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
-        return false;
-      }
-      catch (FileNotFoundException ex)
-      {
-        LogError($"Unable to load the interop file. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
-        return false;
-      }
-
-      // look for the interop interface
-      ClassifyEngine = TypeLoader.LoadTypeFromAssembly<Classifier.Interfaces.IClassify1>(asm);
-      if (null == ClassifyEngine)
-      {
-        // could not locate the interface.
-        LogError($"Unable to load the IClasify1 interface in the interop file. '{dllInteropPath}'.");
-        return false;
-      }
-
-      // initialise the engine itself.
-      return ClassifyEngine.Initialise(EventViewSource, dllEnginePath, databasePath);
     }
 
     /// <summary>

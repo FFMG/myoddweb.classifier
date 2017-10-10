@@ -2,11 +2,21 @@
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
+using System;
+using Classifier.Interfaces;
+using myoddweb.classifier.utils;
 
 namespace myoddweb.classifier
 {
   public partial class ThisAddIn
   {
+    /// <summary>
+    /// Name for logging in the event viewer,
+    /// </summary>
+    private const string EventViewSource = "myoddweb.classifier";
+
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
@@ -21,11 +31,11 @@ namespace myoddweb.classifier
     // all the ongoing tasks.
     private List<Task> _tasks;
 
-    private Engine TheEngine => _engine ?? (_engine = new Engine());
+    private Engine TheEngine => _engine ?? (_engine = new Engine( InitialiseEngine(), EventViewSource ));
 
     private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
 
-    private void ThisAddIn_Startup(object sender, System.EventArgs e)
+    private void ThisAddIn_Startup(object sender, EventArgs e)
     {
       _tasks = new List<Task>();
 
@@ -148,6 +158,78 @@ namespace myoddweb.classifier
         return Task.FromResult(false);
       }
       return Task.FromResult(true);
+    }
+
+    /// <summary>
+    /// Initialise the engine and load all the resources neeed.
+    /// Will load the database and so on to get the plugin ready for use.
+    /// </summary>
+    /// <returns>boolean success or not.</returns>
+    private static IClassify1 InitialiseEngine()
+    {
+      // the paths we will be using.
+      var directoryName = AppDomain.CurrentDomain.BaseDirectory;
+
+      //  the database path
+      // %appdata%\MyOddWeb\Classifier
+      var myAppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyOddWeb\\Classifier");
+      Directory.CreateDirectory(myAppData);
+      var databasePath = Path.Combine(myAppData, "database.classifier");
+
+      // initialise the engine.
+      return InitialiseEngine(directoryName, databasePath);
+    }
+
+    /// <summary>
+    /// Initialise the engine and load all the resources neeed.
+    /// Will load the database and so on to get the plugin ready for use.
+    /// </summary>
+    /// <param name="directoryName">string the directory we are loading from.</param>
+    /// <param name="databasePath">string the name/path of the database we will be loading.</param>
+    /// <returns></returns>
+    private static IClassify1 InitialiseEngine(string directoryName, string databasePath)
+    {
+      var dllInteropPath = Path.Combine(directoryName, "x86\\Classifier.Interop.dll");
+      var dllEnginePath = Path.Combine(directoryName, "x86\\Classifier.Engine.dll");
+      if (Environment.Is64BitProcess)
+      {
+        dllInteropPath = Path.Combine(directoryName, "x64\\Classifier.Interop.dll");
+        dllEnginePath = Path.Combine(directoryName, "x64\\Classifier.Engine.dll");
+      }
+
+      // look for the 
+      Assembly asm = null;
+      try
+      {
+        asm = Assembly.LoadFrom(dllInteropPath);
+        if (null == asm)
+        {
+          throw new Exception($"Unable to load the interop file. '{dllInteropPath}'.");
+        }
+      }
+      catch (ArgumentException ex)
+      {
+        throw new Exception($"The interop file name/path does not appear to be valid. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+      }
+      catch (FileNotFoundException ex)
+      {
+        throw new Exception($"Unable to load the interop file. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+      }
+
+      // look for the interop interface
+      var classifyEngine = TypeLoader.LoadTypeFromAssembly<Classifier.Interfaces.IClassify1>(asm);
+      if (null == classifyEngine)
+      {
+        // could not locate the interface.
+        throw new Exception($"Unable to load the IClasify1 interface in the interop file. '{dllInteropPath}'.");
+      }
+
+      // initialise the engine itself.
+      if (!classifyEngine.Initialise(EventViewSource, dllEnginePath, databasePath))
+      {
+        return null;
+      }
+      return classifyEngine;
     }
   }
 }

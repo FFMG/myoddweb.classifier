@@ -3,12 +3,20 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using myoddweb.classifier.core;
+using Classifier.Interfaces;
+using System.Reflection;
+using myoddweb.classifier.utils;
 
 namespace myoddweb.classifierUnitTest
 {
   [TestFixture]
   public class TestCommon
   {
+    /// <summary>
+    /// Name for logging in the event viewer,
+    /// </summary>
+    private const string EventViewSource = "myoddweb.classifier";
+
     // the engine
     private Engine _engine;
 
@@ -54,6 +62,58 @@ namespace myoddweb.classifierUnitTest
       return null;
     }
 
+    /// <summary>
+    /// Initialise the engine and load all the resources neeed.
+    /// Will load the database and so on to get the plugin ready for use.
+    /// </summary>
+    /// <param name="directoryName">string the directory we are loading from.</param>
+    /// <param name="databasePath">string the name/path of the database we will be loading.</param>
+    /// <returns></returns>
+    private static IClassify1 InitialiseEngine(string directoryName, string databasePath)
+    {
+      var dllInteropPath = Path.Combine(directoryName, "x86\\Classifier.Interop.dll");
+      var dllEnginePath = Path.Combine(directoryName, "x86\\Classifier.Engine.dll");
+      if (Environment.Is64BitProcess)
+      {
+        dllInteropPath = Path.Combine(directoryName, "x64\\Classifier.Interop.dll");
+        dllEnginePath = Path.Combine(directoryName, "x64\\Classifier.Engine.dll");
+      }
+
+      // look for the 
+      Assembly asm = null;
+      try
+      {
+        asm = Assembly.LoadFrom(dllInteropPath);
+        if (null == asm)
+        {
+          throw new Exception($"Unable to load the interop file. '{dllInteropPath}'.");
+        }
+      }
+      catch (ArgumentException ex)
+      {
+        throw new Exception($"The interop file name/path does not appear to be valid. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+      }
+      catch (FileNotFoundException ex)
+      {
+        throw new Exception($"Unable to load the interop file. '{dllInteropPath}'.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+      }
+
+      // look for the interop interface
+      var classifyEngine = TypeLoader.LoadTypeFromAssembly<Classifier.Interfaces.IClassify1>(asm);
+      if (null == classifyEngine)
+      {
+        // could not locate the interface.
+        throw new Exception($"Unable to load the IClasify1 interface in the interop file. '{dllInteropPath}'.");
+      }
+
+      // initialise the engine itself.
+      if (!classifyEngine.Initialise(EventViewSource, dllEnginePath, databasePath))
+      {
+        return null;
+      }
+      return classifyEngine;
+    }
+
     protected static Engine CreateEngine()
     {
       // the paths we will be using.
@@ -81,7 +141,7 @@ namespace myoddweb.classifierUnitTest
       CleanDatabaseFullPath = $"{DirectoryPath}\\{CleandbName}";
       if (!File.Exists(CleanDatabaseFullPath))
       {
-        var e = new Engine(DirectoryPath, CleanDatabaseFullPath);
+        var e = new Engine( InitialiseEngine( DirectoryPath, CleanDatabaseFullPath ), EventViewSource);
         e.SetConfig("Option.CommonWordsMinPercent", "100");
         e.Release();
       }
@@ -94,7 +154,7 @@ namespace myoddweb.classifierUnitTest
       }
 
       //create the engine
-      return new Engine(DirectoryPath, DatabaseFullPath);
+      return new Engine(InitialiseEngine(DirectoryPath, DatabaseFullPath), EventViewSource);
     }
 
     protected void ReleaseEngine( bool removeCleanDb )

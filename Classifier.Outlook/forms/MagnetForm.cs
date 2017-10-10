@@ -18,19 +18,19 @@ namespace myoddweb.classifier.forms
       public override string ToString() { return Text; }
     }
 
-    private readonly IEngine _engine = null;
+    private readonly IMagnets _magnets = null;
 
     private Magnet GivenMagnet { get; set; }
 
     private readonly Categories _Categories;
 
-    public MagnetForm( IEngine engine, Categories categories, Magnet magnet  )
+    public MagnetForm(IMagnets magnets, Categories categories, Magnet magnet  )
     {
       // 
       InitializeComponent();
 
       // the engine to create new categories.
-      _engine = engine;
+      _magnets = magnets;
 
       // the category we working with.
       GivenMagnet = magnet;
@@ -164,7 +164,7 @@ namespace myoddweb.classifier.forms
       var categoryId = GetSelectedCategoryId();
 
       // all the magnets.
-      var allMagnets = _engine.GetMagnets();
+      var allMagnets = _magnets.GetMagnets();
 
       // does it already exist?
       var item = allMagnets.Where( m => string.Equals( m.Name, text, StringComparison.CurrentCultureIgnoreCase) && m.Rule == ruleId )
@@ -201,12 +201,12 @@ namespace myoddweb.classifier.forms
       if (GivenMagnet != null)
       {
         //  change the name of the magnet.
-        _engine.UpdateMagnet(GivenMagnet.Id, text, ruleId, categoryId);
+        _magnets.UpdateMagnet(GivenMagnet.Id, text, ruleId, categoryId);
       }
       else
       {
         // create the magnet 
-        _engine.CreateMagnet(text, ruleId, categoryId);
+        _magnets.CreateMagnet(text, ruleId, categoryId);
       }
 
       // and we are dome

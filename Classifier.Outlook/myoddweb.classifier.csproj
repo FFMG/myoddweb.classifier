@@ -251,6 +251,7 @@
     <Compile Include="forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="interfaces\IMagnets.cs" />
     <Compile Include="utils\errors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
