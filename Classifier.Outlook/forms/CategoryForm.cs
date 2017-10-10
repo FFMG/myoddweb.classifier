@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using myoddweb.classifier.core;
 using System.Collections.Generic;
 using System.Linq;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier
 {

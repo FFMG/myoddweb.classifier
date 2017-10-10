@@ -15,6 +15,7 @@ using myoddweb.classifier.forms;
 using myoddweb.viewer.utils;
 using Exception = System.Exception;
 using Office = Microsoft.Office.Core;
+using myoddweb.classifier.interfaces;
 
 // For more information, see the Ribbon XML documentation in the Visual Studio Tools for Office Help.
 namespace myoddweb.classifier.core

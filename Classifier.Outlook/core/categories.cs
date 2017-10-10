@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myoddweb.classifier.interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;

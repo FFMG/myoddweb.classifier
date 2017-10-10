@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Classifier.Interfaces;
 using Classifier.Interfaces.Helpers;
+using myoddweb.classifier.core;
 
-namespace myoddweb.classifier.core
+namespace myoddweb.classifier.interfaces
 {
   public interface IEngine : ILogger, IConfig, IClassify
   {

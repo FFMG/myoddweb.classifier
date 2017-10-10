@@ -6,6 +6,7 @@ using myoddweb.classifier.utils;
 using System.Linq;
 using System.Threading;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
 {

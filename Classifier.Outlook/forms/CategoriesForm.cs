@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using myoddweb.classifier.core;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.forms
 {

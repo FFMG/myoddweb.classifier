@@ -1,7 +1,8 @@
 ﻿using Classifier.Interfaces.Helpers;
+using myoddweb.classifier.core;
 using System.Collections.Generic;
 
-namespace myoddweb.classifier.core
+namespace myoddweb.classifier.interfaces
 {
   public interface IClassify
   {

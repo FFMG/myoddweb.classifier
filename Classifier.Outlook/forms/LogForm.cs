@@ -4,6 +4,7 @@ using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
 using System.Drawing;
 using System.Linq;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.forms
 {

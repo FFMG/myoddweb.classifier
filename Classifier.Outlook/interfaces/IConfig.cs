@@ -1,4 +1,4 @@
-﻿namespace myoddweb.classifier.core
+﻿namespace myoddweb.classifier.interfaces
 {
   public interface IConfig
   {

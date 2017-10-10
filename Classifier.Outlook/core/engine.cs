@@ -8,6 +8,7 @@ using System.Linq;
 using Classifier.Interfaces.Helpers;
 using System.Timers;
 using Newtonsoft.Json;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
 {

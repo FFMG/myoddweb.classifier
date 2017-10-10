@@ -3,6 +3,7 @@ using NUnit.Framework;
 using myoddweb.classifier.core;
 using Moq;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifierUnitTest
 {

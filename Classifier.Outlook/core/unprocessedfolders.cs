@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myoddweb.classifier.interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Outlook = Microsoft.Office.Interop.Outlook;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Classifier.Interfaces;
 using myoddweb.classifier.core;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.forms
 {

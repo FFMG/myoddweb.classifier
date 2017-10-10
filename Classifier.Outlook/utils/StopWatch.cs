@@ -1,4 +1,5 @@
 ﻿using myoddweb.classifier.core;
+using myoddweb.classifier.interfaces;
 using System.Diagnostics;
 
 namespace myoddweb.viewer.utils

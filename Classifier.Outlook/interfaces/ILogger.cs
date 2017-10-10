@@ -1,7 +1,7 @@
 ﻿using Classifier.Interfaces.Helpers;
 using System.Collections.Generic;
 
-namespace myoddweb.classifier.core
+namespace myoddweb.classifier.interfaces
 {
   public interface ILogger
   {
