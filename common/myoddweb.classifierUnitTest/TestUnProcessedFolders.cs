@@ -2,6 +2,7 @@
 using myoddweb.classifier.core;
 using Moq;
 using NUnit.Framework;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifierUnitTest64
 {
