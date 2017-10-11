@@ -48,11 +48,6 @@ namespace myoddweb.classifier.core
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
-    /// The timer we use to call the clean log function.
-    /// </summary>
-    Timer LogTimer { get; set; }
-
-    /// <summary>
     /// The engine constructor.
     /// </summary>
     /// <param name="classifyEngine">The classification engine</param>
@@ -62,9 +57,6 @@ namespace myoddweb.classifier.core
       // save the classify engine.
       ClassifyEngine = classifyEngine;
 
-      // start the 'cleanup' timer.
-      StartLogCleanupTimer();
-
       // set the event view source.
       EventViewSource = eventViewSource;
     }
@@ -73,53 +65,10 @@ namespace myoddweb.classifier.core
     {
       // release the engine
       ReleaseEngine();
-
-      // stop the log
-      StopLogCleanupTimer();
-    }
-
-          // start the 'cleanup' timer.
-    private void StartLogCleanupTimer()
-    {
-      //  stop the timer if need be.
-      StopLogCleanupTimer();
-
-      // start the new time
-      LogTimer = new Timer();
-      LogTimer.Elapsed += OnTimedLogEvent;
-      LogTimer.Interval = 60 * 60 * 1000;  // one hour
-      LogTimer.Enabled = true;
-    }
-
-    private void StopLogCleanupTimer()
-    {
-      LogTimer?.Stop();
-      LogTimer?.Dispose();
-      LogTimer = null;
-    }
-
-    private void OnTimedLogEvent(object source, ElapsedEventArgs e)
-    {
-      if( null == ClassifyEngine )
-      {
-        return;
-      }
-
-      // days of retention
-      var daysRetention = Options.LogRetention;
-
-      // the oldest log date
-      var date = DateTime.UtcNow.AddDays(daysRetention * -1);
-
-      // delete old entries.
-      ClassifyEngine.ClearLogEntries(Helpers.DateTimeToUnix(date));
     }
 
     public void Release()
     {
-      // stop the time
-      StopLogCleanupTimer();
-
       // release the engine
       ReleaseEngine();
     }

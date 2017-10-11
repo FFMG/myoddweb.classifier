@@ -7,11 +7,18 @@ using System.IO;
 using System;
 using Classifier.Interfaces;
 using myoddweb.classifier.utils;
+using System.Timers;
 
 namespace myoddweb.classifier
 {
   public partial class ThisAddIn
   {
+    /// <summary>
+    /// The timer we use to call the clean log function.
+    /// </summary>
+    Timer LogTimer { get; set; }
+
+
     /// <summary>
     /// Name for logging in the event viewer,
     /// </summary>
@@ -59,6 +66,9 @@ namespace myoddweb.classifier
       {
         _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
       }
+
+      // start the 'cleanup' timer.
+      StartLogCleanupTimer();
     }
 
     // parse all the unprocessed emails.
@@ -110,6 +120,9 @@ namespace myoddweb.classifier
 
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
     {
+      // stop the time
+      StopLogCleanupTimer();
+
       Task.WaitAll(_tasks?.ToArray());
       _tasks = null;
       // Note: Outlook no longer raises this event. If you have code that 
@@ -230,6 +243,55 @@ namespace myoddweb.classifier
         return null;
       }
       return classifyEngine;
+    }
+
+    // start the 'cleanup' timer.
+    private void StartLogCleanupTimer()
+    {
+      //  stop the timer if need be.
+      StopLogCleanupTimer();
+
+      // start the new time
+      LogTimer = new Timer();
+      LogTimer.Elapsed += OnTimedLogEvent;
+      LogTimer.Interval = 60 * 60 * 1000;  // one hour
+      LogTimer.Enabled = true;
+    }
+
+    private void StopLogCleanupTimer()
+    {
+      LogTimer?.Stop();
+      LogTimer?.Dispose();
+      LogTimer = null;
+    }
+
+    private void OnTimedLogEvent(object source, ElapsedEventArgs e)
+    {
+      if( null == _engine )
+      {
+        return;
+      }
+
+      var classifyEngine = _engine.ClassifyEngine;
+      if (null == classifyEngine)
+      {
+        return;
+      }
+
+      var options = _engine.Options;
+      if (null == options )
+      {
+        return;
+      }
+
+      // days of retention
+      var daysRetention = options.LogRetention;
+
+      // the oldest log date
+      var date = DateTime.UtcNow.AddDays(daysRetention * -1);
+
+      // delete old entries.
+      classifyEngine.ClearLogEntries(Helpers.DateTimeToUnix(date));
     }
   }
 }
