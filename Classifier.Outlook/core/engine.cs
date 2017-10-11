@@ -4,7 +4,6 @@ using Classifier.Interfaces;
 using myoddweb.classifier.utils;
 using System.Linq;
 using Classifier.Interfaces.Helpers;
-using System.Timers;
 using Newtonsoft.Json;
 using myoddweb.classifier.interfaces;
 
@@ -12,17 +11,6 @@ namespace myoddweb.classifier.core
 {
   public class Engine : IEngine
   {
-    /// <summary>
-    /// If NULL we have not check for event source.
-    /// Any other value, we will check for.
-    /// </summary>
-    private bool? _eventSource = null;
-
-    /// <summary>
-    /// Name for logging in the event viewer,
-    /// </summary>
-    private readonly string EventViewSource;
-
     /// <summary>
     /// All the options
     /// </summary>
@@ -52,22 +40,19 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="classifyEngine">The classification engine</param>
     /// <param name="eventViewSource">The event log name.</param>
-    public Engine( IClassify1 classifyEngine, string eventViewSource )
+    public Engine( IClassify1 classifyEngine )
     {
       // save the classify engine.
       ClassifyEngine = classifyEngine;
-
-      // set the event view source.
-      EventViewSource = eventViewSource;
     }
 
     ~Engine()
     {
       // release the engine
-      ReleaseEngine();
+      Release();
     }
 
-    public void Release()
+    public virtual void Release()
     {
       // release the engine
       ReleaseEngine();
@@ -90,32 +75,6 @@ namespace myoddweb.classifier.core
 
       // and free the memory
       ClassifyEngine = null;
-    }
-
-    private bool InstallAndValidateSource()
-    {
-      if (null != _eventSource)
-      {
-        return (bool) _eventSource;
-      }
-
-      try
-      {
-        if (!System.Diagnostics.EventLog.SourceExists(EventViewSource))
-        {
-          System.Diagnostics.EventLog.CreateEventSource(EventViewSource, null);
-        }
-
-        // set the value.
-        _eventSource = System.Diagnostics.EventLog.SourceExists(EventViewSource);
-      }
-      catch (System.Security.SecurityException)
-      {
-        _eventSource = false;
-      }
-
-      // one last check.
-      return InstallAndValidateSource();
     }
 
     /// <summary>
@@ -143,76 +102,40 @@ namespace myoddweb.classifier.core
     /// Log a verbose message
     /// </summary>
     /// <param name="message"></param>
-    public void LogVerbose(string message)
+    public virtual void LogVerbose(string message)
     {
       // log it
       LogMessageToEngine(message, Options.LogLevels.Verbose);
-
-      // log to the event log.
-      if (!InstallAndValidateSource())
-      {
-        return;
-      }
-
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information );
     }
 
     /// <summary>
     /// Log an error message
     /// </summary>
     /// <param name="message"></param>
-    public void LogError(string message)
+    public virtual void LogError(string message)
     {
       // log it
       LogMessageToEngine(message, Options.LogLevels.Error);
-
-      // log to the event log.
-      if (!InstallAndValidateSource())
-      {
-        return;
-      }
-
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Error);
     }
 
     /// <summary>
     /// Log a warning message
     /// </summary>
     /// <param name="message"></param>
-    public void LogWarning(string message)
+    public virtual void LogWarning(string message)
     {
       // log it
       LogMessageToEngine(message, Options.LogLevels.Warning);
-
-      // log to the event log.
-      if (!InstallAndValidateSource())
-      {
-        return;
-      }
-
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Warning);
     }
 
     /// <summary>
     /// Log an information message
     /// </summary>
     /// <param name="message"></param>
-    public void LogInformation(string message)
+    public virtual void LogInformation(string message)
     {
       // log it
       LogMessageToEngine(message, Options.LogLevels.Information);
-
-      // log to the event log.
-      if (!InstallAndValidateSource())
-      {
-        return;
-      }
-
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
-      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
     }
 
     /// <summary>

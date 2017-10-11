@@ -188,6 +188,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="core\outlookengine.cs" />
     <Compile Include="interfaces\IClassify.cs" />
     <Compile Include="interfaces\IConfig.cs" />
     <Compile Include="interfaces\IEngine.cs" />
