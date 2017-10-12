@@ -11,14 +11,14 @@ namespace myoddweb.classifier.forms
   public partial class LogForm : Form
   {
     // the classifier engine
-    private readonly IEngine _engine;
+    private readonly ILogger _logger;
 
     private readonly uint _numberOfItemsToDisplay;
 
-    public LogForm( IEngine engine, uint numberOfItemsToDisplay )
+    public LogForm( ILogger logger, uint numberOfItemsToDisplay )
     {
       Padding = new Padding(5);
-      _engine = engine;
+      _logger = logger;
       _numberOfItemsToDisplay = numberOfItemsToDisplay;
       InitializeComponent();
     }
@@ -69,7 +69,7 @@ namespace myoddweb.classifier.forms
 
       // get the Log and make sure that it is ordered by date.
       listLog.BeginUpdate();
-      var logEntries = _engine.GetLogEntries( (int)_numberOfItemsToDisplay );
+      var logEntries = _logger.GetLogEntries( (int)_numberOfItemsToDisplay );
       logEntries = logEntries.OrderByDescending(o => o.Unixtime).ToList();
       foreach (var entry in logEntries )
       {
