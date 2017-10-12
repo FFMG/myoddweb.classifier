@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -43,9 +42,34 @@ namespace myoddweb.classifier.core
     public int Count => ListOfCategories?.Count ?? 0;
     
     /// <summary>
-    /// The engine that does the classification.
+    /// The category engine
     /// </summary>
-    private readonly IEngine _engine;
+    private readonly ICategories _categories;
+
+    /// <summary>
+    /// What we will be using to log information
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    /// What we will be using to log information
+    /// </summary>
+    private readonly IMagnets _magnets;
+
+    /// <summary>
+    /// The classification engine.
+    /// </summary>
+    private readonly IClassify _classify;
+
+    /// <summary>
+    /// The configuration interface.
+    /// </summary>
+    private readonly IConfig _config;
+
+    /// <summary>
+    /// The root folder.
+    /// </summary>
+    Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
     /// The actual folders
@@ -56,17 +80,38 @@ namespace myoddweb.classifier.core
     /// The folders we will be using.
     /// </summary>
     /// 
-    private Folders TheFolders => _folders ?? (_folders = new Folders(_engine.GetRootFolder() ));
+    private Folders TheFolders => _folders ?? (_folders = new Folders(_rootFolder ));
 
     /// <summary>
     /// Unique identitider to all messages that will contain our unique key.
     /// </summary>
     private const string IdentifierKey = "Classifier.Identifier";
 
-    public Categories( IEngine engine )
+    public Categories( Engine engine ) :
+      this(engine, engine.GetRootFolder(), engine, engine, engine, engine)
     {
-      // the engine.
-      _engine = engine;
+
+    }
+
+    public Categories(IClassify classify, Outlook.MAPIFolder rootFolder, IConfig config, ICategories categories, IMagnets magnets, ILogger logger )
+    {
+      // the root folder.
+      _rootFolder = rootFolder;
+
+      // the config handler.
+      _config = config;
+
+      // classification engine
+      _classify = classify;
+
+      // the magnets interface.
+      _magnets = magnets;
+
+      // the logger
+      _logger = logger;
+
+      // the categories engine.
+      _categories = categories;
 
       // (re)load the categories
       ReloadCategories();
@@ -78,13 +123,13 @@ namespace myoddweb.classifier.core
     public void ReloadCategories()
     {
       //  we don't seem to have a valid engine
-      if (null == _engine)
+      if (null == _categories)
       {
         return;
       }
 
       // reload the categories.
-      var categories = _engine.GetCategories();
+      var categories = _categories.GetCategories();
 
       // use a temp list to update what we have.
       var listOfCategories = new List<Category>();
@@ -115,7 +160,7 @@ namespace myoddweb.classifier.core
         var configName = GetConfigName( categoryName );
 
         // and now ger the value.
-        return _engine.GetConfig(configName);
+        return _config.GetConfig(configName);
       }
       catch (KeyNotFoundException)
       {
@@ -353,7 +398,7 @@ namespace myoddweb.classifier.core
       magnetWasUsed = (magnetCategory != -1);
 
       // otherwise, use the engine direclty.
-      return magnetWasUsed ? magnetCategory : _engine.Categorize(GetStringFromMailItem(mailItem));
+      return magnetWasUsed ? magnetCategory : _classify.Categorize(GetStringFromMailItem(mailItem));
     }
 
     /// <summary>
@@ -364,7 +409,7 @@ namespace myoddweb.classifier.core
     private int CategorizeUsingMagnets(Outlook._MailItem mailItem)
     {
       // we need to get the magnets and see if any one of them actually applies to us.
-      var magnets = _engine.GetMagnets();
+      var magnets = _magnets.GetMagnets();
 
       // the email address of the sender.
       string fromEmailAddress = null;
@@ -411,7 +456,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.LogError(e.ToString());
+                _logger.LogError(e.ToString());
               }
             }
             break;
@@ -443,13 +488,13 @@ namespace myoddweb.classifier.core
               }
               catch( FormatException e )
               {
-                _engine.LogError(e.ToString());
+                _logger.LogError(e.ToString());
               }
             }
             break;
 
           default:
-            _engine.LogError( $"Unknown magnet rule : {magnet.Rule}." );
+            _logger.LogError( $"Unknown magnet rule : {magnet.Rule}." );
             break;
         }
       }
@@ -468,7 +513,7 @@ namespace myoddweb.classifier.core
     /// <returns>myoddweb.classifier.Errors the result of the operation</returns>
     private Errors Classify(string uniqueEntryId, Dictionary<MailStringCategories, string> listOfItems, uint categoryId, uint weight)
     {
-      if (_engine == null)
+      if (_categories == null)
       {
         return Errors.CategoryNoEngine;
       }
@@ -484,7 +529,7 @@ namespace myoddweb.classifier.core
       var contents = string.Join(";", listOfItems.Select(x => x.Value));
 
       // classify it.
-      if ( !_engine.Train(category.Name, contents, uniqueEntryId, (int)weight ) )
+      if ( !_classify.Train(category.Name, contents, uniqueEntryId, (int)weight ) )
       {
         //  did not work.
         return Errors.CategoryTrainning;
@@ -534,7 +579,7 @@ namespace myoddweb.classifier.core
       var uniqueIdentifier = GetUniqueIdentifierString(mailItem);
 
       // then look for it in the engine.
-      return FindCategoryById( _engine.GetCategoryFromUniqueId(uniqueIdentifier) );
+      return FindCategoryById(_categories.GetCategoryFromUniqueId(uniqueIdentifier) );
     }
 
     /// <summary>
