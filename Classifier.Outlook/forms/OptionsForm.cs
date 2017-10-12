@@ -531,7 +531,7 @@ namespace myoddweb.classifier.forms
 
     private void Log_Click(object sender, EventArgs e)
     {
-      using (var logForm = new LogForm(engine: _engine, numberOfItemsToDisplay: GetNumberOfEntriesToDisplay() ))
+      using (var logForm = new LogForm(logger: _engine, numberOfItemsToDisplay: GetNumberOfEntriesToDisplay() ))
       {
         logForm.ShowDialog();
       }
