@@ -419,7 +419,7 @@ namespace myoddweb.classifier.forms
 
     private void Magnets_Click(object sender, EventArgs e)
     {
-      using (var rulesForm = new MagnetsForm( engine: _engine, categories: _categories ))
+      using (var rulesForm = new MagnetsForm( magnets: _engine, categories: _categories ))
       {
         rulesForm.ShowDialog();
       }

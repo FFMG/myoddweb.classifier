@@ -10,14 +10,14 @@ namespace myoddweb.classifier.forms
   public partial class MagnetsForm : Form
   {
     // the classifier engine
-    private readonly IEngine _engine;
+    private readonly IMagnets _magnets;
 
     // all the categories.
     private readonly Categories _categories;
 
-    public MagnetsForm(Categories categories, IEngine engine)
+    public MagnetsForm(Categories categories, IMagnets magnets)
     {
-      _engine = engine;
+      _magnets = magnets;
       _categories = categories;
       InitializeComponent();
     }
@@ -62,7 +62,7 @@ namespace myoddweb.classifier.forms
       ListMagnets.Items.Clear();
 
       // the current list of magnets.
-      var magnets = _engine.GetMagnets();
+      var magnets = _magnets.GetMagnets();
 
       // the rules.
       var rules = new Rules();
@@ -107,7 +107,7 @@ namespace myoddweb.classifier.forms
     private void New_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var magnet = new MagnetForm( _engine, _categories, null );
+      var magnet = new MagnetForm(_magnets, _categories, null );
 
       // load the dialog box.
       if (magnet.ShowDialog() != DialogResult.OK)
@@ -168,7 +168,7 @@ namespace myoddweb.classifier.forms
     private void Edit_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var magnet = new MagnetForm(_engine, _categories, GetSelectedMagnet());
+      var magnet = new MagnetForm(_magnets, _categories, GetSelectedMagnet());
 
       // load the dialog box.
       if (magnet.ShowDialog() != DialogResult.OK)
@@ -199,7 +199,7 @@ namespace myoddweb.classifier.forms
       }
 
       // try and delete the category.
-      if (!_engine.DeleteMagnet(magnet.Id))
+      if (!_magnets.DeleteMagnet(magnet.Id))
       {
         MessageBox.Show("There was an error deleting the magnet.", "Delete Magnet", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
@@ -219,7 +219,7 @@ namespace myoddweb.classifier.forms
       }
 
       // make a new category.
-      var magnetForm = new MagnetForm(_engine, _categories, GetSelectedMagnet() );
+      var magnetForm = new MagnetForm(_magnets, _categories, GetSelectedMagnet() );
 
       // load the dialog box.
       if (magnetForm.ShowDialog() != DialogResult.OK)
