@@ -234,7 +234,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: _engine, categories: _engine.Categories ))
+      using (var optionsForm = new OptionsForm( engine: _engine, categories: _engine ))
       {
         optionsForm.ShowDialog();
       }

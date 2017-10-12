@@ -4,12 +4,21 @@ using myoddweb.classifier.core;
 using System.Collections.Generic;
 using System.Linq;
 using myoddweb.classifier.interfaces;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier
 {
   public partial class CategoryForm : Form
   {
-    private readonly IEngine _engine = null;
+    /// <summary>
+    /// The categories.
+    /// </summary>
+    private readonly ICategories _categories;
+
+    /// <summary>
+    /// The categories.
+    /// </summary>
+    private readonly IConfig _config;
 
     /// <summary>
     /// The actual folders
@@ -17,20 +26,31 @@ namespace myoddweb.classifier
     private Folders _folders = null;
 
     /// <summary>
+    /// The outlook folder.
+    /// </summary>
+    public Outlook.MAPIFolder _rootFolder;
+
+    /// <summary>
     /// The folders we will be using.
     /// </summary>
     /// 
-    private Folders TheFolders => _folders ?? (_folders = new Folders( _engine.GetRootFolder()));
+    private Folders TheFolders => _folders ?? (_folders = new Folders(_rootFolder));
 
     private Category GivenCategory { get; set; }
 
-    public CategoryForm( IEngine engine, Category category  )
+    public CategoryForm( ICategories categories, IConfig config, Outlook.MAPIFolder rootFolder, Category category  )
     {
       // 
       InitializeComponent();
 
-      // the engine to create new categories.
-      _engine = engine;
+      // the categories
+      _categories = categories;
+
+      // the config
+      _config = config;
+
+      // the outlook root project.
+      _rootFolder = rootFolder;
 
       // the category we working with.
       GivenCategory = category;
@@ -100,7 +120,7 @@ namespace myoddweb.classifier
 
     private void Apply_Click(object sender, EventArgs e)
     {
-      var allCategories = _engine.GetCategories();
+      var allCategories = _categories.GetCategories();
 
       // get the text and clean it up
       var text = textName.Text;
@@ -147,16 +167,16 @@ namespace myoddweb.classifier
       if (GivenCategory != null)
       {
         //  change the name of the category.
-        _engine.RenameCategory(GivenCategory.Name, text);
+        _categories.RenameCategory(GivenCategory.Name, text);
       }
       else
       {
         // add the category
-        _engine.GetCategory(text);
+        _categories.GetCategory(text);
       }
 
       // save the id of the folder.
-      _engine.SetConfig(Categories.GetConfigName(text), folderId);
+      _config.SetConfig(Categories.GetConfigName(text), folderId);
 
       // and we are dome
       DialogResult = DialogResult.OK;

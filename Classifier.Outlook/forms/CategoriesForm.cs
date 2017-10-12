@@ -2,21 +2,43 @@
 using System.Windows.Forms;
 using myoddweb.classifier.core;
 using myoddweb.classifier.interfaces;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.forms
 {
   public partial class CategoriesForm : Form
   {
-    // the classifier engine
-    private readonly IEngine _engine;
+    /// <summary>
+    /// The categories.
+    /// </summary>
+    private readonly ICategories _categories;
 
-    // all the categories.
-    private readonly Categories _categories;
+    /// <summary>
+    /// The categories.
+    /// </summary>
+    private readonly IConfig _config;
 
-    public CategoriesForm( Categories categories, IEngine engine)
+    /// <summary>
+    /// The actual folders
+    /// </summary>
+    private Folders _folders = null;
+
+    /// <summary>
+    /// The outlook folder.
+    /// </summary>
+    public Outlook.MAPIFolder _rootFolder;
+
+    public CategoriesForm(ICategories categories, IConfig config, Outlook.MAPIFolder rootFolder )
     {
-      _engine = engine;
+      // the categories
       _categories = categories;
+      
+      // the config
+      _config = config;
+
+      // the outlook root project.
+      _rootFolder = rootFolder;
+
       InitializeComponent();
     }
 
@@ -58,7 +80,7 @@ namespace myoddweb.classifier.forms
 
       // get the categories.
       listCategories.BeginUpdate();
-      foreach (var category in _categories.List() )
+      foreach (var category in _categories.Categories.List() )
       {
         var item = new ListViewItem()
         {
@@ -72,7 +94,7 @@ namespace myoddweb.classifier.forms
       listCategories.EndUpdate();
 
       // do we have anything at all?
-      if (0 == _categories.Count)
+      if (0 == _categories.Categories.Count)
       {
         DisableButtons();
       }
@@ -89,7 +111,7 @@ namespace myoddweb.classifier.forms
 
     private string GetRuleDescription(Category category)
     {
-      var folder = _categories.FindFolderById(category.FolderId);
+      var folder = _categories.Categories.FindFolderById(category.FolderId);
       if (null == folder)
       {
         // no action.
@@ -103,7 +125,7 @@ namespace myoddweb.classifier.forms
     private void New_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var category = new CategoryForm( _engine, null );
+      var category = new CategoryForm(_categories, _config, _rootFolder, null );
 
       // load the dialog box.
       if (category.ShowDialog() != DialogResult.OK)
@@ -112,7 +134,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.ReloadCategories();
+      _categories.Categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();
@@ -167,7 +189,7 @@ namespace myoddweb.classifier.forms
     private void Edit_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var category = new CategoryForm(_engine, GetSelectedCategory());
+      var category = new CategoryForm(_categories, _config, _rootFolder, GetSelectedCategory());
 
       // load the dialog box.
       if (category.ShowDialog() != DialogResult.OK)
@@ -176,7 +198,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.ReloadCategories();
+      _categories.Categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();
@@ -201,14 +223,14 @@ namespace myoddweb.classifier.forms
       }
 
       // try and delete the category.
-      if (!_engine.DeleteCategory(category.Name))
+      if (!_categories.DeleteCategory(category.Name))
       {
         MessageBox.Show("There was an error deleting the category.", "Delete Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
       // reload all the categories.
-      _categories.ReloadCategories();
+      _categories.Categories.ReloadCategories();
 
       // reload the values.
       ReloadCategories();
@@ -224,7 +246,7 @@ namespace myoddweb.classifier.forms
       }
 
       // make a new category.
-      var categoryForm = new CategoryForm(_engine, GetSelectedCategory() );
+      var categoryForm = new CategoryForm(_categories, _config, _rootFolder, GetSelectedCategory() );
 
       // load the dialog box.
       if (categoryForm.ShowDialog() != DialogResult.OK)
@@ -233,7 +255,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.ReloadCategories();
+      _categories.Categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();

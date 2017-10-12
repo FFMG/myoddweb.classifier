@@ -37,12 +37,12 @@ namespace myoddweb.classifier.forms
     }
 
     // all the categories.
-    private readonly Categories _categories;
+    private readonly ICategories _categories;
 
     // all the engine.
     private readonly IEngine _engine;
 
-    public OptionsForm( IEngine engine, Categories categories )
+    public OptionsForm( IEngine engine, ICategories categories )
     {
       _engine = engine;
       _categories = categories;
@@ -411,7 +411,7 @@ namespace myoddweb.classifier.forms
 
     private void Categories_Click(object sender, EventArgs e)
     {
-      using (var categoriesForm = new CategoriesForm(categories: _categories, engine: _engine))
+      using (var categoriesForm = new CategoriesForm( _categories, _engine, _engine.GetRootFolder() ))
       {
         categoriesForm.ShowDialog();
       }
@@ -419,7 +419,7 @@ namespace myoddweb.classifier.forms
 
     private void Magnets_Click(object sender, EventArgs e)
     {
-      using (var rulesForm = new MagnetsForm( magnets: _engine, categories: _categories ))
+      using (var rulesForm = new MagnetsForm( magnets: _engine, categories: _categories.Categories ))
       {
         rulesForm.ShowDialog();
       }
