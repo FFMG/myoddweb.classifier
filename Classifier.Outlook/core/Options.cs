@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myoddweb.classifier.interfaces;
+using System;
 
 namespace myoddweb.classifier.core
 {
@@ -25,7 +26,7 @@ namespace myoddweb.classifier.core
       ClassifyDelaySeconds = 1
     }
 
-    private readonly Engine _engine;
+    private readonly IConfig _config;
 
     private bool? _reAutomaticallyTrainMagnetMessages;
 
@@ -65,12 +66,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_minPercentage ??
-                       (_minPercentage = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.MinPercentage", Convert.ToString((uint)DefaultOptions.MinPercentage))))));
+                       (_minPercentage = (Convert.ToUInt32(_config?.GetConfigWithDefault("Option.MinPercentage", Convert.ToString((uint)DefaultOptions.MinPercentage))))));
       }
       set
       {
         _minPercentage = value;
-        _engine?.SetConfig("Option.MinPercentage", Convert.ToString(value));
+        _config?.SetConfig("Option.MinPercentage", Convert.ToString(value));
       }
     }
 
@@ -83,12 +84,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_classifyDelaySeconds ??
-                       (_classifyDelaySeconds = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.ClassifyDelaySeconds", "1")))));
+                       (_classifyDelaySeconds = (Convert.ToUInt32(_config?.GetConfigWithDefault("Option.ClassifyDelaySeconds", "1")))));
       }
       set
       {
         _classifyDelaySeconds = value;
-        _engine?.SetConfig("Option.ClassifyDelaySeconds", Convert.ToString(value));
+        _config?.SetConfig("Option.ClassifyDelaySeconds", Convert.ToString(value));
       }
     }
 
@@ -106,12 +107,12 @@ namespace myoddweb.classifier.core
     {
       get {
         return (bool) (_reCheckCategories ??
-                       (_reCheckCategories = ("1" == _engine?.GetConfigWithDefault("Option.ReCheckCategories", "1"))));
+                       (_reCheckCategories = ("1" == _config?.GetConfigWithDefault("Option.ReCheckCategories", "1"))));
       }
       set
       {
         _reCheckCategories = value;
-         _engine?.SetConfig("Option.ReCheckCategories", (value ? "1" : "0") );
+        _config?.SetConfig("Option.ReCheckCategories", (value ? "1" : "0") );
       }
     }
 
@@ -123,12 +124,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (bool)(_reAutomaticallyTrainMagnetMessages ??
-                       (_reAutomaticallyTrainMagnetMessages = ("1" == _engine?.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", "1"))));
+                       (_reAutomaticallyTrainMagnetMessages = ("1" == _config?.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", "1"))));
       }
       set
       {
         _reAutomaticallyTrainMagnetMessages = value;
-        _engine?.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", (value ? "1" : "0"));
+        _config?.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", (value ? "1" : "0"));
       }
     }
 
@@ -142,12 +143,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (bool)(_reAutomaticallyTrainMessages ??
-                       (_reAutomaticallyTrainMessages = ("1" == _engine?.GetConfigWithDefault("Option.ReAutomaticallyTrainMessages", "0"))));
+                       (_reAutomaticallyTrainMessages = ("1" == _config?.GetConfigWithDefault("Option.ReAutomaticallyTrainMessages", "0"))));
       }
       set
       {
         _reAutomaticallyTrainMessages = value;
-        _engine?.SetConfig("Option.ReAutomaticallyTrainMessages", (value ? "1" : "0"));
+        _config?.SetConfig("Option.ReAutomaticallyTrainMessages", (value ? "1" : "0"));
       }
     }
 
@@ -160,12 +161,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (bool)(_reCheckIfCtrlIsDown ??
-                       (_reCheckIfCtrlIsDown = ("1" == _engine?.GetConfigWithDefault("Option.ReCheckIfCtrlKeyIsDown", "1"))));
+                       (_reCheckIfCtrlIsDown = ("1" == _config?.GetConfigWithDefault("Option.ReCheckIfCtrlKeyIsDown", "1"))));
       }
       set
       {
         _reCheckIfCtrlIsDown = value;
-        _engine?.SetConfig("Option.ReCheckIfCtrlKeyIsDown", (value ? "1" : "0"));
+        _config?.SetConfig("Option.ReCheckIfCtrlKeyIsDown", (value ? "1" : "0"));
       }
     }
 
@@ -177,12 +178,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_magnetsWeight ??
-                       (_magnetsWeight = (Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.MagnetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
+                       (_magnetsWeight = (Convert.ToUInt32(_config?.GetConfigWithDefault("Option.MagnetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
       }
       set
       {
         _magnetsWeight = value;
-        _engine?.SetConfig("Option.MagnetsWeight", Convert.ToString(value));
+        _config?.SetConfig("Option.MagnetsWeight", Convert.ToString(value));
       }
     }
 
@@ -194,12 +195,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_userWeight ??
-                       (_userWeight = (Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.UserWeight", Convert.ToString( (uint)DefaultOptions.UserWeight))))));
+                       (_userWeight = (Convert.ToUInt32(_config?.GetConfigWithDefault("Option.UserWeight", Convert.ToString( (uint)DefaultOptions.UserWeight))))));
       }
       set
       {
         _userWeight = value;
-        _engine?.SetConfig("Option.UserWeight", Convert.ToString(value));
+        _config?.SetConfig("Option.UserWeight", Convert.ToString(value));
       }
     }
 
@@ -211,12 +212,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_logRetention ??
-                       (_logRetention = Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogRetention", Convert.ToString((uint)DefaultOptions.LogRetention)))));
+                       (_logRetention = Convert.ToUInt32(_config?.GetConfigWithDefault("Option.LogRetention", Convert.ToString((uint)DefaultOptions.LogRetention)))));
       }
       set
       {
         _logRetention = value;
-        _engine?.SetConfig("Option.LogRetention", Convert.ToString(value));
+        _config?.SetConfig("Option.LogRetention", Convert.ToString(value));
       }
     }
 
@@ -228,12 +229,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)( _logDisplaySize ??
-                       (_logDisplaySize = Convert.ToUInt32(_engine?.GetConfigWithDefault("Option.LogDisplaySize", Convert.ToString((uint)DefaultOptions.LogDisplaySize)))));
+                       (_logDisplaySize = Convert.ToUInt32(_config?.GetConfigWithDefault("Option.LogDisplaySize", Convert.ToString((uint)DefaultOptions.LogDisplaySize)))));
       }
       set
       {
         _logDisplaySize = value;
-        _engine?.SetConfig("Option.LogDisplaySize", Convert.ToString(value));
+        _config?.SetConfig("Option.LogDisplaySize", Convert.ToString(value));
       }
     }
 
@@ -245,12 +246,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (LogLevels)(_logLevel ??
-                       (_logLevel = (LogLevels)(int.Parse(_engine?.GetConfigWithDefault("Option.LogLevels", $"{(uint)DefaultOptions.LogLevel}")))));
+                       (_logLevel = (LogLevels)(int.Parse(_config?.GetConfigWithDefault("Option.LogLevels", $"{(uint)DefaultOptions.LogLevel}")))));
       }
       set
       {
         _logLevel = value;
-        _engine?.SetConfig("Option.LogLevels", Convert.ToString( (int)value));
+        _config?.SetConfig("Option.LogLevels", Convert.ToString( (int)value));
       }
     }
 
@@ -263,12 +264,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (bool)(_checkUnProcessedEmailsOnStartUp ??
-                       (_checkUnProcessedEmailsOnStartUp = ("1" == _engine?.GetConfigWithDefault("Option.CheckUnProcessedEmailsOnStartUp", "1"))));
+                       (_checkUnProcessedEmailsOnStartUp = ("1" == _config?.GetConfigWithDefault("Option.CheckUnProcessedEmailsOnStartUp", "1"))));
       }
       set
       {
         _checkUnProcessedEmailsOnStartUp = value;
-        _engine?.SetConfig("Option.CheckUnProcessedEmailsOnStartUp", (value ? "1" : "0"));
+        _config?.SetConfig("Option.CheckUnProcessedEmailsOnStartUp", (value ? "1" : "0"));
       }
     }
 
@@ -281,12 +282,12 @@ namespace myoddweb.classifier.core
       get
       {
         return (bool)(_checkIfUnknownCategory ??
-                       (_checkIfUnknownCategory = ("1" == _engine?.GetConfigWithDefault("Option.CheckIfUnKnownCategory", "1"))));
+                       (_checkIfUnknownCategory = ("1" == _config?.GetConfigWithDefault("Option.CheckIfUnKnownCategory", "1"))));
       }
       set
       {
         _checkIfUnknownCategory = value;
-        _engine?.SetConfig("Option.CheckIfUnKnownCategory", (value ? "1" : "0"));
+        _config?.SetConfig("Option.CheckIfUnKnownCategory", (value ? "1" : "0"));
       }
     }
 
@@ -295,18 +296,18 @@ namespace myoddweb.classifier.core
       get
       {
         return (uint)(_commonWordsMinPercent ?? 
-                     (_commonWordsMinPercent = Convert.ToUInt32( _engine?.GetConfigWithDefault("Option.CommonWordsMinPercent", Convert.ToString((uint)DefaultOptions.CommonWordsMinPercent)))));
+                     (_commonWordsMinPercent = Convert.ToUInt32(_config?.GetConfigWithDefault("Option.CommonWordsMinPercent", Convert.ToString((uint)DefaultOptions.CommonWordsMinPercent)))));
       }
       set
       {
         _commonWordsMinPercent = value;
-         _engine?.SetConfig("Option.CommonWordsMinPercent", Convert.ToString(value));
+        _config?.SetConfig("Option.CommonWordsMinPercent", Convert.ToString(value));
       }
     }
 
-    public Options(Engine engine)
+    public Options(IConfig config)
     {
-      _engine = engine;
+      _config = config;
     }
 
     public bool CanLog(LogLevels level )
