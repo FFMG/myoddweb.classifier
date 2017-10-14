@@ -248,19 +248,19 @@ namespace myoddweb.classifier.core
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
-        _engine.LogError(e.ToString());
+        _engine.Logger.LogError(e.ToString());
       }
 
       if (mailItem == null)
       {
-        _engine.LogWarning($"Could not locate mail item {entryIdItem} to move.");
+        _engine.Logger.LogWarning($"Could not locate mail item {entryIdItem} to move.");
         return false;
       }
 
       // did we send this email?
       if( MailWasSentByUs(mailItem))
       {
-        _engine.LogWarning($"Mail item {entryIdItem} was sent by us and will not be classified.");
+        _engine.Logger.LogWarning($"Mail item {entryIdItem} was sent by us and will not be classified.");
         return false;
       }
 
@@ -274,7 +274,7 @@ namespace myoddweb.classifier.core
       }
 
       // start the watch
-      var watch = StopWatch.Start(_engine);
+      var watch = StopWatch.Start(_engine.Logger);
 
       // look for the category
       var guessCategoryResponse = await _engine.Categories.CategorizeAsync(mailItem).ConfigureAwait(false);
@@ -286,7 +286,7 @@ namespace myoddweb.classifier.core
       // did we find a category?
       if (-1 == categoryId)
       {
-        _engine.LogVerbose($"I could not classify the new message {entryIdItem} into any categories. ('{mailItem.Subject}')");
+        _engine.Logger.LogVerbose($"I could not classify the new message {entryIdItem} into any categories. ('{mailItem.Subject}')");
         watch.Checkpoint("I could not classify the new message into any categories: (in: {0})");
         return false;
       }
@@ -313,7 +313,7 @@ namespace myoddweb.classifier.core
         if (null == folder)
         {
           // 
-          _engine.LogWarning($"Could not locate folder for category {categoryId}, cannot move item.");
+          _engine.Logger.LogWarning($"Could not locate folder for category {categoryId}, cannot move item.");
 
           //  the user does not want to move to another folder.
           return false;
@@ -325,14 +325,14 @@ namespace myoddweb.classifier.core
         // if they are not the same, we can move it.
         if (currentFolder.EntryID == folder.Id() )
         {
-          _engine.LogVerbose($"No need to move mail, '{mailItem.Subject}', to folder, '{folder.Name()}', already in folder");
+          _engine.Logger.LogVerbose($"No need to move mail, '{mailItem.Subject}', to folder, '{folder.Name()}', already in folder");
           return true;
         }
 
         // if this is an ignored conversation, we will not move it.
         if (IsIgnoredConversation(mailItem))
         {
-          _engine.LogVerbose($"Mail, '{mailItem.Subject}' is part of an ignored conversation and will not be moved." );
+          _engine.Logger.LogVerbose($"Mail, '{mailItem.Subject}' is part of an ignored conversation and will not be moved." );
           return true;
         }
 
@@ -347,11 +347,11 @@ namespace myoddweb.classifier.core
         mailItem.Move(itemToFolder);
 
         // and log it.
-        _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{folder.Name()}'");
+        _engine.Logger.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{folder.Name()}'");
       }
       catch (Exception ex)
       {
-        _engine.LogError(ex.ToString());
+        _engine.Logger.LogError(ex.ToString());
         return false;
       }
       return true;

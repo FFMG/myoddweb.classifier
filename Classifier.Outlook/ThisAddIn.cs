@@ -95,7 +95,7 @@ namespace myoddweb.classifier
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
-        TheEngine.LogError(e.ToString());
+        TheEngine.Logger.LogError(e.ToString());
       }
     }
 
@@ -146,9 +146,9 @@ namespace myoddweb.classifier
         // add it to the mail processor.
         TheMailProcessor.Add(entryIdItem);
       }
-      catch (System.Exception ex)
+      catch (Exception ex)
       {
-        TheEngine.LogError(ex.ToString());
+        TheEngine.Logger.LogError(ex.ToString());
         return Task.FromResult(false);
       }
       return Task.FromResult(true);

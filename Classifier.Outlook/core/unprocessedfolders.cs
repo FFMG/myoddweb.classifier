@@ -66,7 +66,7 @@ namespace myoddweb.classifier.core
       }
       catch (Exception e)
       {
-        _engine.LogError($"There was an exception looking at unprocessed folders : {e}");
+        _engine.Logger.LogError($"There was an exception looking at unprocessed folders : {e}");
       }
       return ids;
     }
@@ -104,11 +104,11 @@ namespace myoddweb.classifier.core
           // add this to the mail processor...
           ids.Add(mailItem.EntryID);
 
-          _engine.LogInformation($"Found unprocessed email...{mailItem.Subject}.");
+          _engine.Logger.LogInformation($"Found unprocessed email...{mailItem.Subject}.");
         }
         catch (Exception e)
         {
-          _engine.LogError($"There was an exception looking at unprocessed folder : {e}");
+          _engine.Logger.LogError($"There was an exception looking at unprocessed folder : {e}");
         }
       }
       return ids;

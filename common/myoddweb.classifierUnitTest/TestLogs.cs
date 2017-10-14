@@ -122,9 +122,9 @@ namespace myoddweb.classifierUnitTest
       TheEngine.Options.LogLevel = Options.LogLevels.Error;
 
       var message = RandomString(10);
-      TheEngine.LogError(message);
+      TheEngine.Logger.LogError(message);
 
-      var entries = TheEngine.GetLogEntries(10);
+      var entries = TheEngine.Logger.GetLogEntries(10);
       Assert.AreEqual(1, entries.Count);
 
       var entry = JsonConvert.DeserializeObject<LogData>(entries[0].Entry);
@@ -145,7 +145,7 @@ namespace myoddweb.classifierUnitTest
       for( var i = 0; i < count; ++i )
       {
         var message = RandomString(10);
-        TheEngine.LogError(message);
+        TheEngine.Logger.LogError(message);
         messages.Add(message);
       }
 
@@ -154,7 +154,7 @@ namespace myoddweb.classifierUnitTest
       messages.Reverse();
 
       var get = count / 2;
-      var entries = TheEngine.GetLogEntries(get);
+      var entries = TheEngine.Logger.GetLogEntries(get);
       Assert.AreEqual(get, entries.Count);
 
       for( int i = 0; i < get; ++i )

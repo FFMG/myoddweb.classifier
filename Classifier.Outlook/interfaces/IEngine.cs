@@ -4,8 +4,13 @@ using myoddweb.classifier.core;
 
 namespace myoddweb.classifier.interfaces
 {
-  public interface IEngine : ILogger, IConfig, IClassify, IMagnets, ICategories
+  public interface IEngine : IConfig, IClassify, IMagnets, ICategories
   {
+    /// <summary>
+    /// The logger.
+    /// </summary>
+    ILogger Logger { get; }
+
     /// <summary>
     /// All the folders
     /// </summary>

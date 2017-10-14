@@ -170,7 +170,7 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          var watch = StopWatch.Start(_engine);
+          var watch = StopWatch.Start(_engine.Logger);
 
           // log a message to indicate when we are trying to do.
           Debug.WriteLine($"Classifying message id {mailItem.EntryID} to category {categoryId}");
@@ -191,7 +191,7 @@ namespace myoddweb.classifier.core
           watch.Stop("  [Failed] Classifying took {0}.");
 
           // log the error
-          _engine.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
+          _engine.Logger.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // no need to go further, something broke.
           return false;
@@ -199,7 +199,7 @@ namespace myoddweb.classifier.core
         catch
         {
           // log that this did not work.
-          _engine.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
+          _engine.Logger.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // bail out.
           return false;
@@ -337,7 +337,7 @@ namespace myoddweb.classifier.core
       Cursor.Current = Cursors.WaitCursor;
 
       // start the wath
-      var watch = StopWatch.Start(_engine);
+      var watch = StopWatch.Start(_engine.Logger);
 
       try
       {
@@ -349,7 +349,7 @@ namespace myoddweb.classifier.core
       }
       catch (Exception e)
       {
-        _engine.LogError(e.ToString());
+        _engine.Logger.LogError(e.ToString());
 
         // @todo we need to log that there was an issue.
         guessCategoryResponse = new Categories.CategorizeResponse
