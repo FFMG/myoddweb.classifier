@@ -22,7 +22,7 @@ namespace myoddweb.classifierUnitTest
     public void ConfigvalueDoesNotExist()
     {
       // brand new value.
-      Assert.Throws<KeyNotFoundException>(() => TheEngine.GetConfig( RandomString(8) ));
+      Assert.Throws<KeyNotFoundException>(() => TheEngine.Config.GetConfig( RandomString(8) ));
     }
 
     [Test]
@@ -30,7 +30,7 @@ namespace myoddweb.classifierUnitTest
     {
       // brand new value.
       var defaultValue = RandomString(8);
-      var returnValue = TheEngine.GetConfigWithDefault(RandomString(8), defaultValue );
+      var returnValue = TheEngine.Config.GetConfigWithDefault(RandomString(8), defaultValue );
       Assert.AreEqual(defaultValue, returnValue);
     }
 
@@ -41,9 +41,9 @@ namespace myoddweb.classifierUnitTest
       var configName = RandomString(8);
       var defaultValue = RandomString(8);
       var savedValue = RandomString(8);
-      Assert.IsTrue(TheEngine.SetConfig(configName, savedValue));
+      Assert.IsTrue(TheEngine.Config.SetConfig(configName, savedValue));
 
-      var returnValue = TheEngine.GetConfigWithDefault( configName , defaultValue);
+      var returnValue = TheEngine.Config.GetConfigWithDefault( configName , defaultValue);
       Assert.AreEqual(savedValue, returnValue);
     }
 
@@ -54,8 +54,8 @@ namespace myoddweb.classifierUnitTest
       var u16Value = RandomString(16);
       var u16Name = RandomString(8);
 
-      Assert.IsTrue(TheEngine.SetConfig(u16Name, u16Value ) );
-      Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
+      Assert.IsTrue(TheEngine.Config.SetConfig(u16Name, u16Value ) );
+      Assert.AreEqual(u16Value, TheEngine.Config.GetConfig(u16Name));
     }
 
     [Test]
@@ -65,8 +65,8 @@ namespace myoddweb.classifierUnitTest
       var u16Value = RandomString(16);
       var u16Name = RandomString(8);
 
-      Assert.IsTrue(TheEngine.SetConfig( $"   {u16Name}    ", u16Value));
-      Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
+      Assert.IsTrue(TheEngine.Config.SetConfig( $"   {u16Name}    ", u16Value));
+      Assert.AreEqual(u16Value, TheEngine.Config.GetConfig(u16Name));
     }
 
     [Test]
@@ -76,22 +76,22 @@ namespace myoddweb.classifierUnitTest
       var u16Value = RandomString(16);
       var u16Name = RandomString(8);
 
-      Assert.IsTrue(TheEngine.SetConfig( u16Name, u16Value));
-      Assert.AreEqual(u16Value, TheEngine.GetConfig($"   {u16Name}    "));
+      Assert.IsTrue(TheEngine.Config.SetConfig( u16Name, u16Value));
+      Assert.AreEqual(u16Value, TheEngine.Config.GetConfig($"   {u16Name}    "));
     }
 
     [Test]
     public void EmptyConfigValue()
     {
       // simple save and load config.
-      Assert.IsFalse(TheEngine.SetConfig("", RandomString(8)));
+      Assert.IsFalse(TheEngine.Config.SetConfig("", RandomString(8)));
     }
 
     [Test]
     public void EmptyConfigValueWithSpaces()
     {
       // simple save and load config.
-      Assert.IsFalse(TheEngine.SetConfig("        ", RandomString(8)));
+      Assert.IsFalse(TheEngine.Config.SetConfig("        ", RandomString(8)));
     }
 	
     [Test]
@@ -100,8 +100,8 @@ namespace myoddweb.classifierUnitTest
       // simple save and load config.
       var u16Value = RandomNonAsciiString(16);
       var u16Name = RandomString(8);
-      Assert.IsTrue(TheEngine.SetConfig(u16Name, u16Value));
-      Assert.AreEqual( u16Value, TheEngine.GetConfig(u16Name));
+      Assert.IsTrue(TheEngine.Config.SetConfig(u16Name, u16Value));
+      Assert.AreEqual( u16Value, TheEngine.Config.GetConfig(u16Name));
     }
 
     [Test]
@@ -110,8 +110,8 @@ namespace myoddweb.classifierUnitTest
       // simple save and load config.
       var u16Value = RandomString(16);
       var u16Name = RandomNonAsciiString(8);
-      Assert.IsTrue(TheEngine.SetConfig(u16Name, u16Value));
-      Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
+      Assert.IsTrue(TheEngine.Config.SetConfig(u16Name, u16Value));
+      Assert.AreEqual(u16Value, TheEngine.Config.GetConfig(u16Name));
     }
 
     [Test]
@@ -120,8 +120,8 @@ namespace myoddweb.classifierUnitTest
       // simple save and load config.
       var u16Value = RandomNonAsciiString(16);
       var u16Name = RandomNonAsciiString(8);
-      Assert.IsTrue(TheEngine.SetConfig(u16Name, u16Value));
-      Assert.AreEqual(u16Value, TheEngine.GetConfig(u16Name));
+      Assert.IsTrue(TheEngine.Config.SetConfig(u16Name, u16Value));
+      Assert.AreEqual(u16Value, TheEngine.Config.GetConfig(u16Name));
     }
   }
 }

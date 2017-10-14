@@ -188,6 +188,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="core\Config.cs" />
     <Compile Include="core\logger.cs" />
     <Compile Include="core\outlookengine.cs" />
     <Compile Include="core\outlooklogger.cs" />

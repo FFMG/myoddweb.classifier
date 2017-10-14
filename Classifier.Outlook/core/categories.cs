@@ -77,7 +77,7 @@ namespace myoddweb.classifier.core
     private const string IdentifierKey = "Classifier.Identifier";
 
     public Categories( Engine engine ) :
-      this(engine, engine.Folders, engine, engine, engine, engine.Logger)
+      this(engine, engine.Folders, engine.Config, engine, engine, engine.Logger)
     {
 
     }

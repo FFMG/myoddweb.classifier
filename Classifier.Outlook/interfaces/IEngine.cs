@@ -1,11 +1,15 @@
 ﻿using System;
 using Classifier.Interfaces;
-using myoddweb.classifier.core;
 
 namespace myoddweb.classifier.interfaces
 {
-  public interface IEngine : IConfig, IClassify, IMagnets, ICategories
+  public interface IEngine : IClassify, IMagnets, ICategories
   {
+    /// <summary>
+    /// Get the configuration
+    /// </summary>
+    IConfig Config { get; }
+
     /// <summary>
     /// The logger.
     /// </summary>

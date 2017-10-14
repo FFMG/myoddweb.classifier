@@ -410,7 +410,7 @@ namespace myoddweb.classifier.forms
 
     private void Categories_Click(object sender, EventArgs e)
     {
-      using (var categoriesForm = new CategoriesForm( _categories, _engine, _engine.Folders ))
+      using (var categoriesForm = new CategoriesForm( _categories, _engine.Config, _engine.Folders ))
       {
         categoriesForm.ShowDialog();
       }

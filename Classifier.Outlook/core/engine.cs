@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Classifier.Interfaces;
-using myoddweb.classifier.utils;
 using System.Linq;
 using Classifier.Interfaces.Helpers;
-using Newtonsoft.Json;
 using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
@@ -17,6 +15,11 @@ namespace myoddweb.classifier.core
     private IOptions _options;
 
     /// <summary>
+    /// The configuration handler.
+    /// </summary>
+    private IConfig _config;
+
+    /// <summary>
     /// All the folders.
     /// </summary>
     private OutlookFolders _folders;
@@ -24,7 +27,12 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The logger.
     /// </summary>
-    public virtual ILogger Logger { get; set; } 
+    public virtual ILogger Logger { get; set; }
+
+    /// <summary>
+    /// The logger.
+    /// </summary>
+    public virtual IConfig Config => _config ?? (_config = new Config(ClassifyEngine));
 
     /// <summary>
     /// all the categories.
@@ -34,7 +42,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Public accessor of the options.
     /// </summary>
-    public IOptions Options => _options ?? (_options = new Options(this));
+    public IOptions Options => _options ?? (_options = new Options(Config));
 
     public Categories Categories => _categories ?? (_categories = new Categories(this));
 
@@ -117,39 +125,6 @@ namespace myoddweb.classifier.core
       engineVersion -= (minor * 1000);
       var build = engineVersion;
       return new Version( major, minor, build, 0 );
-    }
-
-    public string GetConfig(string configName )
-    {
-      string configValue;
-      if (!ClassifyEngine.GetConfig(configName, out configValue))
-      {
-        throw new KeyNotFoundException("The value could not be found!");
-      }
-      return configValue;
-    }
-
-    /// <summary>
-    /// Same as GetConfig( ... ) but if the value does not exist we will return the default.
-    /// </summary>
-    /// <param name="configName"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
-    public string GetConfigWithDefault(string configName, string defaultValue )
-    {
-      try
-      {
-        return GetConfig(configName);
-      }
-      catch (KeyNotFoundException)
-      {
-        return defaultValue;
-      }
-    }
-
-    public bool SetConfig(string configName, string configValue)
-    {
-      return ClassifyEngine?.SetConfig(configName, configValue) ?? false;
     }
 
     public bool Train(string categoryName, string textToCategorise, string uniqueIdentifier, int weight )

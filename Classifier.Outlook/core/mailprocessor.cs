@@ -49,7 +49,7 @@ namespace myoddweb.classifier.core
         Lock.EnterReadLock();
         try
         {
-          var last = Convert.ToInt32(_engine.GetConfigWithDefault(ConfigName, "-1"));
+          var last = Convert.ToInt32(_engine.Config.GetConfigWithDefault(ConfigName, "-1"));
           if (-1 == last)
           {
             return DateTime.Now;
@@ -223,14 +223,14 @@ namespace myoddweb.classifier.core
       var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime);
 
       // get the last processed time
-      var last = Convert.ToInt32(_engine.GetConfigWithDefault(ConfigName, "0"));
+      var last = Convert.ToInt32(_engine.Config.GetConfigWithDefault(ConfigName, "0"));
 
       // did we handle something older?
       if (last > when)
       {
         return;
       }
-      _engine.SetConfig(ConfigName, Convert.ToString(when));
+      _engine.Config.SetConfig(ConfigName, Convert.ToString(when));
     }
 
     /// <summary>

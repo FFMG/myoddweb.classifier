@@ -142,7 +142,7 @@ namespace myoddweb.classifierUnitTest
       if (!File.Exists(CleanDatabaseFullPath))
       {
         var e = new Engine( InitialiseEngine( DirectoryPath, CleanDatabaseFullPath ));
-        e.SetConfig("Option.CommonWordsMinPercent", "100");
+        e.Config.SetConfig("Option.CommonWordsMinPercent", "100");
         e.Release();
       }
 
