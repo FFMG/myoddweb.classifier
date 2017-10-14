@@ -34,12 +34,7 @@ namespace myoddweb.classifier.core
     /// The engine constructor.
     /// </summary>
     public OutlookEngine() : base( InitialiseEngine() )
-    {
-      if( null == ClassifyEngine )
-      {
-        throw new ArgumentNullException(nameof(ClassifyEngine));
-      }
-         
+    {         
       // start the 'cleanup' timer.
       StartLogCleanupTimer();
     }
