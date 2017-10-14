@@ -67,20 +67,9 @@ namespace myoddweb.classifier.core
     private readonly IConfig _config;
 
     /// <summary>
-    /// The root folder.
-    /// </summary>
-    Outlook.MAPIFolder _rootFolder;
-
-    /// <summary>
     /// The actual folders
     /// </summary>
-    private Folders _folders = null;
-
-    /// <summary>
-    /// The folders we will be using.
-    /// </summary>
-    /// 
-    private Folders TheFolders => _folders ?? (_folders = new Folders(_rootFolder ));
+    private IFolders _folders = null;
 
     /// <summary>
     /// Unique identitider to all messages that will contain our unique key.
@@ -88,15 +77,15 @@ namespace myoddweb.classifier.core
     private const string IdentifierKey = "Classifier.Identifier";
 
     public Categories( Engine engine ) :
-      this(engine, engine.GetRootFolder(), engine, engine, engine, engine)
+      this(engine, engine.Folders, engine, engine, engine, engine)
     {
 
     }
 
-    public Categories(IClassify classify, Outlook.MAPIFolder rootFolder, IConfig config, ICategories categories, IMagnets magnets, ILogger logger )
+    public Categories(IClassify classify, IFolders folders, IConfig config, ICategories categories, IMagnets magnets, ILogger logger )
     {
       // the root folder.
-      _rootFolder = rootFolder;
+      _folders = folders;
 
       // the config handler.
       _config = config;
@@ -539,13 +528,13 @@ namespace myoddweb.classifier.core
       return Errors.Success;
     }
 
-    public Folder FindFolderById(string folderId)
+    public IFolder FindFolderById(string folderId)
     {
       if (string.IsNullOrEmpty(folderId))
       {
         return null;
       }
-      return TheFolders?.GetFolders().FirstOrDefault(e => e.Id() == folderId);
+      return _folders?.GetFolders().FirstOrDefault(e => e.Id() == folderId);
     }
 
     public Category FindCategoryById( int categoryId )
@@ -559,7 +548,7 @@ namespace myoddweb.classifier.core
       return ListOfCategories.FirstOrDefault(e => e.Id == categoryId);
     }
 
-    public Folder FindFolderByCategoryId(int categoryId)
+    public IFolder FindFolderByCategoryId(int categoryId)
     {
       // get the category.
       var category = FindCategoryById(categoryId);

@@ -193,13 +193,15 @@
     <Compile Include="interfaces\IClassify.cs" />
     <Compile Include="interfaces\IConfig.cs" />
     <Compile Include="interfaces\IEngine.cs" />
+    <Compile Include="interfaces\IFolder.cs" />
+    <Compile Include="interfaces\IFolders.cs" />
     <Compile Include="interfaces\ILogger.cs" />
     <Compile Include="core\mailprocessor.cs" />
     <Compile Include="core\options.cs" />
     <Compile Include="core\Rule.cs" />
     <Compile Include="core\Rules.cs" />
-    <Compile Include="core\folder.cs" />
-    <Compile Include="core\folders.cs" />
+    <Compile Include="core\outlookfolder.cs" />
+    <Compile Include="core\outlookfolders.cs" />
     <Compile Include="core\unprocessedfolders.cs" />
     <Compile Include="forms\LogForm.cs">
       <SubType>Form</SubType>

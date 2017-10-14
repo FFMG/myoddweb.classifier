@@ -17,6 +17,11 @@ namespace myoddweb.classifier.core
     private Options _options;
 
     /// <summary>
+    /// All the folders.
+    /// </summary>
+    private OutlookFolders _folders;
+
+    /// <summary>
     /// all the categories.
     /// </summary>
     private Categories _categories;
@@ -32,6 +37,11 @@ namespace myoddweb.classifier.core
     /// The classification engine.
     /// </summary>
     public IClassify1 ClassifyEngine { get; private set; }
+
+    /// <summary>
+    /// Get all the folders.
+    /// </summary>
+    public IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
 
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
@@ -291,7 +301,7 @@ namespace myoddweb.classifier.core
       _rootFolder = rootFolder;
     }
 
-    public Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()
+    private Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()
     {
       return _rootFolder;
     }

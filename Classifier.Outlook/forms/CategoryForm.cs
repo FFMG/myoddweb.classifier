@@ -21,24 +21,13 @@ namespace myoddweb.classifier
     private readonly IConfig _config;
 
     /// <summary>
-    /// The actual folders
-    /// </summary>
-    private Folders _folders = null;
-
-    /// <summary>
     /// The outlook folder.
     /// </summary>
-    public Outlook.MAPIFolder _rootFolder;
-
-    /// <summary>
-    /// The folders we will be using.
-    /// </summary>
-    /// 
-    private Folders TheFolders => _folders ?? (_folders = new Folders(_rootFolder));
+    public IFolders _folders;
 
     private Category GivenCategory { get; set; }
 
-    public CategoryForm( ICategories categories, IConfig config, Outlook.MAPIFolder rootFolder, Category category  )
+    public CategoryForm( ICategories categories, IConfig config, IFolders folders, Category category  )
     {
       // 
       InitializeComponent();
@@ -50,7 +39,7 @@ namespace myoddweb.classifier
       _config = config;
 
       // the outlook root project.
-      _rootFolder = rootFolder;
+      _folders = folders;
 
       // the category we working with.
       GivenCategory = category;
@@ -84,7 +73,7 @@ namespace myoddweb.classifier
       items.Add(new { Text = "n/a", Value = "" });
 
       // go around all the folders.
-      foreach (var folder in TheFolders.GetFolders() )
+      foreach (var folder in _folders.GetFolders() )
       {
         // is that our current one?
         if (GivenCategory?.FolderId == folder.Id())
@@ -98,7 +87,7 @@ namespace myoddweb.classifier
       comboBoxFolders.DataSource = items;
 
       // do we have any folders?
-      if (TheFolders.GetFolders().Count == 0)
+      if (_folders.GetFolders().Count() == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)

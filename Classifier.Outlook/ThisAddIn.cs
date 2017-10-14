@@ -15,7 +15,7 @@ namespace myoddweb.classifier
 
     private Outlook.Explorers _explorers;
 
-    private Outlook.Folders _folders;
+    private Outlook._Folders _folders;
 
     private MailProcessor _mailProcessor;
 
@@ -61,7 +61,7 @@ namespace myoddweb.classifier
 
     private void RegisterAllFolders()
     {
-      foreach (Outlook.Folder folder in _folders)
+      foreach (Outlook.MAPIFolder folder in _folders)
       {
         folder.Items.ItemAdd += FolderItemAdd;
       }
@@ -88,7 +88,7 @@ namespace myoddweb.classifier
         }
 
         // get the new folder id
-        var folderId = ((Outlook.Folder)mailItem?.Parent).EntryID;
+        var folderId = ((Outlook.MAPIFolder)mailItem?.Parent).EntryID;
 
         // get the item id
         var itemId = mailItem?.EntryID;

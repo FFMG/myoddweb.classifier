@@ -71,7 +71,7 @@ namespace myoddweb.classifier.forms
       foreach (var category in _engine.Categories.List() )
       {
         // is that our current one?
-        if (category?.FolderId == ((Outlook.Folder)_mailItem?.Parent).EntryID)
+        if (category?.FolderId == ((Outlook.MAPIFolder)_mailItem?.Parent).EntryID)
         {
           return (int)category.Id;
         }

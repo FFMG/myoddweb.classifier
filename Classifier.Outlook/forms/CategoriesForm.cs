@@ -19,16 +19,11 @@ namespace myoddweb.classifier.forms
     private readonly IConfig _config;
 
     /// <summary>
-    /// The actual folders
+    /// The folders.
     /// </summary>
-    private Folders _folders = null;
+    public IFolders _folders;
 
-    /// <summary>
-    /// The outlook folder.
-    /// </summary>
-    public Outlook.MAPIFolder _rootFolder;
-
-    public CategoriesForm(ICategories categories, IConfig config, Outlook.MAPIFolder rootFolder )
+    public CategoriesForm(ICategories categories, IConfig config, IFolders folders )
     {
       // the categories
       _categories = categories;
@@ -37,7 +32,7 @@ namespace myoddweb.classifier.forms
       _config = config;
 
       // the outlook root project.
-      _rootFolder = rootFolder;
+      _folders = folders;
 
       InitializeComponent();
     }
@@ -125,7 +120,7 @@ namespace myoddweb.classifier.forms
     private void New_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var category = new CategoryForm(_categories, _config, _rootFolder, null );
+      var category = new CategoryForm(_categories, _config, _folders, null );
 
       // load the dialog box.
       if (category.ShowDialog() != DialogResult.OK)
@@ -189,7 +184,7 @@ namespace myoddweb.classifier.forms
     private void Edit_Click(object sender, EventArgs e)
     {
       // make a new category.
-      var category = new CategoryForm(_categories, _config, _rootFolder, GetSelectedCategory());
+      var category = new CategoryForm(_categories, _config, _folders, GetSelectedCategory());
 
       // load the dialog box.
       if (category.ShowDialog() != DialogResult.OK)
@@ -246,7 +241,7 @@ namespace myoddweb.classifier.forms
       }
 
       // make a new category.
-      var categoryForm = new CategoryForm(_categories, _config, _rootFolder, GetSelectedCategory() );
+      var categoryForm = new CategoryForm(_categories, _config, _folders, GetSelectedCategory() );
 
       // load the dialog box.
       if (categoryForm.ShowDialog() != DialogResult.OK)

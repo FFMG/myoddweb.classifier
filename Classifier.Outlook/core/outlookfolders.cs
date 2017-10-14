@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using myoddweb.classifier.interfaces;
+using System.Collections.Generic;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
 {
-  public class Folders
+  public class OutlookFolders : IFolders
   {
     /// <summary>
     /// The list of folders as we know it.
     /// </summary>
-    private List<Folder> _folders = null;
+    private List<OutlookFolder> _folders = null;
 
     private readonly Outlook.MAPIFolder _rootFolder;
-    public Folders(Outlook.MAPIFolder rootFolder )
+    public OutlookFolders(Outlook.MAPIFolder rootFolder )
     {
       // get all the folders.
       _rootFolder = rootFolder;
     }
 
-    public List<Folder> GetFolders()
+    public IEnumerable<IFolder> GetFolders()
     {
       // the folders.
       if (null != _folders)
@@ -26,7 +27,7 @@ namespace myoddweb.classifier.core
       }
 
       // create the folders.
-      _folders = new List<Folder>();
+      _folders = new List<OutlookFolder>();
 
       // enumerates
       EnumerateFolders(_rootFolder, _folders);
@@ -36,7 +37,7 @@ namespace myoddweb.classifier.core
     }
 
     // Uses recursion to enumerate Outlook subfolders.
-    private void EnumerateFolders(Outlook.MAPIFolder folder, ICollection<Folder> folders )
+    private void EnumerateFolders(Outlook.MAPIFolder folder, ICollection<OutlookFolder> folders )
     {
       var childFolders = folder.Folders;
       if (childFolders.Count == 0)
@@ -54,11 +55,11 @@ namespace myoddweb.classifier.core
         }
 
         // child folder item
-        var childFolder = item as Outlook.Folder;
+        var childFolder = item as Outlook.MAPIFolder;
         if (null != childFolder)
         {
           // add this folder to the list.
-          folders.Add(new Folder(childFolder, PrettyFolderPath(childFolder.FolderPath)));
+          folders.Add(new OutlookFolder(childFolder, PrettyFolderPath(childFolder.FolderPath)));
 
           // Call EnumerateFolders using childFolder.
           EnumerateFolders(childFolder, folders);

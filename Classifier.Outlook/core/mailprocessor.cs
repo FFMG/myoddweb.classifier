@@ -319,16 +319,13 @@ namespace myoddweb.classifier.core
           return false;
         }
 
-        // this is where we want to move to.
-        var itemToFolder = folder.OutlookFolder;
-
         // don't move it if we don't need to.
         var currentFolder = (Outlook.MAPIFolder)mailItem.Parent;
-
+ 
         // if they are not the same, we can move it.
-        if (currentFolder.EntryID == folder.OutlookFolder.EntryID)
+        if (currentFolder.EntryID == folder.Id() )
         {
-          _engine.LogVerbose($"No need to move mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}', already in folder");
+          _engine.LogVerbose($"No need to move mail, '{mailItem.Subject}', to folder, '{folder.Name()}', already in folder");
           return true;
         }
 
@@ -338,10 +335,19 @@ namespace myoddweb.classifier.core
           _engine.LogVerbose($"Mail, '{mailItem.Subject}' is part of an ignored conversation and will not be moved." );
           return true;
         }
-        
+
+        // this is where we want to move to.
+        var itemToFolder = (folder as OutlookFolder)?.Folder;
+        if( null == itemToFolder )
+        {
+          throw new Exception($"The folder {folder.Name()} does not seem to be of type 'Folder' and cannot be used.");
+        }
+
         // try and move 
         mailItem.Move(itemToFolder);
-        _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{itemToFolder.Name}'");
+
+        // and log it.
+        _engine.LogVerbose($"Moved mail, '{mailItem.Subject}', to folder, '{folder.Name()}'");
       }
       catch (Exception ex)
       {
@@ -373,7 +379,7 @@ namespace myoddweb.classifier.core
     private bool IsIgnoredConversation(Outlook._MailItem mailItem)
     {
       // does the folder allow conversations?
-      var folder = mailItem.Parent as Outlook.Folder;
+      var folder = mailItem.Parent as Outlook.MAPIFolder;
       var store = folder?.Store;
       if (store?.IsConversationEnabled != true)
       {

@@ -7,6 +7,11 @@ namespace myoddweb.classifier.interfaces
   public interface IEngine : ILogger, IConfig, IClassify, IMagnets, ICategories
   {
     /// <summary>
+    /// All the folders
+    /// </summary>
+    IFolders Folders { get; }
+
+    /// <summary>
     /// Public accessor of the options.
     /// </summary>
     Options Options { get; }
@@ -21,12 +26,5 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <returns>Version the engine version number</returns>
     Version GetEngineVersion();
-
-    /// <summary>
-    /// Get the root folder.
-    /// @todo this should not be in this interface... it is to MS Outlook specific.
-    /// </summary>
-    /// <returns></returns>
-    Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder();
   }
 }
