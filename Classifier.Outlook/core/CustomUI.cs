@@ -274,7 +274,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // update the magnets list.
-      using (var magnetMailItemForm = new MagnetMailItemForm( _engine, mailItem ))
+      using (var magnetMailItemForm = new MagnetMailItemForm( _engine.Logger, _engine.Magnets, _engine, mailItem ))
       {
         magnetMailItemForm.ShowDialog();
       }

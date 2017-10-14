@@ -34,7 +34,7 @@ namespace myoddweb.classifierUnitTest
       var randomName = RandomString(10);
 
       var categoryId = TheEngine.GetCategory(RandomString(5));
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName, 1, categoryId));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName, 1, categoryId));
     }
 
     [Test]
@@ -44,21 +44,21 @@ namespace myoddweb.classifierUnitTest
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var categoryId = random.Next(100, 1000);
-      Assert.AreEqual(-1, TheEngine.CreateMagnet(randomName, 1, categoryId));
+      Assert.AreEqual(-1, TheEngine.Magnets.CreateMagnet(randomName, 1, categoryId));
     }
 
     [Test]
     public void TestCreateWithEmptyName()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
-      Assert.AreEqual(-1, TheEngine.CreateMagnet("", 1, categoryId));
+      Assert.AreEqual(-1, TheEngine.Magnets.CreateMagnet("", 1, categoryId));
     }
 
     [Test]
     public void TestCreateWithEmptyNameWithSpaces()
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
-      Assert.AreEqual(-1, TheEngine.CreateMagnet("            ", 1, categoryId));
+      Assert.AreEqual(-1, TheEngine.Magnets.CreateMagnet("            ", 1, categoryId));
     }
 
     [Test]
@@ -66,7 +66,7 @@ namespace myoddweb.classifierUnitTest
     {
       var random = new Random(Guid.NewGuid().GetHashCode());
       var magnetId = random.Next(100, 1000);
-      Assert.IsFalse(TheEngine.DeleteMagnet(magnetId));
+      Assert.IsFalse(TheEngine.Magnets.DeleteMagnet(magnetId));
     }
 
     [Test]
@@ -74,8 +74,8 @@ namespace myoddweb.classifierUnitTest
     {
       var randomName = RandomString(10);
       var categoryId = TheEngine.GetCategory(RandomString(5));
-      var magnetId = TheEngine.CreateMagnet(randomName, 1, categoryId);
-      Assert.IsTrue(TheEngine.DeleteMagnet(magnetId));
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, 1, categoryId);
+      Assert.IsTrue(TheEngine.Magnets.DeleteMagnet(magnetId));
     }
 
     [Test]
@@ -85,10 +85,10 @@ namespace myoddweb.classifierUnitTest
       var randomName2 = RandomString(10);
       var categoryId = TheEngine.GetCategory(RandomString(5));
 
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName1, 1, categoryId));
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName2, 1, categoryId));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName1, 1, categoryId));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName2, 1, categoryId));
 
-      var magnets = TheEngine.GetMagnets();
+      var magnets = TheEngine.Magnets.GetMagnets();
       Assert.IsNotNull(magnets);
       Assert.AreEqual(2, magnets.Count);
 
@@ -115,10 +115,10 @@ namespace myoddweb.classifierUnitTest
       var ruleId1 = random.Next(0, 100);
       var ruleId2 = random.Next(0, 100);
 
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName1, ruleId1, categoryId1));
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName2, ruleId2, categoryId2));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName1, ruleId1, categoryId1));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName2, ruleId2, categoryId2));
 
-      var magnets = TheEngine.GetMagnets();
+      var magnets = TheEngine.Magnets.GetMagnets();
       Assert.IsNotNull(magnets);
       Assert.AreEqual(2, magnets.Count);
 
@@ -143,14 +143,14 @@ namespace myoddweb.classifierUnitTest
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // update it.
       var newRandomName = RandomString(15);
-      Assert.IsTrue(TheEngine.UpdateMagnet(magnetId, newRandomName, ruleId, categoryId));
+      Assert.IsTrue(TheEngine.Magnets.UpdateMagnet(magnetId, newRandomName, ruleId, categoryId));
 
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnet);
       Assert.AreEqual(newRandomName, updatedMagnet.Name);
     }
@@ -165,17 +165,17 @@ namespace myoddweb.classifierUnitTest
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
-      var currentMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var currentMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(currentMagnet);
 
       // update it.
       var newRandomName = RandomString(15);
-      Assert.IsTrue(TheEngine.UpdateMagnet(currentMagnet, newRandomName, ruleId, categoryId));
+      Assert.IsTrue(TheEngine.Magnets.UpdateMagnet(currentMagnet, newRandomName, ruleId, categoryId));
 
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnet);
       Assert.AreEqual(newRandomName, updatedMagnet.Name);
     }
@@ -190,14 +190,14 @@ namespace myoddweb.classifierUnitTest
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // update it.
-      Assert.IsFalse(TheEngine.UpdateMagnet(magnetId, "", ruleId, categoryId));
+      Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(magnetId, "", ruleId, categoryId));
 
       // everything is still the same 
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnet);
       Assert.AreEqual(randomName, updatedMagnet.Name);
     }
@@ -214,10 +214,10 @@ namespace myoddweb.classifierUnitTest
       var ruleId1 = random.Next(0, 100);
       var ruleId2 = random.Next(0, 100);
 
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName1, ruleId1, categoryId1));
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName2, ruleId2, categoryId2));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName1, ruleId1, categoryId1));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName2, ruleId2, categoryId2));
 
-      var magnets = TheEngine.GetMagnets();
+      var magnets = TheEngine.Magnets.GetMagnets();
       Assert.IsNotNull(magnets);
       Assert.AreEqual(2, magnets.Count);
 
@@ -235,9 +235,9 @@ namespace myoddweb.classifierUnitTest
       var categoryId3 = TheEngine.GetCategory(RandomString(5));
       var ruleId3 = random.Next(0, 100);
 
-      Assert.AreNotEqual(-1, TheEngine.CreateMagnet(randomName3, ruleId3, categoryId3));
+      Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName3, ruleId3, categoryId3));
 
-      magnets = TheEngine.GetMagnets();
+      magnets = TheEngine.Magnets.GetMagnets();
       Assert.IsNotNull(magnets);
       Assert.AreEqual(3, magnets.Count);
 
@@ -263,13 +263,13 @@ namespace myoddweb.classifierUnitTest
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // nothing has changed
-      Assert.IsTrue(TheEngine.UpdateMagnet(magnetId, randomName, ruleId, categoryId));
+      Assert.IsTrue(TheEngine.Magnets.UpdateMagnet(magnetId, randomName, ruleId, categoryId));
 
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnet);
       Assert.AreEqual(randomName, updatedMagnet.Name);
     }
@@ -283,14 +283,14 @@ namespace myoddweb.classifierUnitTest
 
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // nothing has changed
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
-      Assert.IsTrue(TheEngine.UpdateMagnet(updatedMagnet, randomName, ruleId, categoryId));
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      Assert.IsTrue(TheEngine.Magnets.UpdateMagnet(updatedMagnet, randomName, ruleId, categoryId));
 
-      var updatedMagnetCheck = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnetCheck = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnetCheck);
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
     }
@@ -303,7 +303,7 @@ namespace myoddweb.classifierUnitTest
       var categoryId = TheEngine.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
 
-      Assert.IsFalse(TheEngine.UpdateMagnet(null, randomName, ruleId, categoryId));
+      Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(null, randomName, ruleId, categoryId));
     }
 
     [Test]
@@ -315,15 +315,15 @@ namespace myoddweb.classifierUnitTest
 
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // nothing has changed
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       var randomNameWithSpaces = $"      {randomName}        ";
-      Assert.IsTrue(TheEngine.UpdateMagnet(updatedMagnet, randomNameWithSpaces, ruleId, categoryId));
+      Assert.IsTrue(TheEngine.Magnets.UpdateMagnet(updatedMagnet, randomNameWithSpaces, ruleId, categoryId));
 
-      var updatedMagnetCheck = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnetCheck = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnetCheck);
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
 
@@ -339,15 +339,15 @@ namespace myoddweb.classifierUnitTest
 
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // nothing has changed
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
-      Assert.IsFalse(TheEngine.UpdateMagnet(updatedMagnet, "", ruleId, categoryId));
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(updatedMagnet, "", ruleId, categoryId));
 
       // the old one still exists.
-      var updatedMagnetCheck = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnetCheck = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnetCheck);
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
@@ -362,15 +362,15 @@ namespace myoddweb.classifierUnitTest
 
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       // nothing has changed
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
-      Assert.IsFalse(TheEngine.UpdateMagnet(updatedMagnet, "   ", ruleId, categoryId));
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(updatedMagnet, "   ", ruleId, categoryId));
 
       // the old one still exists.
-      var updatedMagnetCheck = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnetCheck = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnetCheck);
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
@@ -385,17 +385,17 @@ namespace myoddweb.classifierUnitTest
 
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var newCategoryId = random.Next(categoryId + 1, categoryId + 500);
 
-      var updatedMagnet = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
-      Assert.IsFalse(TheEngine.UpdateMagnet(updatedMagnet, randomName, ruleId, newCategoryId));
+      var updatedMagnet = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(updatedMagnet, randomName, ruleId, newCategoryId));
 
       // the old one still exists.
-      var updatedMagnetCheck = TheEngine.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
+      var updatedMagnetCheck = TheEngine.Magnets.GetMagnets().FirstOrDefault(m => m.Id == magnetId);
       Assert.IsNotNull(updatedMagnetCheck);
       Assert.AreEqual(randomName, updatedMagnetCheck.Name);
       Assert.AreEqual(updatedMagnetCheck.Id, updatedMagnetCheck.Id);
@@ -406,7 +406,7 @@ namespace myoddweb.classifierUnitTest
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
-      var magnetId = TheEngine.CreateMagnet("", ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet("", ruleId, categoryId);
       Assert.AreEqual(-1, magnetId);
     }
 
@@ -415,7 +415,7 @@ namespace myoddweb.classifierUnitTest
     {
       var categoryId = TheEngine.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
-      var magnetId = TheEngine.CreateMagnet( "            ", ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet( "            ", ruleId, categoryId);
       Assert.AreEqual(-1, magnetId);
     }
 
@@ -433,10 +433,10 @@ namespace myoddweb.classifierUnitTest
       var categoryId = TheEngine.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
 
-      var magnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId);
 
-      var newMagnetId = TheEngine.CreateMagnet(randomName, ruleId, categoryId);
+      var newMagnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
 
       Assert.AreEqual( magnetId, newMagnetId);
     }
@@ -451,14 +451,14 @@ namespace myoddweb.classifierUnitTest
       var randomName1 = RandomString(10);
       var randomName2 = RandomString(10);
 
-      var magnetId1 = TheEngine.CreateMagnet(randomName1, ruleId, categoryId);
+      var magnetId1 = TheEngine.Magnets.CreateMagnet(randomName1, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId1);
 
-      var magnetId2 = TheEngine.CreateMagnet(randomName2, ruleId, categoryId);
+      var magnetId2 = TheEngine.Magnets.CreateMagnet(randomName2, ruleId, categoryId);
       Assert.AreNotEqual(-1, magnetId2);
 
       // try and give #2 the values of #1
-      Assert.IsFalse( TheEngine.UpdateMagnet( magnetId2, randomName1, ruleId, categoryId) );
+      Assert.IsFalse( TheEngine.Magnets.UpdateMagnet( magnetId2, randomName1, ruleId, categoryId) );
     }
   }
 }

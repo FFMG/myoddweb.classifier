@@ -26,25 +26,41 @@ namespace myoddweb.classifier.forms
     }
 
     /// <summary>
-    /// The main classifier logger.
-    /// </summary>
-    private readonly IEngine _engine;
-
-    /// <summary>
     /// The current email we are checking.
     /// </summary>
     private readonly Outlook._MailItem _mailItem;
 
-    public MagnetMailItemForm( IEngine engine, Outlook._MailItem mailItem )
+    /// <summary>
+    /// The logger
+    /// </summary>
+    private readonly ILogger _logger;
+
+    /// <summary>
+    /// The magnets
+    /// </summary>
+    private readonly IMagnets _magnets;
+
+    /// <summary>
+    /// The categories
+    /// </summary>
+    private readonly ICategories _categories;
+
+    public MagnetMailItemForm( ILogger logger, IMagnets magnets, ICategories categories, Outlook._MailItem mailItem )
     {
       // 
       InitializeComponent();
 
-      // the engine to create new categories.
-      _engine = engine;
+      // the logger.
+      _logger = logger;
+
+      // the magnets
+      _magnets = magnets;
 
       // the mail item
       _mailItem = mailItem;
+
+      // the categories
+      _categories = categories;
     }
 
     private void MagnetMailItemForm_Load(object sender, EventArgs e)
@@ -68,7 +84,7 @@ namespace myoddweb.classifier.forms
     /// <returns>number the posible category id or -1 if we don't know.</returns>
     private int GuessCategoryFromMailItem()
     {
-      foreach (var category in _engine.Categories.List() )
+      foreach (var category in _categories.Categories.List() )
       {
         // is that our current one?
         if (category?.FolderId == ((Outlook.MAPIFolder)_mailItem?.Parent).EntryID)
@@ -99,7 +115,7 @@ namespace myoddweb.classifier.forms
       var guessedCategory = GuessCategoryFromMailItem();
 
       // go around all the folders.
-      foreach (var category in _engine.Categories.List() )
+      foreach (var category in _categories.Categories.List() )
       {
         // is that our current one?
         if (category?.Id == guessedCategory)
@@ -116,7 +132,7 @@ namespace myoddweb.classifier.forms
       comboBoxCategories.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_engine.Categories.Count == 0)
+      if (_categories.Categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
@@ -185,7 +201,7 @@ namespace myoddweb.classifier.forms
       comboMagnetAndRules.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_engine.Categories.Count == 0)
+      if (_categories.Categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
@@ -228,7 +244,7 @@ namespace myoddweb.classifier.forms
       var categoryId = GetSelectedCategoryId();
 
       // all the magnets.
-      var allMagnets = _engine.GetMagnets();
+      var allMagnets = _magnets.GetMagnets();
 
       // does it already exist?
       var currentMagnet = allMagnets.FirstOrDefault(m => string.Equals(m.Name, magnetText, StringComparison.CurrentCultureIgnoreCase));
@@ -236,13 +252,13 @@ namespace myoddweb.classifier.forms
       {
         // the given magnet seem to exist already
         // we just need to update it now.
-        _engine.Logger.LogInformation( $"Updating magnet {currentMagnet.Id}/{currentMagnet.Name}" );
+        _logger.LogInformation( $"Updating magnet {currentMagnet.Id}/{currentMagnet.Name}" );
 
         // try and do the update
-        if (!_engine.UpdateMagnet(currentMagnet, magnetText, (int) ruleType, categoryId))
+        if (!_magnets.UpdateMagnet(currentMagnet, magnetText, (int) ruleType, categoryId))
         {
           // there was a problem updating the data.
-          _engine.Logger.LogError($"Unable to update magnet {currentMagnet.Id}/{currentMagnet.Name}");
+          _logger.LogError($"Unable to update magnet {currentMagnet.Id}/{currentMagnet.Name}");
 
           // display a message.
           MessageBox.Show("I was unable to update the given magnet!", "Magnets update", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -263,11 +279,11 @@ namespace myoddweb.classifier.forms
       }
 
       // create the magnet 
-      var newMagnetId = _engine.CreateMagnet(magnetText, (int) ruleType, categoryId);
+      var newMagnetId = _magnets.CreateMagnet(magnetText, (int) ruleType, categoryId);
       if( -1 == newMagnetId )
       {
         // success
-        _engine.Logger.LogError($"Unable to create a new magnet : {magnetText}.");
+        _logger.LogError($"Unable to create a new magnet : {magnetText}.");
 
         // display a message.
         MessageBox.Show("I was unable to create the given magnet!", "Create magnets", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -277,7 +293,7 @@ namespace myoddweb.classifier.forms
       }
 
       // log that it worked.
-      _engine.Logger.LogInformation( $"Created a new magnet : {newMagnetId}/{magnetText}." );
+      _logger.LogInformation( $"Created a new magnet : {newMagnetId}/{magnetText}." );
 
       // success
       MessageBox.Show("The magnet was successfuly created!", "Magnets created", MessageBoxButtons.OK, MessageBoxIcon.Information);
