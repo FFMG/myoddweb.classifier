@@ -1,4 +1,5 @@
 ﻿using myoddweb.classifier.core;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.utils
 {
@@ -7,7 +8,7 @@ namespace myoddweb.classifier.utils
     /// <summary>
     /// The log level
     /// </summary>
-    public Options.LogLevels Level { get; set; }
+    public LogLevels Level { get; set; }
 
     /// <summary>
     /// The message itself.

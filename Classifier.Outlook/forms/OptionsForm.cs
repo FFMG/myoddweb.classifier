@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using myoddweb.classifier.core;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
@@ -24,7 +23,7 @@ namespace myoddweb.classifier.forms
 
     public class ComboboxLogLevelValue
     {
-      public Options.LogLevels Level { get; set; }
+      public LogLevels Level { get; set; }
       public override string ToString() { return Convert.ToString(Level); }
     }
 
@@ -101,7 +100,7 @@ namespace myoddweb.classifier.forms
       var currentLogLevel = _engine.Options.LogLevel;
 
       // go around all the folders.
-      foreach( Options.LogLevels i in Enum.GetValues( typeof(Options.LogLevels)))
+      foreach( LogLevels i in Enum.GetValues( typeof(LogLevels)))
       {
         // is that our current one?
         if (i == currentLogLevel)
@@ -319,19 +318,19 @@ namespace myoddweb.classifier.forms
       // did we select anything at all?
       if (comboRetention.SelectedIndex == -1)
       {
-        return (uint)Options.DefaultOptions.LogRetention;
+        return (uint)DefaultOptions.LogRetention;
       }
 
       // otherwise get the id
       return ((ComboboxRetentionValue)comboRetention.SelectedItem).Days;
     }
 
-    private Options.LogLevels GetLogLevel()
+    private LogLevels GetLogLevel()
     {
       // did we select anything at all?
       if (comboLogLevel.SelectedIndex == -1)
       {
-        return (Options.LogLevels)Options.DefaultOptions.LogLevel;
+        return (LogLevels)DefaultOptions.LogLevel;
       }
 
       // otherwise get the id
@@ -366,7 +365,7 @@ namespace myoddweb.classifier.forms
     {
       if (comboDisplaySize.SelectedIndex == -1)
       {
-        return (uint)Options.DefaultOptions.LogDisplaySize;
+        return (uint)DefaultOptions.LogDisplaySize;
       }
 
       // otherwise get the log size
@@ -378,7 +377,7 @@ namespace myoddweb.classifier.forms
       // did we select anything at all?
       if (comboMagnets.SelectedIndex == -1)
       {
-        return (uint)Options.DefaultOptions.MagnetsWeight;
+        return (uint)DefaultOptions.MagnetsWeight;
       }
 
       // otherwise get the id
@@ -390,7 +389,7 @@ namespace myoddweb.classifier.forms
       // did we select anything at all?
       if (comboUser.SelectedIndex == -1)
       {
-        return (uint)Options.DefaultOptions.UserWeight;
+        return (uint)DefaultOptions.UserWeight;
       }
 
       // otherwise get the id
@@ -480,28 +479,28 @@ namespace myoddweb.classifier.forms
 
     private void RebuildDefaults()
     {
-      labelMagnets.Text = $"[ {(int)Options.DefaultOptions.MagnetsWeight} ]";
+      labelMagnets.Text = $"[ {(int)DefaultOptions.MagnetsWeight} ]";
       labelMagnets.ForeColor = Color.DarkGray;
 
-      labelUserTrained.Text = $"[ {(int)Options.DefaultOptions.UserWeight} ]";
+      labelUserTrained.Text = $"[ {(int)DefaultOptions.UserWeight} ]";
       labelUserTrained.ForeColor = Color.DarkGray;
 
-      labelCommonWord.Text = $"[ {(int)Options.DefaultOptions.CommonWordsMinPercent}% ]";
+      labelCommonWord.Text = $"[ {(int)DefaultOptions.CommonWordsMinPercent}% ]";
       labelCommonWord.ForeColor = Color.DarkGray;
 
-      labelMinPercentage.Text = $"[ {(int)Options.DefaultOptions.MinPercentage}% ]";
+      labelMinPercentage.Text = $"[ {(int)DefaultOptions.MinPercentage}% ]";
       labelCommonWord.ForeColor = Color.DarkGray;
 
-      labelDefaultLogLevel.Text = $"[ {(Options.LogLevels)Options.DefaultOptions.LogLevel} ]";
+      labelDefaultLogLevel.Text = $"[ {(LogLevels)DefaultOptions.LogLevel} ]";
       labelDefaultLogLevel.ForeColor = Color.DarkGray;
 
-      labelDefaultRetention.Text = $"[ {(int)Options.DefaultOptions.LogRetention} Days ]";
+      labelDefaultRetention.Text = $"[ {(int)DefaultOptions.LogRetention} Days ]";
       labelCommonWord.ForeColor = Color.DarkGray;
 
-      labelDefaultClassifyDelay.Text = $"[ {(int)Options.DefaultOptions.ClassifyDelaySeconds} Seconds ]";
+      labelDefaultClassifyDelay.Text = $"[ {(int)DefaultOptions.ClassifyDelaySeconds} Seconds ]";
       labelDefaultClassifyDelay.ForeColor = Color.DarkGray;
 
-      labelDisplaySizeDefault.Text = $"[ {(int)Options.DefaultOptions.LogDisplaySize} ]";
+      labelDisplaySizeDefault.Text = $"[ {(int)DefaultOptions.LogDisplaySize} ]";
       labelDisplaySizeDefault.ForeColor = Color.DarkGray;
     }
 

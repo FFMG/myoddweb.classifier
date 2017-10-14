@@ -3,29 +3,8 @@ using System;
 
 namespace myoddweb.classifier.core
 {
-  public class Options
+  public class Options : IOptions
   {
-    public enum LogLevels
-    {
-      None,
-      Error,
-      Warning,
-      Information,
-      Verbose
-    }
-
-    public enum DefaultOptions
-    {
-      UserWeight = 10,
-      MagnetsWeight = 2,
-      CommonWordsMinPercent = 50,
-      MinPercentage = 75,
-      LogLevel = LogLevels.Error,
-      LogRetention = 30,
-      LogDisplaySize = 100,
-      ClassifyDelaySeconds = 1
-    }
-
     private readonly IConfig _config;
 
     private bool? _reAutomaticallyTrainMagnetMessages;
@@ -305,14 +284,14 @@ namespace myoddweb.classifier.core
       }
     }
 
-    public Options(IConfig config)
+    /// <summary>
+    /// Check if we can log given a certain log level.
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
+    public bool CanLog(LogLevels level)
     {
-      _config = config;
-    }
-
-    public bool CanLog(LogLevels level )
-    {
-      if( level == LogLevels.None )
+      if (level == LogLevels.None)
       {
         return false;
       }
@@ -320,6 +299,11 @@ namespace myoddweb.classifier.core
       // if the current level if greater or equal
       // to the level we want to log, then we are good.
       return (LogLevel >= level);
+    }
+
+    public Options(IConfig config)
+    {
+      _config = config;
     }
   }
 }

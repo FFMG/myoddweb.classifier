@@ -19,7 +19,7 @@ namespace myoddweb.classifier.interfaces
     /// <summary>
     /// Public accessor of the options.
     /// </summary>
-    Options Options { get; }
+    IOptions Options { get; }
 
     /// <summary>
     /// The classification engine.

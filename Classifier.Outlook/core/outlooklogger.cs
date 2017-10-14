@@ -1,4 +1,5 @@
 ﻿using Classifier.Interfaces;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
 {
@@ -15,7 +16,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     private bool? _eventSource = null;
 
-    public OutlookLogger( string eventSource, IClassify1 classifyEngine, Options options) : 
+    public OutlookLogger( string eventSource, IClassify1 classifyEngine, IOptions options) : 
       base(classifyEngine, options)
     {
       EventViewSource = eventSource;

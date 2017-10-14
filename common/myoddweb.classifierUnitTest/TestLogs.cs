@@ -3,6 +3,7 @@ using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifierUnitTest
 {
@@ -26,7 +27,7 @@ namespace myoddweb.classifierUnitTest
       ReleaseEngine(true);
     }
 
-    private static string LogSource(Options.LogLevels level)
+    private static string LogSource(LogLevels level)
     {
       return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
     }
@@ -34,92 +35,92 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestSetLogLevelInfo()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Information;
-      Assert.AreEqual(Options.LogLevels.Information, TheEngine.Options.LogLevel);
+      TheEngine.Options.LogLevel = LogLevels.Information;
+      Assert.AreEqual(LogLevels.Information, TheEngine.Options.LogLevel);
     }
 
     [Test]
     public void TestCanLogLevelInfo()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Information;
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Error));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Warning));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Information));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
+      TheEngine.Options.LogLevel = LogLevels.Information;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));
     }
 
     [Test]
     public void TestSetLogLevelNone()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.None;
-      Assert.AreEqual(Options.LogLevels.None, TheEngine.Options.LogLevel);
+      TheEngine.Options.LogLevel = LogLevels.None;
+      Assert.AreEqual(LogLevels.None, TheEngine.Options.LogLevel);
     }
 
     [Test]
     public void TestCanLogLevelNone()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.None;
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Error));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Warning));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Information));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
+      TheEngine.Options.LogLevel = LogLevels.None;
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));
     }
 
     [Test]
     public void TestSetLogLevelWarning()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Warning;
-      Assert.AreEqual(Options.LogLevels.Warning, TheEngine.Options.LogLevel);
+      TheEngine.Options.LogLevel = LogLevels.Warning;
+      Assert.AreEqual(LogLevels.Warning, TheEngine.Options.LogLevel);
     }
 
     [Test]
     public void TestCanLogLevelWarning()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Warning;
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Error));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Warning));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Information));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
+      TheEngine.Options.LogLevel = LogLevels.Warning;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));
     }
 
     [Test]
     public void TestSetLogLevelVerbose()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Verbose;
-      Assert.AreEqual(Options.LogLevels.Verbose, TheEngine.Options.LogLevel);
+      TheEngine.Options.LogLevel = LogLevels.Verbose;
+      Assert.AreEqual(LogLevels.Verbose, TheEngine.Options.LogLevel);
     }
 
     [Test]
     public void TestCanLogLevelVerbose()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Verbose;
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Error));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Warning));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Information));
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
+      TheEngine.Options.LogLevel = LogLevels.Verbose;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Verbose));
     }
 
     [Test]
     public void TestSetLogLevelError()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Error;
-      Assert.AreEqual(Options.LogLevels.Error, TheEngine.Options.LogLevel);
+      TheEngine.Options.LogLevel = LogLevels.Error;
+      Assert.AreEqual(LogLevels.Error, TheEngine.Options.LogLevel);
     }
 
     [Test]
     public void TestCanLogLevelError()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Error;
-      Assert.IsTrue(TheEngine.Options.CanLog(Options.LogLevels.Error));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Warning));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Information));
-      Assert.IsFalse(TheEngine.Options.CanLog(Options.LogLevels.Verbose));
+      TheEngine.Options.LogLevel = LogLevels.Error;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));
     }
 
     [Test]
     public void TestLogOneErrorItem()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Error;
+      TheEngine.Options.LogLevel = LogLevels.Error;
 
       var message = RandomString(10);
       TheEngine.Logger.LogError(message);
@@ -129,15 +130,15 @@ namespace myoddweb.classifierUnitTest
 
       var entry = JsonConvert.DeserializeObject<LogData>(entries[0].Entry);
       Assert.AreEqual(message, entry.Message);
-      Assert.AreEqual(Options.LogLevels.Error, entry.Level );
+      Assert.AreEqual(LogLevels.Error, entry.Level );
 
-      Assert.AreEqual(LogSource(Options.LogLevels.Error), entries[0].Source);
+      Assert.AreEqual(LogSource(LogLevels.Error), entries[0].Source);
     }
 
     [Test]
     public void TestLogMultipleErrorItems()
     {
-      TheEngine.Options.LogLevel = Options.LogLevels.Error;
+      TheEngine.Options.LogLevel = LogLevels.Error;
 
       var messages = new List<string>();
       const int count = 10;
@@ -162,9 +163,9 @@ namespace myoddweb.classifierUnitTest
         var message = messages[i];
         var entry = JsonConvert.DeserializeObject<LogData>(entries[i].Entry);
         Assert.AreEqual(message, entry.Message);
-        Assert.AreEqual(Options.LogLevels.Error, entry.Level);
+        Assert.AreEqual(LogLevels.Error, entry.Level);
 
-        Assert.AreEqual(LogSource(Options.LogLevels.Error), entries[i].Source);
+        Assert.AreEqual(LogSource(LogLevels.Error), entries[i].Source);
       }
     }
   }

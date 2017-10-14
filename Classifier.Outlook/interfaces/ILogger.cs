@@ -3,6 +3,15 @@ using System.Collections.Generic;
 
 namespace myoddweb.classifier.interfaces
 {
+  public enum LogLevels
+  {
+    None,
+    Error,
+    Warning,
+    Information,
+    Verbose
+  }
+
   public interface ILogger
   {
     /// <summary>

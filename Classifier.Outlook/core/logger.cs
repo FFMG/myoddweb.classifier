@@ -15,8 +15,12 @@ namespace myoddweb.classifier.core
     /// </summary>
     private readonly IClassify1 ClassifyEngine;
 
-    private readonly Options Options;
-    public Logger(IClassify1 classifyEngine, Options options )
+    /// <summary>
+    /// The options
+    /// </summary>
+    private readonly IOptions Options;
+
+    public Logger(IClassify1 classifyEngine, IOptions options )
     {
       ClassifyEngine = classifyEngine;
       Options = options;
@@ -41,7 +45,7 @@ namespace myoddweb.classifier.core
     public virtual void LogError(string message)
     {
       // log it
-      LogMessageToEngine(message, Options.LogLevels.Error);
+      LogMessageToEngine(message, LogLevels.Error);
     }
 
     /// <summary>
@@ -51,7 +55,7 @@ namespace myoddweb.classifier.core
     public virtual void LogWarning(string message)
     {
       // log it
-      LogMessageToEngine(message, Options.LogLevels.Warning);
+      LogMessageToEngine(message, LogLevels.Warning);
     }
 
     /// <summary>
@@ -61,7 +65,7 @@ namespace myoddweb.classifier.core
     public virtual void LogInformation(string message)
     {
       // log it
-      LogMessageToEngine(message, Options.LogLevels.Information);
+      LogMessageToEngine(message, LogLevels.Information);
     }
 
     /// <summary>
@@ -71,7 +75,7 @@ namespace myoddweb.classifier.core
     public virtual void LogVerbose(string message)
     {
       // log it
-      LogMessageToEngine(message, Options.LogLevels.Verbose);
+      LogMessageToEngine(message, LogLevels.Verbose);
     }
 
 
@@ -80,7 +84,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="message"></param>
     /// <param name="level"></param>
-    private void LogMessageToEngine(string message, Options.LogLevels level)
+    private void LogMessageToEngine(string message, LogLevels level)
     {
       // can we log this?
       if (!Options.CanLog(level))
@@ -96,7 +100,7 @@ namespace myoddweb.classifier.core
       ClassifyEngine.Log(LogSource(level), json);
     }
 
-    private static string LogSource(Options.LogLevels level)
+    private static string LogSource(LogLevels level)
     {
       return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
     }

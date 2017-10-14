@@ -14,7 +14,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// All the options
     /// </summary>
-    private Options _options;
+    private IOptions _options;
 
     /// <summary>
     /// All the folders.
@@ -34,7 +34,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Public accessor of the options.
     /// </summary>
-    public Options Options => _options ?? (_options = new Options(this));
+    public IOptions Options => _options ?? (_options = new Options(this));
 
     public Categories Categories => _categories ?? (_categories = new Categories(this));
 
