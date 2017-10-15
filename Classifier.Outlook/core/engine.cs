@@ -12,27 +12,37 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// All the options
     /// </summary>
-    private IOptions _options;
+    protected IOptions _options;
 
     /// <summary>
     /// The configuration handler.
     /// </summary>
-    private IConfig _config;
+    protected IConfig _config;
 
     /// <summary>
     /// The magnets.
     /// </summary>
-    private IMagnets _magnets;
+    protected IMagnets _magnets;
 
     /// <summary>
     /// All the folders.
     /// </summary>
-    private OutlookFolders _folders;
+    protected OutlookFolders _folders;
+
+    /// <summary>
+    /// The logger
+    /// </summary>
+    protected Logger _logger;
+
+    /// <summary>
+    /// all the categories.
+    /// </summary>
+    protected Categories _categories;
 
     /// <summary>
     /// The logger.
     /// </summary>
-    public virtual ILogger Logger { get; set; }
+    public virtual ILogger Logger => _logger ?? (_logger = new Logger(ClassifyEngine, Options));
 
     /// <summary>
     /// The logger.
@@ -42,29 +52,27 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Get the magnets
     /// </summary>
-    public IMagnets Magnets => _magnets ?? (_magnets = new Magnets(ClassifyEngine));
-
-    /// <summary>
-    /// all the categories.
-    /// </summary>
-    private Categories _categories;
+    public virtual IMagnets Magnets => _magnets ?? (_magnets = new Magnets(ClassifyEngine));
 
     /// <summary>
     /// Public accessor of the options.
     /// </summary>
-    public IOptions Options => _options ?? (_options = new Options(Config));
+    public virtual IOptions Options => _options ?? (_options = new Options(Config));
 
-    public Categories Categories => _categories ?? (_categories = new Categories(this));
+    /// <summary>
+    /// The categories manager
+    /// </summary>
+    public virtual Categories Categories => _categories ?? (_categories = new Categories(this));
 
     /// <summary>
     /// The classification engine.
     /// </summary>
-    public IClassify1 ClassifyEngine { get; private set; }
+    public virtual IClassify1 ClassifyEngine { get; protected set; }
 
     /// <summary>
     /// Get all the folders.
     /// </summary>
-    public IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
+    public virtual IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
 
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 

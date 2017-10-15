@@ -13,7 +13,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The timer we use to call the clean log function.
     /// </summary>
-    Timer LogTimer { get; set; }
+    private Timer LogTimer { get; set; }
 
     /// <summary>
     /// Name for logging in the event viewer,
@@ -21,14 +21,9 @@ namespace myoddweb.classifier.core
     private const string EventViewSource = "myoddweb.classifier";
 
     /// <summary>
-    /// The actual logger
-    /// </summary>
-    private OutlookLogger _outlookLogger;
-
-    /// <summary>
     /// The logger.
     /// </summary>
-    public override ILogger Logger => _outlookLogger ?? (_outlookLogger = new OutlookLogger(EventViewSource, ClassifyEngine, Options));
+    public override ILogger Logger => _logger ?? (_logger = new OutlookLogger(EventViewSource, ClassifyEngine, Options));
 
     /// <summary>
     /// The engine constructor.
