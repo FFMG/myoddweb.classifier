@@ -13,9 +13,9 @@ namespace myoddweb.classifier.forms
     private readonly IMagnets _magnets;
 
     // all the categories.
-    private readonly Categories _categories;
+    private readonly CategoriesCollection _categories;
 
-    public MagnetsForm(Categories categories, IMagnets magnets)
+    public MagnetsForm(CategoriesCollection categories, IMagnets magnets)
     {
       _magnets = magnets;
       _categories = categories;

@@ -82,7 +82,7 @@ namespace myoddweb.classifier
         }
 
         // the message note.
-        if (!Categories.IsUsableClassNameForClassification(mailItem?.MessageClass))
+        if (!CategoriesCollection.IsUsableClassNameForClassification(mailItem?.MessageClass))
         {
           return;
         }

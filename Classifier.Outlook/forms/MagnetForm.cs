@@ -22,9 +22,9 @@ namespace myoddweb.classifier.forms
 
     private Magnet GivenMagnet { get; set; }
 
-    private readonly Categories _Categories;
+    private readonly CategoriesCollection _Categories;
 
-    public MagnetForm(IMagnets magnets, Categories categories, Magnet magnet  )
+    public MagnetForm(IMagnets magnets, CategoriesCollection categories, Magnet magnet  )
     {
       // 
       InitializeComponent();

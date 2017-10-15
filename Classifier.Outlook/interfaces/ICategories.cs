@@ -8,7 +8,7 @@ namespace myoddweb.classifier.interfaces
     /// <summary>
     /// Class to manage the categories.
     /// </summary>
-    Categories Categories { get; }
+    CategoriesCollection Categories { get; }
 
     /// <summary>
     /// Rename a category

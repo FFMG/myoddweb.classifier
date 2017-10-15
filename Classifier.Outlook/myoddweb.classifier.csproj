@@ -252,7 +252,7 @@
     <Compile Include="forms\CategoryForm.Designer.cs">
       <DependentUpon>CategoryForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="core\categories.cs" />
+    <Compile Include="core\categoriescollection.cs" />
     <Compile Include="core\category.cs" />
     <Compile Include="core\engine.cs" />
     <Compile Include="forms\OptionsForm.cs">

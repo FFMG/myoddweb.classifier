@@ -51,7 +51,7 @@ namespace myoddweb.classifier.core
       return ClassifyEngine?.Categorize(categoryText, minPercentage) ?? -1;
     }
 
-    public int Categorize(Dictionary<Categories.MailStringCategories, string> categoryList)
+    public int Categorize(Dictionary<CategoriesCollection.MailStringCategories, string> categoryList)
     {
       return Categorize(string.Join(";", categoryList.Select(x => x.Value)), Options.MinPercentage);
     }

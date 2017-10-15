@@ -268,7 +268,7 @@ namespace myoddweb.classifier.core
       UpdateLastProcessedEmailInLock(mailItem);
 
       // the message note.
-      if (!Categories.IsUsableClassNameForClassification(mailItem.MessageClass))
+      if (!CategoriesCollection.IsUsableClassNameForClassification(mailItem.MessageClass))
       {
         return false;
       }

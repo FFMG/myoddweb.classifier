@@ -109,7 +109,7 @@ namespace myoddweb.classifier.core
         var item = selectionItem as _MailItem;
         if (null != item)
         {
-          if( !Categories.IsUsableClassNameForClassification(item?.MessageClass) )
+          if( !CategoriesCollection.IsUsableClassNameForClassification(item?.MessageClass) )
           {
             continue;
           }
@@ -253,7 +253,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // show the displays
-      var categoryList = Categories.GetStringFromMailItem(mailItem);
+      var categoryList = CategoriesCollection.GetStringFromMailItem(mailItem);
       var text = string.Join(";", categoryList.Select(x => x.Value));
       using (var detailsForm = new DetailsForm(_engine.ClassifyEngine, text ))
       {
@@ -309,9 +309,9 @@ namespace myoddweb.classifier.core
     /// <param name="categories">the categories tool we will use to re-categorise</param>
     /// <param name="currentCategoryId">The current value of the category</param>
     /// <returns>Categories.CategorizeResponse the new id or -1 if we don't know.</returns>
-    protected async Task<Categories.CategorizeResponse> GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, Categories categories )
+    protected async Task<CategoriesCollection.CategorizeResponse> GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, CategoriesCollection categories )
     {
-      var guessCategoryResponse = new Categories.CategorizeResponse
+      var guessCategoryResponse = new CategoriesCollection.CategorizeResponse
       {
         CategoryId = 0,
         WasMagnetUsed = false
@@ -352,7 +352,7 @@ namespace myoddweb.classifier.core
         _engine.Logger.LogError(e.ToString());
 
         // @todo we need to log that there was an issue.
-        guessCategoryResponse = new Categories.CategorizeResponse
+        guessCategoryResponse = new CategoriesCollection.CategorizeResponse
         {
           CategoryId = 0,
           WasMagnetUsed = false
@@ -497,7 +497,7 @@ namespace myoddweb.classifier.core
       return Properties.Resources.maybe;
     }
 
-    private Categories GetAllCategories()
+    private CategoriesCollection GetAllCategories()
     {
       return _engine.Categories;
     }

@@ -165,7 +165,7 @@ namespace myoddweb.classifier
       }
 
       // save the id of the folder.
-      _config.SetConfig(Categories.GetConfigName(text), folderId);
+      _config.SetConfig(CategoriesCollection.GetConfigName(text), folderId);
 
       // and we are dome
       DialogResult = DialogResult.OK;

@@ -12,7 +12,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// all the categories.
     /// </summary>
-    protected Categories _categories;
+    protected CategoriesCollection _categories;
 
     /// <summary>
     /// All the options
@@ -72,7 +72,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The categories manager
     /// </summary>
-    public virtual Categories Categories => _categories ?? (_categories = new Categories(this));
+    public virtual CategoriesCollection Categories => _categories ?? (_categories = new CategoriesCollection(this));
 
     /// <summary>
     /// The classification engine.
