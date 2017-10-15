@@ -10,6 +10,8 @@ namespace myoddweb.classifier.core
 {
   class OutlookEngine : Engine
   {
+    private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
+
     /// <summary>
     /// The timer we use to call the clean log function.
     /// </summary>
@@ -24,6 +26,11 @@ namespace myoddweb.classifier.core
     /// The logger.
     /// </summary>
     public override ILogger Logger => _logger ?? (_logger = new OutlookLogger(EventViewSource, ClassifyEngine, Options));
+
+    /// <summary>
+    /// Get all the folders.
+    /// </summary>
+    public override IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
 
     /// <summary>
     /// The engine constructor.
@@ -162,6 +169,18 @@ namespace myoddweb.classifier.core
         return null;
       }
       return classifyEngine;
+    }
+
+
+    public void SetRootFolder(Microsoft.Office.Interop.Outlook.MAPIFolder rootFolder)
+    {
+      // set the root folder.
+      _rootFolder = rootFolder;
+    }
+
+    private Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()
+    {
+      return _rootFolder;
     }
   }
 }

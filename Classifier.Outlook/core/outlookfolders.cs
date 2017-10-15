@@ -4,13 +4,8 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
 {
-  public class OutlookFolders : IFolders
+  public class OutlookFolders : Folders
   {
-    /// <summary>
-    /// The list of folders as we know it.
-    /// </summary>
-    private List<OutlookFolder> _folders = null;
-
     private readonly Outlook.MAPIFolder _rootFolder;
     public OutlookFolders(Outlook.MAPIFolder rootFolder )
     {
@@ -18,7 +13,7 @@ namespace myoddweb.classifier.core
       _rootFolder = rootFolder;
     }
 
-    public IEnumerable<IFolder> GetFolders()
+    public override IEnumerable<IFolder> GetFolders()
     {
       // the folders.
       if (null != _folders)
@@ -27,7 +22,7 @@ namespace myoddweb.classifier.core
       }
 
       // create the folders.
-      _folders = new List<OutlookFolder>();
+      _folders = new List<IFolder>();
 
       // enumerates
       EnumerateFolders(_rootFolder, _folders);
@@ -37,7 +32,7 @@ namespace myoddweb.classifier.core
     }
 
     // Uses recursion to enumerate Outlook subfolders.
-    private void EnumerateFolders(Outlook.MAPIFolder folder, ICollection<OutlookFolder> folders )
+    private void EnumerateFolders(Outlook.MAPIFolder folder, ICollection<IFolder> folders )
     {
       var childFolders = folder.Folders;
       if (childFolders.Count == 0)

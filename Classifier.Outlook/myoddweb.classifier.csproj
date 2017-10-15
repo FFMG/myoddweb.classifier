@@ -189,6 +189,7 @@
   -->
   <ItemGroup>
     <Compile Include="core\Config.cs" />
+    <Compile Include="core\Folders.cs" />
     <Compile Include="core\logger.cs" />
     <Compile Include="core\Magnets.cs" />
     <Compile Include="core\outlookengine.cs" />

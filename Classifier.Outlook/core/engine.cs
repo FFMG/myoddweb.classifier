@@ -27,7 +27,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// All the folders.
     /// </summary>
-    protected OutlookFolders _folders;
+    protected Folders _folders;
 
     /// <summary>
     /// The logger
@@ -72,9 +72,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Get all the folders.
     /// </summary>
-    public virtual IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
-
-    private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
+    public virtual IFolders Folders => _folders ?? (_folders = new Folders());
 
     /// <summary>
     /// The engine constructor.
@@ -218,17 +216,6 @@ namespace myoddweb.classifier.core
     public bool DeleteCategory(string categoryName)
     {
       return ClassifyEngine.DeleteCategory(categoryName);
-    }
-
-    public void SetRootFolder(Microsoft.Office.Interop.Outlook.MAPIFolder rootFolder)
-    {
-      // set the root folder.
-      _rootFolder = rootFolder;
-    }
-
-    private Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()
-    {
-      return _rootFolder;
     }
   }
 }
