@@ -4,6 +4,7 @@ using Classifier.Interfaces;
 using myoddweb.classifier.core;
 using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
+using System.Collections.Generic;
 
 namespace myoddweb.classifier.forms
 {
@@ -13,9 +14,9 @@ namespace myoddweb.classifier.forms
     private readonly IMagnets _magnets;
 
     // all the categories.
-    private readonly CategoriesCollection _categories;
+    private readonly ICategories _categories;
 
-    public MagnetsForm(CategoriesCollection categories, IMagnets magnets)
+    public MagnetsForm( ICategories categories, IMagnets magnets)
     {
       _magnets = magnets;
       _categories = categories;

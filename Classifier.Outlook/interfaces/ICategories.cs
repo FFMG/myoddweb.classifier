@@ -3,12 +3,31 @@ using System.Collections.Generic;
 
 namespace myoddweb.classifier.interfaces
 {
+  public enum MailStringCategories
+  {
+    Bcc,
+    To,
+    Address,
+    SenderName,
+    Cc,
+    Subject,
+    Body,
+    HtmlBody,
+    RtfBody,
+    Smtp
+  }
+
   public interface ICategories
   {
     /// <summary>
-    /// Class to manage the categories.
+    /// Get all the categories
     /// </summary>
-    CategoriesCollection Categories { get; }
+    IEnumerable<Category> List { get; }
+
+    /// <summary>
+    /// The number of items in the collection
+    /// </summary>
+    int Count { get; }
 
     /// <summary>
     /// Rename a category
@@ -44,5 +63,31 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <returns></returns>
     Dictionary<int, string> GetCategories();
+
+    /// <summary>
+    /// Find a category given a category id.
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
+    Category FindCategoryById( int categoryId);
+
+    /// <summary>
+    /// Find a folder that belong to a category id.
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
+    IFolder FindFolderByCategoryId(int categoryId);
+
+    /// <summary>
+    /// Find a folder given the app specific folder id.
+    /// </summary>
+    /// <param name="folderId"></param>
+    /// <returns></returns>
+    IFolder FindFolderById(string folderId);
+
+    /// <summary>
+    /// Reload all the categories from the list of categories.
+    /// </summary>
+    void ReloadCategories();
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using System.Linq;
 
 namespace myoddweb.classifierUnitTest
 {
@@ -22,24 +23,35 @@ namespace myoddweb.classifierUnitTest
     }
 
     [Test]
+    public void TestEmptyCategoriesIsNotNull()
+    {
+      // we should have no categories.
+      var theCategories = TheEngine.Categories.List;
+      Assert.IsNotNull(theCategories);
+      Assert.AreEqual(0, theCategories.Count());
+    }
+
+    [Test]
     public void TestReloadCategories()
     {
       // we should have no categories.
-      var theCategories = new classifier.core.CategoriesCollection(TheEngine );
-      Assert.AreEqual(0, theCategories.Count);
+      var theCategories = TheEngine.Categories.List;
+      Assert.AreEqual(0, theCategories.Count());
 
       // create 2 categories by getting them.
-      var categorySpam = TheEngine.GetCategory("Spam");
-      var categoryHam = TheEngine.GetCategory("Ham");
-      var categoryJam = TheEngine.GetCategory("Jam");
+      var categorySpam = TheEngine.Categories.GetCategory("Spam");
+      var categoryHam = TheEngine.Categories.GetCategory("Ham");
+      var categoryJam = TheEngine.Categories.GetCategory("Jam");
 
       // should still be 0
-      Assert.AreEqual(0, theCategories.Count);
+      theCategories = TheEngine.Categories.List;
+      Assert.AreEqual(0, theCategories.Count());
 
-      theCategories.ReloadCategories();
+      TheEngine.Categories.ReloadCategories();
 
       // we should now have 3
-      Assert.AreEqual(3, theCategories.Count);
+      theCategories = TheEngine.Categories.List;
+      Assert.AreEqual(3, theCategories.Count());
 
       var expectedCategories = new Dictionary<int, string>()
       {
@@ -48,12 +60,7 @@ namespace myoddweb.classifierUnitTest
         {categoryJam, "Jam"}
       };
 
-      if (expectedCategories.Count != theCategories.Count)
-      {
-        return;
-      }
-
-      foreach (var category in theCategories.List() )
+      foreach (var category in theCategories )
       {
         Assert.IsTrue(expectedCategories.ContainsKey((int) category.Id));
         Assert.AreEqual(expectedCategories[(int) category.Id], category.Name);
@@ -65,10 +72,10 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(categoryName);
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // rename it.
-      Assert.IsFalse(TheEngine.RenameCategory(categoryName, ""));
+      Assert.IsFalse(TheEngine.Categories.RenameCategory(categoryName, ""));
     }
 
     [Test]
@@ -76,10 +83,10 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(categoryName);
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // rename it.
-      Assert.IsFalse(TheEngine.RenameCategory(categoryName, "       "));
+      Assert.IsFalse(TheEngine.Categories.RenameCategory(categoryName, "       "));
     }
 
     [Test]
@@ -87,17 +94,17 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(categoryName);
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // rename it.
       var categoryNewName = RandomString(10);
-      Assert.IsTrue( TheEngine.RenameCategory(categoryName, categoryNewName));
+      Assert.IsTrue( TheEngine.Categories.RenameCategory(categoryName, categoryNewName));
 
       // look for it.
-      var categoryNewId = TheEngine.GetCategory(categoryNewName);
+      var categoryNewId = TheEngine.Categories.GetCategory(categoryNewName);
       Assert.AreEqual( categoryNewId, categoryId );
 
-      var categories = TheEngine.GetCategories();
+      var categories = TheEngine.Categories.GetCategories();
       foreach (var category in categories)
       {
         Assert.AreNotSame(category.Value, categoryNewName );
@@ -109,16 +116,16 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(categoryName);
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
-      var categories = TheEngine.GetCategories();
+      var categories = TheEngine.Categories.GetCategories();
       Assert.IsTrue(categories.Count > 0 );
 
       // delete it.
-      Assert.IsTrue(TheEngine.DeleteCategory(categoryName));
+      Assert.IsTrue(TheEngine.Categories.DeleteCategory(categoryName));
 
       // look for it.
-      var categoriesNow = TheEngine.GetCategories();
+      var categoriesNow = TheEngine.Categories.GetCategories();
       Assert.IsTrue(categories.Count == (categoriesNow.Count+1));
       foreach (var category in categoriesNow)
       {
@@ -130,14 +137,14 @@ namespace myoddweb.classifierUnitTest
     public void TestDeleteCategoryWithEmptyName()
     {
       // delete it.
-      Assert.IsFalse(TheEngine.DeleteCategory(""));
+      Assert.IsFalse(TheEngine.Categories.DeleteCategory(""));
     }
 
     [Test]
     public void TestDeleteCategoryWithEmptyNameWithSpaces()
     {
       // delete it.
-      Assert.IsFalse(TheEngine.DeleteCategory("    "));
+      Assert.IsFalse(TheEngine.Categories.DeleteCategory("    "));
     }
   }
 }

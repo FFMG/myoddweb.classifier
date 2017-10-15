@@ -188,6 +188,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="core\Categories.cs" />
     <Compile Include="core\Classify.cs" />
     <Compile Include="core\Config.cs" />
     <Compile Include="core\Folders.cs" />

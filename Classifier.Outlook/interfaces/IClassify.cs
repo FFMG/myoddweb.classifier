@@ -29,7 +29,7 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <param name="categoryList"></param>
     /// <returns></returns>
-    int Categorize(Dictionary<CategoriesCollection.MailStringCategories, string> categoryList);
+    int Categorize(Dictionary<MailStringCategories, string> categoryList);
 
     /// <summary>
     /// Train a given text to a category

@@ -84,7 +84,7 @@ namespace myoddweb.classifier.forms
     /// <returns>number the posible category id or -1 if we don't know.</returns>
     private int GuessCategoryFromMailItem()
     {
-      foreach (var category in _categories.Categories.List() )
+      foreach (var category in _categories.List )
       {
         // is that our current one?
         if (category?.FolderId == ((Outlook.MAPIFolder)_mailItem?.Parent).EntryID)
@@ -115,7 +115,7 @@ namespace myoddweb.classifier.forms
       var guessedCategory = GuessCategoryFromMailItem();
 
       // go around all the folders.
-      foreach (var category in _categories.Categories.List() )
+      foreach (var category in _categories.List )
       {
         // is that our current one?
         if (category?.Id == guessedCategory)
@@ -132,7 +132,7 @@ namespace myoddweb.classifier.forms
       comboBoxCategories.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_categories.Categories.Count == 0)
+      if (_categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
@@ -161,7 +161,7 @@ namespace myoddweb.classifier.forms
       var itemsAlreadyAdded = new List<string>();
 
       // the 'from' rules.
-      var address = CategoriesCollection.GetSmtpMailAddressForSender( _mailItem );
+      var address = MailProcessor.GetSmtpMailAddressForSender( _mailItem );
       if (address != null)
       {
         // add them to the combo.
@@ -174,7 +174,7 @@ namespace myoddweb.classifier.forms
       }
 
       // the 'to' rules.
-      var toAddresses = CategoriesCollection.GetSmtpMailAddressForRecipients(_mailItem);
+      var toAddresses = MailProcessor.GetSmtpMailAddressForRecipients(_mailItem);
       foreach( var toAddress in toAddresses )
       {
         // check if this address already exists.
@@ -201,7 +201,7 @@ namespace myoddweb.classifier.forms
       comboMagnetAndRules.SelectedIndex = 0;
 
       // do we have any folders?
-      if (_categories.Categories.Count == 0)
+      if (_categories.Count == 0)
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)

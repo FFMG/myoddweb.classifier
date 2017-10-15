@@ -38,7 +38,7 @@ namespace myoddweb.classifierUnitTest
       };
 
       // create all the categories.
-      catNames.Select(catName => TheEngine.GetCategory(catName)).ToList();
+      catNames.Select(catName => TheEngine.Categories.GetCategory(catName)).ToList();
 
       // use a dictionary for all the unqique items.
       var uniqueIdentifiers = new Dictionary< string, string >();
@@ -62,8 +62,8 @@ namespace myoddweb.classifierUnitTest
       // check that all of them are valid.
       foreach (var uniqueIdentifier in uniqueIdentifiers)
       {
-        var thisCategoryId = TheEngine.GetCategoryFromUniqueId( uniqueIdentifier.Key );
-        Assert.AreEqual(thisCategoryId, TheEngine.GetCategory(uniqueIdentifier.Value));
+        var thisCategoryId = TheEngine.Categories.GetCategoryFromUniqueId( uniqueIdentifier.Key );
+        Assert.AreEqual(thisCategoryId, TheEngine.Categories.GetCategory(uniqueIdentifier.Value));
       }
     }
 
@@ -80,7 +80,7 @@ namespace myoddweb.classifierUnitTest
       };
 
       // create all the categories.
-      catNames.Select(catName => TheEngine.GetCategory(catName)).ToList();
+      catNames.Select(catName => TheEngine.Categories.GetCategory(catName)).ToList();
 
       // use a dictionary for all the unqique items.
       var uniqueIdentifiers = new Dictionary<string, string>();
@@ -113,8 +113,8 @@ namespace myoddweb.classifierUnitTest
       // make sure that everything has been updated.
       foreach (var uniqueIdentifier in uniqueIdentifiers)
       {
-        var thisCategoryId = TheEngine.GetCategoryFromUniqueId(uniqueIdentifier.Key);
-        Assert.AreEqual(thisCategoryId, TheEngine.GetCategory(uniqueIdentifier.Value));
+        var thisCategoryId = TheEngine.Categories.GetCategoryFromUniqueId(uniqueIdentifier.Key);
+        Assert.AreEqual(thisCategoryId, TheEngine.Categories.GetCategory(uniqueIdentifier.Value));
       }
     }
   }

@@ -3,8 +3,13 @@ using Classifier.Interfaces;
 
 namespace myoddweb.classifier.interfaces
 {
-  public interface IEngine : ICategories
+  public interface IEngine
   {
+    /// <summary>
+    /// The categories.
+    /// </summary>
+    ICategories Categories { get; }
+
     /// <summary>
     /// The classifucation engine.
     /// </summary>

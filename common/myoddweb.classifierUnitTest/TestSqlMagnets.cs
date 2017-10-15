@@ -33,7 +33,7 @@ namespace myoddweb.classifierUnitTest
     {
       var randomName = RandomString(10);
 
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName, 1, categoryId));
     }
 
@@ -50,14 +50,14 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestCreateWithEmptyName()
     {
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       Assert.AreEqual(-1, TheEngine.Magnets.CreateMagnet("", 1, categoryId));
     }
 
     [Test]
     public void TestCreateWithEmptyNameWithSpaces()
     {
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       Assert.AreEqual(-1, TheEngine.Magnets.CreateMagnet("            ", 1, categoryId));
     }
 
@@ -73,7 +73,7 @@ namespace myoddweb.classifierUnitTest
     public void TestCreateThenDelete()
     {
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var magnetId = TheEngine.Magnets.CreateMagnet(randomName, 1, categoryId);
       Assert.IsTrue(TheEngine.Magnets.DeleteMagnet(magnetId));
     }
@@ -83,7 +83,7 @@ namespace myoddweb.classifierUnitTest
     {
       var randomName1 = RandomString(10);
       var randomName2 = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName1, 1, categoryId));
       Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName2, 1, categoryId));
@@ -108,8 +108,8 @@ namespace myoddweb.classifierUnitTest
     {
       var randomName1 = RandomString(10);
       var randomName2 = RandomString(10);
-      var categoryId1 = TheEngine.GetCategory(RandomString(5));
-      var categoryId2 = TheEngine.GetCategory(RandomString(5));
+      var categoryId1 = TheEngine.Categories.GetCategory(RandomString(5));
+      var categoryId2 = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId1 = random.Next(0, 100);
@@ -138,7 +138,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
@@ -160,7 +160,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
@@ -185,7 +185,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
@@ -207,8 +207,8 @@ namespace myoddweb.classifierUnitTest
     {
       var randomName1 = RandomString(10);
       var randomName2 = RandomString(10);
-      var categoryId1 = TheEngine.GetCategory(RandomString(5));
-      var categoryId2 = TheEngine.GetCategory(RandomString(5));
+      var categoryId1 = TheEngine.Categories.GetCategory(RandomString(5));
+      var categoryId2 = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId1 = random.Next(0, 100);
@@ -232,7 +232,7 @@ namespace myoddweb.classifierUnitTest
       Assert.AreEqual(magnet2.Rule, ruleId2);
 
       var randomName3 = RandomString(10);
-      var categoryId3 = TheEngine.GetCategory(RandomString(5));
+      var categoryId3 = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId3 = random.Next(0, 100);
 
       Assert.AreNotEqual(-1, TheEngine.Magnets.CreateMagnet(randomName3, ruleId3, categoryId3));
@@ -258,7 +258,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var random = new Random(Guid.NewGuid().GetHashCode());
       var ruleId = random.Next((int)RuleTypes.RuleTypesFirst, (int)RuleTypes.RuleTypesLast - 1);
@@ -279,7 +279,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var ruleId = RandomRuleType();
 
@@ -300,7 +300,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
 
       Assert.IsFalse(TheEngine.Magnets.UpdateMagnet(null, randomName, ruleId, categoryId));
@@ -311,7 +311,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var ruleId = RandomRuleType();
 
@@ -335,7 +335,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var ruleId = RandomRuleType();
 
@@ -358,7 +358,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var ruleId = RandomRuleType();
 
@@ -381,7 +381,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
 
       var ruleId = RandomRuleType();
 
@@ -404,7 +404,7 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestCreateMagnetWithEmtyString()
     {
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
       var magnetId = TheEngine.Magnets.CreateMagnet("", ruleId, categoryId);
       Assert.AreEqual(-1, magnetId);
@@ -413,7 +413,7 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestCreateMagnetWithEmtyStringWithSpaces()
     {
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
       var magnetId = TheEngine.Magnets.CreateMagnet( "            ", ruleId, categoryId);
       Assert.AreEqual(-1, magnetId);
@@ -430,7 +430,7 @@ namespace myoddweb.classifierUnitTest
     {
       // create a magnet
       var randomName = RandomString(10);
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
 
       var magnetId = TheEngine.Magnets.CreateMagnet(randomName, ruleId, categoryId);
@@ -444,7 +444,7 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestUpdateAnExistingMagnetWithTheValuesOfAnother()
     {
-      var categoryId = TheEngine.GetCategory(RandomString(5));
+      var categoryId = TheEngine.Categories.GetCategory(RandomString(5));
       var ruleId = RandomRuleType();
 
       // create magnets

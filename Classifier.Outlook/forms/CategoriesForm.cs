@@ -75,7 +75,7 @@ namespace myoddweb.classifier.forms
 
       // get the categories.
       listCategories.BeginUpdate();
-      foreach (var category in _categories.Categories.List() )
+      foreach (var category in _categories.List )
       {
         var item = new ListViewItem()
         {
@@ -89,7 +89,7 @@ namespace myoddweb.classifier.forms
       listCategories.EndUpdate();
 
       // do we have anything at all?
-      if (0 == _categories.Categories.Count)
+      if (0 == _categories.Count)
       {
         DisableButtons();
       }
@@ -106,7 +106,7 @@ namespace myoddweb.classifier.forms
 
     private string GetRuleDescription(Category category)
     {
-      var folder = _categories.Categories.FindFolderById(category.FolderId);
+      var folder = _categories.FindFolderById(category.FolderId);
       if (null == folder)
       {
         // no action.
@@ -129,7 +129,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.Categories.ReloadCategories();
+      _categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();
@@ -193,7 +193,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.Categories.ReloadCategories();
+      _categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();
@@ -225,7 +225,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.Categories.ReloadCategories();
+      _categories.ReloadCategories();
 
       // reload the values.
       ReloadCategories();
@@ -250,7 +250,7 @@ namespace myoddweb.classifier.forms
       }
 
       // reload all the categories.
-      _categories.Categories.ReloadCategories();
+      _categories.ReloadCategories();
 
       // reload everything
       ReloadCategories();

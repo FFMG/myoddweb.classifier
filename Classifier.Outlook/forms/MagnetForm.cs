@@ -22,9 +22,9 @@ namespace myoddweb.classifier.forms
 
     private Magnet GivenMagnet { get; set; }
 
-    private readonly CategoriesCollection _Categories;
+    private readonly ICategories _Categories;
 
-    public MagnetForm(IMagnets magnets, CategoriesCollection categories, Magnet magnet  )
+    public MagnetForm(IMagnets magnets, ICategories categories, Magnet magnet  )
     {
       // 
       InitializeComponent();
@@ -69,7 +69,7 @@ namespace myoddweb.classifier.forms
       var selectedIndex = 0;
 
       // go around all the folders.
-      foreach (var category in _Categories.List() )
+      foreach (var category in _Categories.List )
       {
         // is that our current one?
         if (GivenMagnet?.Category == category.Id )

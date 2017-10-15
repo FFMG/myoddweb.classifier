@@ -58,14 +58,14 @@ namespace myoddweb.classifierUnitTest
     {
       // the category is created on the fly... #1 is alocated to it.
       var categoryName = RandomString(8);
-      Assert.AreEqual(1, TheEngine.GetCategory(categoryName));
+      Assert.AreEqual(1, TheEngine.Categories.GetCategory(categoryName));
     }
 
     [Test]
     public void TestCategoryCannotBeCreatedWithEmptyString()
     {
-      Assert.AreEqual(-1, TheEngine.GetCategory(""));
-      Assert.AreEqual(-1, TheEngine.GetCategory(""));  //  we ask twice, in case it was inserted.
+      Assert.AreEqual(-1, TheEngine.Categories.GetCategory(""));
+      Assert.AreEqual(-1, TheEngine.Categories.GetCategory(""));  //  we ask twice, in case it was inserted.
     }
 
     [Test]
@@ -74,8 +74,8 @@ namespace myoddweb.classifierUnitTest
       var random = new Random();
       var result = Enumerable.Repeat(" ", random.Next(1, 20)).Aggregate((sum, next) => sum + next);
 
-      Assert.AreEqual(-1, TheEngine.GetCategory(result));
-      Assert.AreEqual(-1, TheEngine.GetCategory(result));  //  we ask twice, in case it was inserted.
+      Assert.AreEqual(-1, TheEngine.Categories.GetCategory(result));
+      Assert.AreEqual(-1, TheEngine.Categories.GetCategory(result));  //  we ask twice, in case it was inserted.
     }
 
     [Test]
@@ -88,7 +88,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
 
       // the category should/must exist.
-      Assert.AreEqual(1, TheEngine.GetCategory(categoryName));
+      Assert.AreEqual(1, TheEngine.Categories.GetCategory(categoryName));
     }
 
     [Test]
@@ -101,7 +101,7 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
 
       // get the category
-      var categoryId = TheEngine.GetCategory(categoryName);
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // the category should/must exist.
       Assert.AreEqual(categoryId, TheEngine.Classify.Categorize(categoryText, 0 ));
@@ -111,12 +111,12 @@ namespace myoddweb.classifierUnitTest
     public void TestGetCategories()
     {
       // we should have no categories to start with.
-      var categories = TheEngine.GetCategories();
+      var categories = TheEngine.Categories.GetCategories();
       Assert.AreEqual( 0, categories.Count);
 
       // çreate 2 categories by getting them.
-      var categorySpam = TheEngine.GetCategory( "Spam");
-      var categoryHam = TheEngine.GetCategory( "Ham");
+      var categorySpam = TheEngine.Categories.GetCategory( "Spam");
+      var categoryHam = TheEngine.Categories.GetCategory( "Ham");
 
       var expectedCategories = new Dictionary<int, string>()
       {
@@ -125,17 +125,17 @@ namespace myoddweb.classifierUnitTest
       };
 
       // now get it again
-      categories = TheEngine.GetCategories();
+      categories = TheEngine.Categories.GetCategories();
 
       // make sure that it is valid.
       CompareCategories(expectedCategories, categories);
 
       // add one more category.
-      var categoryJam = TheEngine.GetCategory("Jam");
+      var categoryJam = TheEngine.Categories.GetCategory("Jam");
       expectedCategories.Add(categoryJam, "Jam");
 
       // now get it again
-      categories = TheEngine.GetCategories();
+      categories = TheEngine.Categories.GetCategories();
 
       // make sure that it is valid.
       CompareCategories(expectedCategories, categories);
@@ -181,14 +181,14 @@ namespace myoddweb.classifierUnitTest
       // the word 'world' appears 4x in 'ham'
       // so the category must be 'ham'
       var thisCategory = TheEngine.Classify.Categorize("world is good", 0 );
-      Assert.AreEqual(TheEngine.GetCategory("ham"), thisCategory);
+      Assert.AreEqual(TheEngine.Categories.GetCategory("ham"), thisCategory);
 
       // try and classify #1 again into 'spam'
       Assert.IsTrue(TheEngine.Classify.Train("spam", categoryText1, uniqueEntryId1, 1));
 
       // but that should not change anything in the classification
       thisCategory = TheEngine.Classify.Categorize("world is good", 0);
-      Assert.AreEqual(TheEngine.GetCategory("ham"), thisCategory);
+      Assert.AreEqual(TheEngine.Categories.GetCategory("ham"), thisCategory);
     }
 
     [Test]
@@ -209,8 +209,8 @@ namespace myoddweb.classifierUnitTest
       Assert.IsTrue(TheEngine.Classify.Train(categoryName2, "World", uniqueEntryId21, 1));
 
       // get the category
-      var categoryId1 = TheEngine.GetCategory(categoryName1);
-      var categoryId2 = TheEngine.GetCategory(categoryName2);
+      var categoryId1 = TheEngine.Categories.GetCategory(categoryName1);
+      var categoryId2 = TheEngine.Categories.GetCategory(categoryName2);
 
       // our category text
       const string categoryText = "Hello World";

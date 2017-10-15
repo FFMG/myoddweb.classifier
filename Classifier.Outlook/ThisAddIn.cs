@@ -82,7 +82,7 @@ namespace myoddweb.classifier
         }
 
         // the message note.
-        if (!CategoriesCollection.IsUsableClassNameForClassification(mailItem?.MessageClass))
+        if (!MailProcessor.IsUsableClassNameForClassification(mailItem?.MessageClass))
         {
           return;
         }
@@ -116,7 +116,7 @@ namespace myoddweb.classifier
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI(TheEngine);
+      return new CustomUI(TheEngine, TheMailProcessor);
     }
 
     #region VSTO generated code

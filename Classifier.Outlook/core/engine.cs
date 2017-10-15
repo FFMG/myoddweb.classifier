@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Classifier.Interfaces;
-using System.Linq;
-using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
@@ -12,7 +10,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// all the categories.
     /// </summary>
-    protected CategoriesCollection _categories;
+    protected ICategories _categories;
 
     /// <summary>
     /// All the options
@@ -72,7 +70,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The categories manager
     /// </summary>
-    public virtual CategoriesCollection Categories => _categories ?? (_categories = new CategoriesCollection(this));
+    public virtual ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Folders, Config, Logger));
 
     /// <summary>
     /// The classification engine.
@@ -151,36 +149,6 @@ namespace myoddweb.classifier.core
       engineVersion -= (minor * 1000);
       var build = engineVersion;
       return new Version( major, minor, build, 0 );
-    }
-
-    public int GetCategory(string categoryName)
-    {
-      return ClassifyEngine?.GetCategory(categoryName ) ?? -1;
-    }
-
-    public int GetCategoryFromUniqueId(string uniqueIdentifier)
-    {
-      return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
-    }
-
-    public Dictionary<int, string> GetCategories( )
-    {
-      var categories = new Dictionary<int, string>();
-      if (ClassifyEngine?.GetCategories(out categories) < 0 )
-      {
-        return new Dictionary<int, string>();
-      }
-      return categories;
-    }
-
-    public bool RenameCategory(string oldCategory, string newCategory)
-    {
-      return ClassifyEngine?.RenameCategory(oldCategory, newCategory) ?? false;
-    }
-
-    public bool DeleteCategory(string categoryName)
-    {
-      return ClassifyEngine.DeleteCategory(categoryName);
     }
   }
 }
