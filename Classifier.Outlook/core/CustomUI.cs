@@ -31,17 +31,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private readonly IEngine _engine;
+    private IEngine Engine => Globals.ThisAddIn.TheEngine;
+
+    /// <summary>
+    /// The mail processor
+    /// </summary>
+    private MailProcessor MailProcessor => Globals.ThisAddIn.TheMailProcessor;
 
     private Office.IRibbonUI _ribbon;
 
-    private readonly MailProcessor _mailProcessor;
-
-    public CustomUI(IEngine engine, MailProcessor mailProcessor)
+    public CustomUI()
     {
-      // the engine.
-      _engine = engine;
-      _mailProcessor = mailProcessor;
     }
 
     #region IRibbonExtensibility Members
@@ -173,7 +173,7 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          var watch = StopWatch.Start(_engine.Logger);
+          var watch = StopWatch.Start(Engine.Logger);
 
           // log a message to indicate when we are trying to do.
           Debug.WriteLine($"Classifying message id {mailItem.EntryID} to category {categoryId}");
@@ -194,7 +194,7 @@ namespace myoddweb.classifier.core
           watch.Stop("  [Failed] Classifying took {0}.");
 
           // log the error
-          _engine.Logger.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
+          Engine.Logger.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // no need to go further, something broke.
           return false;
@@ -202,7 +202,7 @@ namespace myoddweb.classifier.core
         catch
         {
           // log that this did not work.
-          _engine.Logger.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
+          Engine.Logger.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // bail out.
           return false;
@@ -221,7 +221,7 @@ namespace myoddweb.classifier.core
     {
       // we know this is a user selected item
       // so we can get the weight from the options.
-      return await _mailProcessor.ClassifyAsync(mailItem, id, _engine.Options.UserWeight).ConfigureAwait(false);
+      return await MailProcessor.ClassifyAsync(mailItem, id, Engine.Options.UserWeight).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -230,12 +230,12 @@ namespace myoddweb.classifier.core
     /// <param name="control"></param>
     public void OnManageMore(Office.IRibbonControl control)
     {
-      if (null == _engine.Options )
+      if (null == Engine.Options )
       {
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: _engine, categories: _engine.Categories ))
+      using (var optionsForm = new OptionsForm( engine: Engine, categories: Engine.Categories ))
       {
         optionsForm.ShowDialog();
       }
@@ -256,7 +256,7 @@ namespace myoddweb.classifier.core
       // show the displays
       var categoryList = MailProcessor.GetStringFromMailItem(mailItem);
       var text = string.Join(";", categoryList.Select(x => x.Value));
-      using (var detailsForm = new DetailsForm(_engine.ClassifyEngine, text ))
+      using (var detailsForm = new DetailsForm(Engine.ClassifyEngine, text ))
       {
         detailsForm.ShowDialog();
       }
@@ -275,7 +275,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // update the magnets list.
-      using (var magnetMailItemForm = new MagnetMailItemForm( _engine.Logger, _engine.Magnets, _engine.Categories, mailItem ))
+      using (var magnetMailItemForm = new MagnetMailItemForm( Engine.Logger, Engine.Magnets, Engine.Categories, mailItem ))
       {
         magnetMailItemForm.ShowDialog();
       }
@@ -318,17 +318,17 @@ namespace myoddweb.classifier.core
         WasMagnetUsed = false
       };
 
-      if ( !_engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
+      if ( !Engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
       {
         // if we do not want to check options, then we don't want to do that.
-        if ( !_engine.Options.ReCheckCategories )
+        if ( !Engine.Options.ReCheckCategories )
         {
           return guessCategoryResponse;
         }
 
         // if we currently have a category and we only want to check the
         // unknown categories, then we musn't check.
-        if (currentCategoryId != -1 && _engine.Options.CheckIfUnKnownCategory)
+        if (currentCategoryId != -1 && Engine.Options.CheckIfUnKnownCategory)
         {
           return guessCategoryResponse;
         }
@@ -338,19 +338,19 @@ namespace myoddweb.classifier.core
       Cursor.Current = Cursors.WaitCursor;
 
       // start the wath
-      var watch = StopWatch.Start(_engine.Logger);
+      var watch = StopWatch.Start(Engine.Logger);
 
       try
       {
         // guess where it could be going to now.
         if (mailItem != null)
         {
-          guessCategoryResponse = await _mailProcessor.CategorizeAsync(mailItem).ConfigureAwait(false);
+          guessCategoryResponse = await MailProcessor.CategorizeAsync(mailItem).ConfigureAwait(false);
         }
       }
       catch (Exception e)
       {
-        _engine.Logger.LogError(e.ToString());
+        Engine.Logger.LogError(e.ToString());
 
         // @todo we need to log that there was an issue.
         guessCategoryResponse = new MailProcessor.CategorizeResponse
@@ -384,22 +384,22 @@ namespace myoddweb.classifier.core
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if ( _engine.Categories.Count == 0 )
+      if ( Engine.Categories.Count == 0 )
       {
         return "";
       }
 
       // do we know the current category?
-      var currentCategory = mailItem == null ? null : _mailProcessor.GetCategoryFromMailItem(mailItem);
+      var currentCategory = mailItem == null ? null : MailProcessor.GetCategoryFromMailItem(mailItem);
 
       // get the current category if?
       var currentCategoryId = currentCategory == null ? -1 : (int)currentCategory.Id;
 
       // try and guess the new category
-      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, _engine.Categories.List).ConfigureAwait(false);
+      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, Engine.Categories.List).ConfigureAwait(false);
 
       // and create a menu for all of them.
-      foreach (var category in _engine.Categories.List )
+      foreach (var category in Engine.Categories.List )
       {
         var safeLabel = category.XmlName.Replace( "&amp;", "&amp;&amp;");
         var getImage = "";
@@ -429,7 +429,7 @@ namespace myoddweb.classifier.core
 
       // if we have existing categories, add a separator
       // otherwise we don't need to
-      if (_engine.Categories.Count > 0 )
+      if (Engine.Categories.Count > 0 )
       {
         translationsXml.Append(@"<menuSeparator id=""separator"" />");
       }
@@ -503,14 +503,14 @@ namespace myoddweb.classifier.core
     public bool IsMultipleItemsMenuVisible(Office.IRibbonControl control)
     {
       // if we have no engine, then we have a problem somehwere.
-      if (null == _engine)
+      if (null == Engine)
       {
         return false;
       }
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0 )
+      if (Engine.Categories.Count == 0 )
       {
         return false;
       }
@@ -527,14 +527,14 @@ namespace myoddweb.classifier.core
     public bool IsMenuVisible(Office.IRibbonControl control)
     {
       // if we have no engine, then we have a problem somehwere.
-      if (null == _engine)
+      if (null == Engine)
       {
         return false;
       }
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0  )
+      if (Engine.Categories.Count == 0  )
       {
         return false;
       }

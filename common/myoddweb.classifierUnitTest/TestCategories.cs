@@ -25,10 +25,81 @@ namespace myoddweb.classifierUnitTest
     [Test]
     public void TestEmptyCategoriesIsNotNull()
     {
-      // we should have no categories.
+      // we should have no categories but the IEnumrable should not be null.
       var theCategories = TheEngine.Categories.List;
       Assert.IsNotNull(theCategories);
       Assert.AreEqual(0, theCategories.Count());
+    }
+
+    [Test]
+    public void FindCategoryById_ReturnsNullWhenMinusOne()
+    {
+      Assert.IsNull(TheEngine.Categories.FindCategoryById(-1));
+    }
+    
+    [Test]
+    public void FindCategoryById_ReturnsNullWhenEmpty()
+    {
+      Assert.IsNull(TheEngine.Categories.FindCategoryById(123) );
+    }
+
+    [Test]
+    public void FindCategoryById_ReturnsNullWhenNotFound()
+    {
+      // create 3 categories by getting them.
+      var categorySpam = TheEngine.Categories.GetCategory("Spam");
+      var categoryHam = TheEngine.Categories.GetCategory("Ham");
+      var categoryJam = TheEngine.Categories.GetCategory("Jam");
+
+      var x = categorySpam;
+      while( x == categorySpam || x == categoryHam || x == categoryJam )
+      {
+        x = (int)RandomId();
+      }
+      Assert.IsNull(TheEngine.Categories.FindCategoryById(x));
+    }
+
+    [Test]
+    public void FindCategoryById_ReturnsCorrectValue()
+    {
+      // create 3 categories by getting them.
+      var categorySpam = TheEngine.Categories.GetCategory("Spam");
+      var categoryHam = TheEngine.Categories.GetCategory("Ham");
+      var categoryJam = TheEngine.Categories.GetCategory("Jam");
+
+      var cat1 = TheEngine.Categories.FindCategoryById(categorySpam);
+      Assert.That(cat1.Id == categorySpam);
+      Assert.That(cat1.Name == "Spam");
+
+      var cat2 = TheEngine.Categories.FindCategoryById(categoryHam);
+      Assert.That(cat2.Id == categoryHam);
+      Assert.That(cat2.Name == "Ham");
+    }
+
+    [Test]
+    public void GetCategory_WhenTheValueExistsAlreadyWeDoNotAddMore()
+    {
+      // create 3 categories by getting them.
+      var categorySpam = TheEngine.Categories.GetCategory("Spam");
+      var categoryHam = TheEngine.Categories.GetCategory("Ham");
+      var categoryJam = TheEngine.Categories.GetCategory("Jam");
+
+      var cat1 = TheEngine.Categories.FindCategoryById(categorySpam);
+      Assert.That(cat1.Id == categorySpam);
+      Assert.That(cat1.Name == "Spam");
+
+      // add spam again
+      var categorySpam2 = TheEngine.Categories.GetCategory("Spam");
+      
+      var cat2 = TheEngine.Categories.FindCategoryById(categorySpam);
+
+      // the two values must be the same.
+      Assert.That(cat2.Id == categorySpam);
+      Assert.That(cat2.Id == categorySpam2);
+      Assert.That(cat2.Name == "Spam");
+
+      // we should only have 3 values anyway
+      Assert.That(3 == TheEngine.Categories.Count);
     }
 
     [Test]
@@ -38,18 +109,12 @@ namespace myoddweb.classifierUnitTest
       var theCategories = TheEngine.Categories.List;
       Assert.AreEqual(0, theCategories.Count());
 
-      // create 2 categories by getting them.
+      // create 3 categories by getting them.
       var categorySpam = TheEngine.Categories.GetCategory("Spam");
       var categoryHam = TheEngine.Categories.GetCategory("Ham");
       var categoryJam = TheEngine.Categories.GetCategory("Jam");
 
-      // should still be 0
-      theCategories = TheEngine.Categories.List;
-      Assert.AreEqual(0, theCategories.Count());
-
-      TheEngine.Categories.ReloadCategories();
-
-      // we should now have 3
+      // should still be 3
       theCategories = TheEngine.Categories.List;
       Assert.AreEqual(3, theCategories.Count());
 

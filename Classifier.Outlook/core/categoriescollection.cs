@@ -35,7 +35,7 @@ namespace myoddweb.classifier.core
       }
 
       // find the fist item in the list that will match.
-      return Categories.FirstOrDefault(e => e.Id == categoryId);
+      return Categories?.FirstOrDefault(e => e.Id == categoryId);
     }
 
     /// <summary>
@@ -46,6 +46,11 @@ namespace myoddweb.classifier.core
     {
       return Categories ?? new List<Category>();
     }
+
+    /// <summary>
+    /// Set the categories values.
+    /// </summary>
+    /// <param name="values"></param>
     public void Set(IEnumerable<Category> values )
     {
       Categories = values;

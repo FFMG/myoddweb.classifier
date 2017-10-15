@@ -22,9 +22,9 @@ namespace myoddweb.classifier
     // all the ongoing tasks.
     private List<Task> _tasks;
 
-    private OutlookEngine TheEngine => _engine ?? (_engine = new OutlookEngine( ));
+    public OutlookEngine TheEngine => _engine ?? (_engine = new OutlookEngine());
 
-    private MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
+    public MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
 
     private void ThisAddIn_Startup(object sender, EventArgs e)
     {
@@ -116,7 +116,7 @@ namespace myoddweb.classifier
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI(TheEngine, TheMailProcessor);
+      return new CustomUI();
     }
 
     #region VSTO generated code

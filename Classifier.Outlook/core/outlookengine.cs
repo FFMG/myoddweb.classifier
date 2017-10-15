@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace myoddweb.classifier.core
 {
-  class OutlookEngine : Engine
+  public class OutlookEngine : Engine
   {
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 

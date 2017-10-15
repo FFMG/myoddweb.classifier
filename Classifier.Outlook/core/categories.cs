@@ -45,6 +45,9 @@ namespace myoddweb.classifier.core
       _config = config;
 
       Collection = new CategoriesCollection( logger);
+
+      // we can now reload all the categories
+      ReloadCategories();
     }
 
     public bool RenameCategory(string oldCategory, string newCategory)
@@ -67,9 +70,26 @@ namespace myoddweb.classifier.core
       return categories;
     }
 
+    /// <summary>
+    /// Get a category by category name.
+    /// NB: The category is created if needed.
+    /// </summary>
+    /// <param name="categoryName"></param>
+    /// <returns></returns>
     public int GetCategory(string categoryName)
     {
-      return ClassifyEngine?.GetCategory(categoryName) ?? -1;
+      var id = ClassifyEngine?.GetCategory(categoryName) ?? -1;
+      if( id == -1 )
+      {
+        return -1;
+      }
+
+      // we must now reload everything in case we 
+      // created a brand new category.
+      ReloadCategories();
+
+      // and return the id value
+      return id;
     }
 
     public int GetCategoryFromUniqueId(string uniqueIdentifier)
