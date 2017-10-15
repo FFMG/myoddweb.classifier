@@ -29,7 +29,7 @@ namespace myoddweb.classifierUnitTest
       var categoryName = RandomString(8);
       var categoryText = RandomStringWithSpaces(8);
       var uniqueEntryId = RandomString(100);
-      Assert.IsTrue(TheEngine.Train(categoryName, categoryText, uniqueEntryId, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
     }
 
     [Test]
@@ -39,7 +39,7 @@ namespace myoddweb.classifierUnitTest
       // so we cannot un-train anyting.
       var categoryText = RandomStringWithSpaces(8);
       var uniqueEntryId = RandomString(100);
-      Assert.IsFalse(TheEngine.UnTrain( uniqueEntryId, categoryText));
+      Assert.IsFalse(TheEngine.Classify.UnTrain( uniqueEntryId, categoryText));
     }
 
     [Test]
@@ -49,8 +49,8 @@ namespace myoddweb.classifierUnitTest
       var categoryText = RandomStringWithSpaces(8);
       var uniqueEntryId = RandomString(100);
 
-      Assert.IsTrue(TheEngine.Train(categoryName, categoryText, uniqueEntryId, 1));
-      Assert.IsTrue(TheEngine.UnTrain( uniqueEntryId, categoryText));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
+      Assert.IsTrue(TheEngine.Classify.UnTrain( uniqueEntryId, categoryText));
     }
 
     [Test]
@@ -85,7 +85,7 @@ namespace myoddweb.classifierUnitTest
       var categoryText = RandomStringWithSpaces(8);
       var uniqueEntryId = RandomString(100);
 
-      Assert.IsTrue(TheEngine.Train(categoryName, categoryText, uniqueEntryId, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
 
       // the category should/must exist.
       Assert.AreEqual(1, TheEngine.GetCategory(categoryName));
@@ -98,13 +98,13 @@ namespace myoddweb.classifierUnitTest
       var categoryText = RandomStringWithSpaces(8);
       var uniqueEntryId = RandomString(100);
 
-      Assert.IsTrue(TheEngine.Train(categoryName, categoryText, uniqueEntryId, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
 
       // get the category
       var categoryId = TheEngine.GetCategory(categoryName);
 
       // the category should/must exist.
-      Assert.AreEqual(categoryId, TheEngine.Categorize(categoryText, 0 ));
+      Assert.AreEqual(categoryId, TheEngine.Classify.Categorize(categoryText, 0 ));
     }
 
     [Test]
@@ -172,22 +172,22 @@ namespace myoddweb.classifierUnitTest
       var categoryText4 = "au revoire world";
       var categoryText5 = "is that it world?";
 
-      Assert.IsTrue( TheEngine.Train("spam", categoryText1, uniqueEntryId1, 1)); // world appears once 1/5  = ~20%
-      Assert.IsTrue( TheEngine.Train("ham" , categoryText2, uniqueEntryId2, 1)); // world appears twice 4/5 = ~80%
-      Assert.IsTrue( TheEngine.Train("ham" , categoryText3, uniqueEntryId3, 1));
-      Assert.IsTrue( TheEngine.Train("ham" , categoryText4, uniqueEntryId4, 1));
-      Assert.IsTrue( TheEngine.Train("ham" , categoryText5, uniqueEntryId5, 1));
+      Assert.IsTrue( TheEngine.Classify.Train("spam", categoryText1, uniqueEntryId1, 1)); // world appears once 1/5  = ~20%
+      Assert.IsTrue( TheEngine.Classify.Train("ham" , categoryText2, uniqueEntryId2, 1)); // world appears twice 4/5 = ~80%
+      Assert.IsTrue( TheEngine.Classify.Train("ham" , categoryText3, uniqueEntryId3, 1));
+      Assert.IsTrue( TheEngine.Classify.Train("ham" , categoryText4, uniqueEntryId4, 1));
+      Assert.IsTrue( TheEngine.Classify.Train("ham" , categoryText5, uniqueEntryId5, 1));
 
       // the word 'world' appears 4x in 'ham'
       // so the category must be 'ham'
-      var thisCategory = TheEngine.Categorize("world is good", 0 );
+      var thisCategory = TheEngine.Classify.Categorize("world is good", 0 );
       Assert.AreEqual(TheEngine.GetCategory("ham"), thisCategory);
 
       // try and classify #1 again into 'spam'
-      Assert.IsTrue(TheEngine.Train("spam", categoryText1, uniqueEntryId1, 1));
+      Assert.IsTrue(TheEngine.Classify.Train("spam", categoryText1, uniqueEntryId1, 1));
 
       // but that should not change anything in the classification
-      thisCategory = TheEngine.Categorize("world is good", 0);
+      thisCategory = TheEngine.Classify.Categorize("world is good", 0);
       Assert.AreEqual(TheEngine.GetCategory("ham"), thisCategory);
     }
 
@@ -202,11 +202,11 @@ namespace myoddweb.classifierUnitTest
       var uniqueEntryId21 = RandomString(100);
 
       // we add the same word twice to one category
-      Assert.IsTrue(TheEngine.Train(categoryName1, "World", uniqueEntryId11, 1));
-      Assert.IsTrue(TheEngine.Train(categoryName1, "World", uniqueEntryId12, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName1, "World", uniqueEntryId11, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName1, "World", uniqueEntryId12, 1));
 
       // then we add the same one once, to the other category
-      Assert.IsTrue(TheEngine.Train(categoryName2, "World", uniqueEntryId21, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName2, "World", uniqueEntryId21, 1));
 
       // get the category
       var categoryId1 = TheEngine.GetCategory(categoryName1);
@@ -216,20 +216,20 @@ namespace myoddweb.classifierUnitTest
       const string categoryText = "Hello World";
 
       // so because there are 2 words on one, the current category should be category one.
-      Assert.AreEqual(categoryId1, TheEngine.Categorize(categoryText, 0));
+      Assert.AreEqual(categoryId1, TheEngine.Classify.Categorize(categoryText, 0));
 
       // we now want to change the second category entry
       // with a bigger weight.
-      Assert.IsTrue(TheEngine.Train(categoryName2, "World", uniqueEntryId21, 3));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName2, "World", uniqueEntryId21, 3));
 
       // so we now have 2xWordx(1xWeight) in category 1
       //            and 1xWordx(3xWeight) in category 2
       // so category 2 should be the one.
-      Assert.AreEqual(categoryId2, TheEngine.Categorize(categoryText, 0));
+      Assert.AreEqual(categoryId2, TheEngine.Classify.Categorize(categoryText, 0));
 
       // and if we revet back to 1xWeight then the category should go back to category 1
-      Assert.IsTrue(TheEngine.Train(categoryName2, "World", uniqueEntryId21, 1));
-      Assert.IsTrue(TheEngine.Train(categoryName1, "World", uniqueEntryId21, 3));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName2, "World", uniqueEntryId21, 1));
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName1, "World", uniqueEntryId21, 3));
     }
 
     [Test]
@@ -237,7 +237,7 @@ namespace myoddweb.classifierUnitTest
     {
       // Cannot be more than 100%
       var random = new Random(Guid.NewGuid().GetHashCode());
-      Assert.Throws<ArgumentException>( () => TheEngine.Categorize("Some text", (uint)random.Next(101, 200)));
+      Assert.Throws<ArgumentException>( () => TheEngine.Classify.Categorize("Some text", (uint)random.Next(101, 200)));
     }
 
   }

@@ -40,5 +40,13 @@ namespace myoddweb.classifier.interfaces
     /// <param name="weight"></param>
     /// <returns></returns>
     bool Train(string categoryName, string textToCategorise, string uniqueIdentifier, int weight);
+
+    /// <summary>
+    /// Un train a previously trainned text, (using the unique id).
+    /// </summary>
+    /// <param name="uniqueIdentifier"></param>
+    /// <param name="textToCategorise"></param>
+    /// <returns></returns>
+    bool UnTrain(string uniqueIdentifier, string textToCategorise);
   }
 }

@@ -56,7 +56,7 @@ namespace myoddweb.classifierUnitTest
         // add to the list.
         uniqueIdentifiers.Add( uniqueIdentifier, catName );
 
-        TheEngine.Train(catName, textToCategorise, uniqueIdentifier, 1);
+        TheEngine.Classify.Train(catName, textToCategorise, uniqueIdentifier, 1);
       }
 
       // check that all of them are valid.
@@ -99,7 +99,7 @@ namespace myoddweb.classifierUnitTest
         uniqueIdentifiers.Add(uniqueIdentifier, catName);
 
         // train it to one id
-        TheEngine.Train(catName, textToCategorise, uniqueIdentifier, 1);
+        TheEngine.Classify.Train(catName, textToCategorise, uniqueIdentifier, 1);
 
         // then train it to another.
         var anotherCatName = catNames[random.Next(catNames.Count)];
@@ -107,7 +107,7 @@ namespace myoddweb.classifierUnitTest
         // update the list.
         uniqueIdentifiers[uniqueIdentifier] = anotherCatName;
 
-        TheEngine.Train(anotherCatName, textToCategorise, uniqueIdentifier, 1);
+        TheEngine.Classify.Train(anotherCatName, textToCategorise, uniqueIdentifier, 1);
       }
 
       // make sure that everything has been updated.

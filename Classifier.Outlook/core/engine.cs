@@ -10,6 +10,11 @@ namespace myoddweb.classifier.core
   public class Engine : IEngine
   {
     /// <summary>
+    /// all the categories.
+    /// </summary>
+    protected Categories _categories;
+
+    /// <summary>
     /// All the options
     /// </summary>
     protected IOptions _options;
@@ -27,17 +32,22 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// All the folders.
     /// </summary>
-    protected Folders _folders;
+    protected IFolders _folders;
 
     /// <summary>
     /// The logger
     /// </summary>
-    protected Logger _logger;
+    protected ILogger _logger;
 
     /// <summary>
-    /// all the categories.
+    /// The classify engne.
     /// </summary>
-    protected Categories _categories;
+    protected IClassify _classify;
+
+    /// <summary>
+    /// The classifucation engine.
+    /// </summary>
+    public virtual IClassify Classify => _classify ?? (_classify = new Classify( ClassifyEngine, Options ));
 
     /// <summary>
     /// The logger.
@@ -143,20 +153,6 @@ namespace myoddweb.classifier.core
       return new Version( major, minor, build, 0 );
     }
 
-    public bool Train(string categoryName, string textToCategorise, string uniqueIdentifier, int weight )
-    {
-      if (weight <= 0)
-      {
-        throw new ArgumentException( "The weight cannot be 0 or less!" );
-      }
-      return ClassifyEngine?.Train(categoryName, textToCategorise, uniqueIdentifier, weight ) ?? false;
-    }
-
-    public bool UnTrain( string uniqueIdentifier, string textToCategorise)
-    {
-      return ClassifyEngine?.UnTrain( uniqueIdentifier, textToCategorise) ?? false;
-    }
-
     public int GetCategory(string categoryName)
     {
       return ClassifyEngine?.GetCategory(categoryName ) ?? -1;
@@ -165,37 +161,6 @@ namespace myoddweb.classifier.core
     public int GetCategoryFromUniqueId(string uniqueIdentifier)
     {
       return ClassifyEngine?.GetCategoryFromUniqueId( uniqueIdentifier ) ?? -1;
-    }
-
-    public int Categorize(string categoryText, uint minPercentage, out List<WordCategory> wordsCategory, out Dictionary<int, double > categoryProbabilities)
-    {
-      wordsCategory = new List<WordCategory>();
-      categoryProbabilities = new Dictionary<int, double>();
-
-      // the category min percentage cannot be more than 100%.
-      // it also cannot be less than 0, but we use a uint.
-      if (minPercentage > 100)
-      {
-        throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
-      }
-      return ClassifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory, out categoryProbabilities ) ?? -1;
-    }
-
-    public int Categorize(string categoryText, uint minPercentage )
-    {
-      // the category min percentage cannot be more than 100%.
-      // it also cannot be less than 0, but we use a uint.
-      if (minPercentage > 100)
-      {
-        throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
-      }
-
-      return ClassifyEngine?.Categorize(categoryText, minPercentage) ?? -1;
-    }
-
-    public int Categorize(Dictionary< Categories.MailStringCategories, string> categoryList)
-    {
-      return Categorize(string.Join(";", categoryList.Select(x => x.Value) ), Options.MinPercentage );
     }
 
     public Dictionary<int, string> GetCategories( )
