@@ -137,14 +137,10 @@ namespace myoddweb.classifier.core
       }
 
       // look for the 
-      Assembly asm = null;
+      Assembly asm;
       try
       {
         asm = Assembly.LoadFrom(dllInteropPath);
-        if (null == asm)
-        {
-          throw new Exception($"Unable to load the interop file. '{dllInteropPath}'.");
-        }
       }
       catch (ArgumentException ex)
       {
@@ -156,7 +152,7 @@ namespace myoddweb.classifier.core
       }
 
       // look for the interop interface
-      var classifyEngine = TypeLoader.LoadTypeFromAssembly<Classifier.Interfaces.IClassify1>(asm);
+      var classifyEngine = TypeLoader.LoadTypeFromAssembly<IClassify1>(asm);
       if (null == classifyEngine)
       {
         // could not locate the interface.
