@@ -49,16 +49,11 @@ namespace myoddweb.classifier.core
           continue;
         }
 
-        // child folder item
-        var childFolder = item as Outlook.MAPIFolder;
-        if (null != childFolder)
-        {
-          // add this folder to the list.
-          folders.Add(new OutlookFolder(childFolder, PrettyFolderPath(childFolder.FolderPath)));
+        // add this folder to the list.
+        folders.Add(new OutlookFolder(item, PrettyFolderPath(item.FolderPath)));
 
-          // Call EnumerateFolders using childFolder.
-          EnumerateFolders(childFolder, folders);
-        }
+        // Call EnumerateFolders using childFolder.
+        EnumerateFolders(item, folders);
       }
     }
 
