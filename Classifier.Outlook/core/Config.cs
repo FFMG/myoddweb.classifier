@@ -1,5 +1,4 @@
-﻿using System;
-using myoddweb.classifier.interfaces;
+﻿using myoddweb.classifier.interfaces;
 using Classifier.Interfaces;
 using System.Collections.Generic;
 
@@ -10,17 +9,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 ClassifyEngine;
+    private readonly IClassify1 _classifyEngine;
 
     public Config(IClassify1 classifyEngine)
     {
-      ClassifyEngine = classifyEngine;
+      _classifyEngine = classifyEngine;
     }
 
     public string GetConfig(string configName)
     {
       string configValue;
-      if (!ClassifyEngine.GetConfig(configName, out configValue))
+      if (!_classifyEngine.GetConfig(configName, out configValue))
       {
         throw new KeyNotFoundException("The value could not be found!");
       }
@@ -47,7 +46,7 @@ namespace myoddweb.classifier.core
 
     public bool SetConfig(string configName, string configValue)
     {
-      return ClassifyEngine?.SetConfig(configName, configValue) ?? false;
+      return _classifyEngine?.SetConfig(configName, configValue) ?? false;
     }
   }
 }
