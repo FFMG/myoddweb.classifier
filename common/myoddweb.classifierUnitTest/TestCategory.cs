@@ -80,5 +80,24 @@ namespace myoddweb.classifierUnitTest64
       Assert.False(cat1 == cat2);
       Assert.True(cat1 != cat2);
     }
+
+    [Test]
+    public void XmlName_TheNameDoesNotNeedToBeEscaped([Values("Hello", "World", "Sp  ace")]string name )
+    {
+      var cat = new Category(name, RandomId(), RandomString(10) );
+      Assert.That(cat.XmlName == name);
+    }
+
+    [Test]
+    [TestCase("<Hello>", "&lt;Hello&gt;")]
+    [TestCase("3 && age", "3 &amp;&amp; age")]
+    [TestCase("She said \"You're right\"", "She said \"You're right\"")]
+    [TestCase("She said 'You're right'", "She said 'You're right'")]
+    public void XmlName_TheNameNeedsToBeEscaped( string name, string xname )
+    {
+      var cat = new Category(name, RandomId(), RandomString(10));
+      Assert.That(cat.XmlName == xname);
+    }
+
   }
 }

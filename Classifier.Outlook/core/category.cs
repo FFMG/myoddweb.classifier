@@ -4,22 +4,43 @@ namespace myoddweb.classifier.core
 {
   public class Category
   {
+    /// <summary>
+    /// The given name
+    /// </summary>
     public string Name { get; }
 
-    public string XmlName { get; }
+    /// <summary>
+    /// The excapted name
+    /// </summary>
+    private string _xmlName;
 
+    /// <summary>
+    /// The excapted name, if it does not exist, it will be created.
+    /// </summary>
+    public string XmlName => _xmlName ?? (_xmlName = XmlEscape(Name));
+
+    /// <summary>
+    /// The given id
+    /// </summary>
     public uint Id { get; }
 
+    /// <summary>
+    /// The given folder unique indentifier.
+    /// </summary>
     public string FolderId { get; }
 
     public Category( string name, uint id, string folderId )
     {
       Id = id;
       Name = name;
-      XmlName = XmlEscape(name);
       FolderId = folderId;
     }
 
+    /// <summary>
+    /// Excape the given string.
+    /// </summary>
+    /// <param name="unescaped"></param>
+    /// <returns></returns>
     protected static string XmlEscape(string unescaped)
     {
       var doc = new XmlDocument();
