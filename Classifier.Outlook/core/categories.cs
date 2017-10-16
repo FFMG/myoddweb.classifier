@@ -37,7 +37,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     public int Count => _collection.Count;
 
-    public Categories(IClassify1 classifyEngine, IFolders folders, IConfig config, ILogger logger)
+    public Categories(IClassify1 classifyEngine, IFolders folders, IConfig config)
     {
       _classifyEngine = classifyEngine;
 
@@ -47,7 +47,7 @@ namespace myoddweb.classifier.core
       // the config
       _config = config;
 
-      _collection = new CategoriesCollection( logger);
+      _collection = new CategoriesCollection();
 
       // we can now reload all the categories
       ReloadCategories();
