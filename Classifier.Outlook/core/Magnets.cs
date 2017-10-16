@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
 using Classifier.Interfaces;
 
 namespace myoddweb.classifier.core
 {
-  class Magnets : IMagnets
+  public class Magnets : IMagnets
   {
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 ClassifyEngine;
+    private readonly IClassify1 _classifyEngine;
 
     public Magnets(IClassify1 classifyEngine)
     {
-      ClassifyEngine = classifyEngine;
+      _classifyEngine = classifyEngine;
     }
 
     /// <summary>
@@ -27,7 +26,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public int CreateMagnet(string randomName, int ruleType, int categoryId)
     {
-      return ClassifyEngine.CreateMagnet(randomName, ruleType, categoryId);
+      return _classifyEngine.CreateMagnet(randomName, ruleType, categoryId);
     }
 
     /// <summary>
@@ -37,7 +36,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public bool DeleteMagnet(int magnetId)
     {
-      return ClassifyEngine.DeleteMagnet(magnetId);
+      return _classifyEngine.DeleteMagnet(magnetId);
     }
 
     /// <summary>
@@ -50,7 +49,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public bool UpdateMagnet(int magnetId, string magnetName, int ruleType, int categoryTarget)
     {
-      return ClassifyEngine.UpdateMagnet(magnetId, magnetName, ruleType, categoryTarget);
+      return _classifyEngine.UpdateMagnet(magnetId, magnetName, ruleType, categoryTarget);
     }
 
     /// <summary>
@@ -88,7 +87,7 @@ namespace myoddweb.classifier.core
     public List<Magnet> GetMagnets()
     {
       List<Magnet> magnets;
-      return -1 == ClassifyEngine.GetMagnets(out magnets) ? null : magnets;
+      return -1 == _classifyEngine.GetMagnets(out magnets) ? null : magnets;
     }
   }
 }
