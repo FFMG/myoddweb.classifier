@@ -421,7 +421,6 @@ namespace myoddweb.classifier.core
     /// Try and categorise an email.
     /// </summary>
     /// <param name="mailItem">The mail item we are working with</param>
-    /// <param name="magnetWasUsed">If we used a magnet or not</param>
     /// <returns></returns>
     public async Task<CategorizeResponse> CategorizeAsync(Outlook._MailItem mailItem)
     {
@@ -527,7 +526,7 @@ namespace myoddweb.classifier.core
               try
               {
                 var address = new MailAddress(toEmailAddress);
-                if (string.Compare(address.Host ?? "", text, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(address.Host, text, StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
                   // we have a match for this email address.
                   return magnet.Category;
@@ -557,10 +556,10 @@ namespace myoddweb.classifier.core
     /// <param name="mail"></param>
     private static List<string> GetSmtpAddressForRecipients(Outlook._MailItem mail)
     {
-      const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+      const string prSmtpAddress = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
       var recips = mail.Recipients;
 
-      return (from Outlook.Recipient recip in recips select recip.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS) as string).ToList();
+      return (from Outlook.Recipient recip in recips select recip.PropertyAccessor.GetProperty(prSmtpAddress) as string).ToList();
     }
 
 
@@ -599,15 +598,15 @@ namespace myoddweb.classifier.core
         }
       }
 
-      const string PR_SMTP_ADDRESS = @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
-      return sender.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS) as string;
+      const string prSmtpAddress = @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+      return sender.PropertyAccessor.GetProperty(prSmtpAddress) as string;
     }
 
     /// <summary>
     /// Given a mail item, we try and build an array of strings.
     /// </summary>
     /// <param name="mailItem">The mail item that has the information we are after.</param>
-    /// <returns>List<string> list of items</returns>
+    /// <returns>List list of items</returns>
     public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem)
     {
       if (null == mailItem)
@@ -616,7 +615,7 @@ namespace myoddweb.classifier.core
         return new Dictionary<MailStringCategories, string>();
       }
 
-      if (!IsUsableClassNameForClassification(mailItem?.MessageClass))
+      if (!IsUsableClassNameForClassification(mailItem.MessageClass))
       {
         // @todo we should never get this far.
         return new Dictionary<MailStringCategories, string>();
@@ -653,8 +652,8 @@ namespace myoddweb.classifier.core
           }
           break;
 
-        case Outlook.OlBodyFormat.olFormatUnspecified:
-        case Outlook.OlBodyFormat.olFormatPlain:
+        // case Outlook.OlBodyFormat.olFormatUnspecified:
+        // case Outlook.OlBodyFormat.olFormatPlain:
         default:
           mailItems.Add(MailStringCategories.Body, mailItem.Body);
           break;
