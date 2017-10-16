@@ -8,18 +8,18 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Name for logging in the event viewer,
     /// </summary>
-    private readonly string EventViewSource;
+    private readonly string _eventViewSource;
 
     /// <summary>
     /// If NULL we have not check for event source.
     /// Any other value, we will check for.
     /// </summary>
-    private bool? _eventSource = null;
+    private bool? _eventSource;
 
     public OutlookLogger( string eventSource, IClassify1 classifyEngine, IOptions options) : 
       base(classifyEngine, options)
     {
-      EventViewSource = eventSource;
+      _eventViewSource = eventSource;
     }
 
     private bool InstallAndValidateSource()
@@ -31,13 +31,13 @@ namespace myoddweb.classifier.core
 
       try
       {
-        if (!System.Diagnostics.EventLog.SourceExists(EventViewSource))
+        if (!System.Diagnostics.EventLog.SourceExists(_eventViewSource))
         {
-          System.Diagnostics.EventLog.CreateEventSource(EventViewSource, null);
+          System.Diagnostics.EventLog.CreateEventSource(_eventViewSource, null);
         }
 
         // set the value.
-        _eventSource = System.Diagnostics.EventLog.SourceExists(EventViewSource);
+        _eventSource = System.Diagnostics.EventLog.SourceExists(_eventViewSource);
       }
       catch (System.Security.SecurityException)
       {
@@ -60,7 +60,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Error);
     }
 
@@ -76,7 +76,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Warning);
     }
 
@@ -92,7 +92,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
     }
 
@@ -110,7 +110,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      var appLog = new System.Diagnostics.EventLog { Source = EventViewSource };
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
     }
   }
