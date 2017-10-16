@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace myoddweb.classifier.core
 {
-  public class Categories : ICategories
+  public sealed class Categories : ICategories
   {
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 ClassifyEngine;
+    private readonly IClassify1 _classifyEngine;
 
     /// <summary>
     /// The configuration interface.
@@ -20,23 +20,26 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The actual folders
     /// </summary>
-    private readonly IFolders _folders = null;
+    private readonly IFolders _folders;
 
-    public virtual CategoriesCollection Collection{ get; protected set; }
+    /// <summary>
+    //  All the categories.
+    /// </summary>
+    private readonly CategoriesCollection _collection;
 
     /// <summary>
     /// Get all the categories
     /// </summary>
-    public IEnumerable<Category> List { get { return Collection.List(); } }
+    public IEnumerable<Category> List => _collection.List();
 
     /// <summary>
     /// The number of items in the collection
     /// </summary>
-    public int Count { get { return Collection.Count; } }
-    
+    public int Count => _collection.Count;
+
     public Categories(IClassify1 classifyEngine, IFolders folders, IConfig config, ILogger logger)
     {
-      ClassifyEngine = classifyEngine;
+      _classifyEngine = classifyEngine;
 
       // the folders.
       _folders = folders;
@@ -44,7 +47,7 @@ namespace myoddweb.classifier.core
       // the config
       _config = config;
 
-      Collection = new CategoriesCollection( logger);
+      _collection = new CategoriesCollection( logger);
 
       // we can now reload all the categories
       ReloadCategories();
@@ -52,18 +55,18 @@ namespace myoddweb.classifier.core
 
     public bool RenameCategory(string oldCategory, string newCategory)
     {
-      return ClassifyEngine?.RenameCategory(oldCategory, newCategory) ?? false;
+      return _classifyEngine?.RenameCategory(oldCategory, newCategory) ?? false;
     }
 
     public bool DeleteCategory(string categoryName)
     {
-      return ClassifyEngine.DeleteCategory(categoryName);
+      return _classifyEngine.DeleteCategory(categoryName);
     }
 
     public Dictionary<int, string> GetCategories()
     {
       var categories = new Dictionary<int, string>();
-      if (ClassifyEngine?.GetCategories(out categories) < 0)
+      if (_classifyEngine?.GetCategories(out categories) < 0)
       {
         return new Dictionary<int, string>();
       }
@@ -78,7 +81,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public int GetCategory(string categoryName)
     {
-      var id = ClassifyEngine?.GetCategory(categoryName) ?? -1;
+      var id = _classifyEngine?.GetCategory(categoryName) ?? -1;
       if( id == -1 )
       {
         return -1;
@@ -94,7 +97,7 @@ namespace myoddweb.classifier.core
 
     public int GetCategoryFromUniqueId(string uniqueIdentifier)
     {
-      return ClassifyEngine?.GetCategoryFromUniqueId(uniqueIdentifier) ?? -1;
+      return _classifyEngine?.GetCategoryFromUniqueId(uniqueIdentifier) ?? -1;
     }
 
     /// <summary>
@@ -104,7 +107,7 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public Category FindCategoryById(int categoryId)
     {
-      return Collection.FindCategoryById( categoryId );
+      return _collection.FindCategoryById( categoryId );
     }
 
     /// <summary>
@@ -156,7 +159,7 @@ namespace myoddweb.classifier.core
       }
 
       // we now need to sort it and save it here...
-      Collection.Set( listOfCategories.OrderBy(c => c.Name).ToList() );
+      _collection.Set( listOfCategories.OrderBy(c => c.Name).ToList() );
     }
 
     private string GetFolderId(string categoryName)
