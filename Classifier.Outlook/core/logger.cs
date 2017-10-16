@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
 using Classifier.Interfaces;
@@ -13,17 +12,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 ClassifyEngine;
+    private readonly IClassify1 _classifyEngine;
 
     /// <summary>
     /// The options
     /// </summary>
-    private readonly IOptions Options;
+    private readonly IOptions _options;
 
     public Logger(IClassify1 classifyEngine, IOptions options )
     {
-      ClassifyEngine = classifyEngine;
-      Options = options;
+      _classifyEngine = classifyEngine;
+      _options = options;
     }
 
     /// <summary>
@@ -35,7 +34,7 @@ namespace myoddweb.classifier.core
     {
       // get the log entries,
       List<LogEntry> entries;
-      return -1 == ClassifyEngine.GetLogEntries(out entries, max) ? null : entries;
+      return -1 == _classifyEngine.GetLogEntries(out entries, max) ? null : entries;
     }
 
     /// <summary>
@@ -87,7 +86,7 @@ namespace myoddweb.classifier.core
     private void LogMessageToEngine(string message, LogLevels level)
     {
       // can we log this?
-      if (!Options.CanLog(level))
+      if (!_options.CanLog(level))
       {
         return;
       }
@@ -97,7 +96,7 @@ namespace myoddweb.classifier.core
       string json = JsonConvert.SerializeObject(lm, Formatting.None);
 
       // log the string now.
-      ClassifyEngine.Log(LogSource(level), json);
+      _classifyEngine.Log(LogSource(level), json);
     }
 
     private static string LogSource(LogLevels level)
