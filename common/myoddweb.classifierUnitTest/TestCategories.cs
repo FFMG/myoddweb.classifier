@@ -65,7 +65,6 @@ namespace myoddweb.classifierUnitTest
       // create 3 categories by getting them.
       var categorySpam = TheEngine.Categories.GetCategory("Spam");
       var categoryHam = TheEngine.Categories.GetCategory("Ham");
-      var categoryJam = TheEngine.Categories.GetCategory("Jam");
 
       var cat1 = TheEngine.Categories.FindCategoryById(categorySpam);
       Assert.That(cat1.Id == categorySpam);
@@ -81,8 +80,6 @@ namespace myoddweb.classifierUnitTest
     {
       // create 3 categories by getting them.
       var categorySpam = TheEngine.Categories.GetCategory("Spam");
-      var categoryHam = TheEngine.Categories.GetCategory("Ham");
-      var categoryJam = TheEngine.Categories.GetCategory("Jam");
 
       var cat1 = TheEngine.Categories.FindCategoryById(categorySpam);
       Assert.That(cat1.Id == categorySpam);
@@ -137,7 +134,6 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // rename it.
       Assert.IsFalse(TheEngine.Categories.RenameCategory(categoryName, ""));
@@ -148,7 +144,6 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       // rename it.
       Assert.IsFalse(TheEngine.Categories.RenameCategory(categoryName, "       "));
@@ -181,7 +176,6 @@ namespace myoddweb.classifierUnitTest
     {
       // create a category
       var categoryName = RandomString(10);
-      var categoryId = TheEngine.Categories.GetCategory(categoryName);
 
       var categories = TheEngine.Categories.GetCategories();
       Assert.IsTrue(categories.Count > 0 );
