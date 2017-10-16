@@ -13,7 +13,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The cleanup name of the folder without the root folder.
     /// </summary>
-    private readonly string _prettyFolderPath = null;
+    private readonly string _prettyFolderPath;
 
     public OutlookFolder(Outlook.MAPIFolder folder, string prettyFolderPath)
     {
