@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Classifier.Interfaces;
 using myoddweb.classifier.interfaces;
 
@@ -86,10 +85,10 @@ namespace myoddweb.classifier.core
     /// The engine constructor.
     /// </summary>
     /// <param name="classifyEngine">The classification engine</param>
-    /// <param name="eventViewSource">The event log name.</param>
     public Engine( IClassify1 classifyEngine )
     {
       // save the classify engine.
+      // ReSharper disable once VirtualMemberCallInConstructor
       ClassifyEngine = classifyEngine;
     }
 
