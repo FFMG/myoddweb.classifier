@@ -81,10 +81,10 @@ namespace myoddweb.classifier.core
 
       //  create the json string.
       var lm = new LogData { Level = level, Message = message };
-      string json = JsonConvert.SerializeObject(lm, Formatting.None);
+      var json = JsonConvert.SerializeObject(lm, Formatting.None);
 
       // log the string now.
-      _classifyEngine.Log(LogSource(level), json);
+      Log(LogSource(level), json);
     }
 
     private static string LogSource(LogLevels level)

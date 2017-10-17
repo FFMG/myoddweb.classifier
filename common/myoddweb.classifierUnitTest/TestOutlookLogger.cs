@@ -28,7 +28,7 @@ namespace myoddweb.classifierUnitTest64
       logged.LogInformation( "Hello" );
 
       // but was it called?
-      ilogger.Verify(m => m.LogInformation( "Hello" ), Times.Exactly(1));
+      ilogger.Verify(m => m.LogInformation( "Hello" ), Times.Once);
       ilogger.Verify(m => m.LogWarning("Hello"), Times.Never);
       ilogger.Verify(m => m.LogError("Hello"), Times.Never);
       ilogger.Verify(m => m.LogVerbose("Hello"), Times.Never);
@@ -44,7 +44,7 @@ namespace myoddweb.classifierUnitTest64
       // but was it called?
       ilogger.Verify(m => m.LogInformation("Hello"), Times.Never);
       ilogger.Verify(m => m.LogWarning("Hello"), Times.Never);
-      ilogger.Verify(m => m.LogError("Hello"), Times.Exactly(1));
+      ilogger.Verify(m => m.LogError("Hello"), Times.Once);
       ilogger.Verify(m => m.LogVerbose("Hello"), Times.Never);
     }
 
@@ -57,7 +57,7 @@ namespace myoddweb.classifierUnitTest64
 
       // but was it called?
       ilogger.Verify(m => m.LogInformation("Hello"), Times.Never);
-      ilogger.Verify(m => m.LogWarning("Hello"), Times.Exactly(1));
+      ilogger.Verify(m => m.LogWarning("Hello"), Times.Once);
       ilogger.Verify(m => m.LogError("Hello"), Times.Never);
       ilogger.Verify(m => m.LogVerbose("Hello"), Times.Never);
     }
@@ -73,7 +73,7 @@ namespace myoddweb.classifierUnitTest64
       ilogger.Verify(m => m.LogInformation("Hello"), Times.Never);
       ilogger.Verify(m => m.LogWarning("Hello"), Times.Never);
       ilogger.Verify(m => m.LogError("Hello"), Times.Never);
-      ilogger.Verify(m => m.LogVerbose("Hello"), Times.Exactly(1));
+      ilogger.Verify(m => m.LogVerbose("Hello"), Times.Once);
     }
 
     [Test]
@@ -85,7 +85,7 @@ namespace myoddweb.classifierUnitTest64
       var ilogger = new Mock<ILogger>();
       var logged = new OutlookLogger(EventViewSource, ilogger.Object);
       logged.GetLogEntries(max);
-      ilogger.Verify(m => m.GetLogEntries(max), Times.Exactly(1));
+      ilogger.Verify(m => m.GetLogEntries(max), Times.Once);
     }
 
     [Test]
@@ -97,7 +97,7 @@ namespace myoddweb.classifierUnitTest64
       var ilogger = new Mock<ILogger>();
       var logged = new OutlookLogger(EventViewSource, ilogger.Object);
       logged.ClearLogEntries(olderThan);
-      ilogger.Verify(m => m.ClearLogEntries(olderThan), Times.Exactly(1));
+      ilogger.Verify(m => m.ClearLogEntries(olderThan), Times.Once);
     }
 
     [Test]

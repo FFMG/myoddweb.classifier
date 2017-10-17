@@ -1,8 +1,12 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using myoddweb.classifier.utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Classifier.Interfaces;
+using myoddweb.classifier.core;
 using myoddweb.classifier.interfaces;
+using Moq;
 
 namespace myoddweb.classifierUnitTest
 {
@@ -166,6 +170,78 @@ namespace myoddweb.classifierUnitTest
 
         Assert.AreEqual(LogSource(LogLevels.Error), entries[i].Source);
       }
+    }
+
+    [Test]
+    public void LoggInformation_MakeSureOptionsIsCalledOnceOnly()
+    {
+      var iclassify = new Mock<IClassify1>();
+      var ioption = new Mock<IOptions>();
+      var logger = new Logger(iclassify.Object, ioption.Object);
+
+      // 
+      ioption.Setup(e => e.CanLog(LogLevels.Information)).Returns(false);
+      logger.LogInformation("Hello");
+
+      ioption.Verify(m => m.CanLog(LogLevels.Information), Times.Once);
+      iclassify.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Test]
+    public void LoggWarning_MakeSureOptionsIsCalledOnceOnly()
+    {
+      var iclassify = new Mock<IClassify1>();
+      var ioption = new Mock<IOptions>();
+      var logger = new Logger(iclassify.Object, ioption.Object);
+
+      // 
+      ioption.Setup(e => e.CanLog(LogLevels.Warning)).Returns(false);
+      logger.LogWarning("Hello");
+
+      ioption.Verify(m => m.CanLog(LogLevels.Warning), Times.Once);
+      iclassify.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Test]
+    public void LoggError_MakeSureOptionsIsCalledOnceOnly()
+    {
+      var iclassify = new Mock<IClassify1>();
+      var ioption = new Mock<IOptions>();
+      var logger = new Logger( iclassify.Object, ioption.Object );
+
+      // 
+      ioption.Setup(e => e.CanLog(LogLevels.Error)).Returns(false);
+      logger.LogError( "Hello" );
+
+      ioption.Verify( m => m.CanLog(LogLevels.Error), Times.Once );
+      iclassify.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Test]
+    public void LoggError_CheckThatEngineIsCalled()
+    {
+      var iclassify = new Mock<IClassify1>();
+      var ioption = new Mock<IOptions>();
+      var logger = new Logger(iclassify.Object, ioption.Object);
+
+      // 
+      ioption.Setup(e => e.CanLog(LogLevels.Error)).Returns(true);
+      logger.LogError("Hello");
+
+      ioption.Verify(m => m.CanLog(LogLevels.Error), Times.Once);
+      iclassify.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+    }
+
+    [Test]
+    public void ClearLogEntries_CheckThatEngineIsCalled()
+    {
+      var iclassify = new Mock<IClassify1>();
+      var ioption = new Mock<IOptions>();
+      var logger = new Logger(iclassify.Object, ioption.Object);
+
+      // 
+      logger.ClearLogEntries(10);
+      iclassify.Verify(m => m.ClearLogEntries(It.IsAny<int>()), Times.Once);
     }
   }
 }
