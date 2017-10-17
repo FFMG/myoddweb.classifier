@@ -64,7 +64,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The categories manager
     /// </summary>
-    public ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Folders, Config ));
+    public ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Config ));
 
     /// <summary>
     /// The classification engine.

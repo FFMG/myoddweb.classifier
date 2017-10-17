@@ -59,7 +59,7 @@ namespace myoddweb.classifier.core
     /// Get all the folders.
     /// </summary>
     public IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
-
+    
     public Version GetEngineVersion()
     {
       return _parent.GetEngineVersion();

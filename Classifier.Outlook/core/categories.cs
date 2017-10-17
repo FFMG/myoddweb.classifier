@@ -18,11 +18,6 @@ namespace myoddweb.classifier.core
     private readonly IConfig _config;
 
     /// <summary>
-    /// The actual folders
-    /// </summary>
-    private readonly IFolders _folders;
-
-    /// <summary>
     //  All the categories.
     /// </summary>
     private readonly CategoriesCollection _collection;
@@ -37,13 +32,10 @@ namespace myoddweb.classifier.core
     /// </summary>
     public int Count => _collection.Count;
 
-    public Categories(IClassify1 classifyEngine, IFolders folders, IConfig config)
+    public Categories(IClassify1 classifyEngine, IConfig config)
     {
       _classifyEngine = classifyEngine;
-
-      // the folders.
-      _folders = folders;
-
+      
       // the config
       _config = config;
 
@@ -115,27 +107,14 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
-    public IFolder FindFolderByCategoryId(int categoryId)
+    public string FindFolderIdByCategoryId(int categoryId)
     {
       // get the category.
       var category = FindCategoryById(categoryId);
 
-      // find the fist item in the list that will match.
-      return FindFolderById(category?.FolderId);
-    }
-
-    /// <summary>
-    /// Find a folder given the app specific folder id.
-    /// </summary>
-    /// <param name="folderId"></param>
-    /// <returns></returns>
-    public IFolder FindFolderById(string folderId)
-    {
-      if (string.IsNullOrEmpty(folderId))
-      {
-        return null;
-      }
-      return _folders?.GetFolders().FirstOrDefault(e => e.Id() == folderId);
+      // if we found a folder, then return it
+      // otherwise return nothing at all.
+      return category?.FolderId ?? "";
     }
 
     /// <summary>

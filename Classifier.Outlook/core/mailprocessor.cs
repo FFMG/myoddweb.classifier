@@ -322,7 +322,16 @@ namespace myoddweb.classifier.core
       try
       {
         // get the posible folder.
-        var folder = _engine.Categories.FindFolderByCategoryId(categoryId);
+        var folderId = _engine.Categories.FindFolderIdByCategoryId(categoryId);
+        if (string.IsNullOrEmpty(folderId))
+        {
+          _engine.Logger.LogWarning($"Could not locate folder id for category {categoryId}, cannot move item.");
+
+          //  the user does not want to move to another folder.
+          return false;
+        }
+
+        var folder = _engine.Folders.FindFolderById(folderId);
         if (null == folder)
         {
           // 

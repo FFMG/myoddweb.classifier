@@ -106,7 +106,7 @@ namespace myoddweb.classifier.forms
 
     private string GetRuleDescription(Category category)
     {
-      var folder = _categories.FindFolderById(category.FolderId);
+      var folder = _folders.FindFolderById(category.FolderId);
       if (null == folder)
       {
         // no action.

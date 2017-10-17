@@ -9,5 +9,12 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <returns></returns>
     IEnumerable<IFolder> GetFolders();
+
+    /// <summary>
+    /// Find a folder given the app specific folder id.
+    /// </summary>
+    /// <param name="folderId"></param>
+    /// <returns></returns>
+    IFolder FindFolderById(string folderId);
   }
 }

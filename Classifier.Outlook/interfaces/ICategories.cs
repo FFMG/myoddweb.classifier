@@ -76,14 +76,8 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
-    IFolder FindFolderByCategoryId(int categoryId);
+    string FindFolderIdByCategoryId(int categoryId);
 
-    /// <summary>
-    /// Find a folder given the app specific folder id.
-    /// </summary>
-    /// <param name="folderId"></param>
-    /// <returns></returns>
-    IFolder FindFolderById(string folderId);
 
     /// <summary>
     /// Reload all the categories from the list of categories.
