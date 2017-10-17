@@ -84,6 +84,7 @@
     <Compile Include="TestCommon.cs" />
     <Compile Include="TestGeneral.cs" />
     <Compile Include="TestLogs.cs" />
+    <Compile Include="TestMagnets.cs" />
     <Compile Include="TestOutlookLogger.cs" />
     <Compile Include="TestSqlClassify.cs" />
     <Compile Include="TestSqlConfig.cs" />

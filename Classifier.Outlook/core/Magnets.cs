@@ -2,6 +2,7 @@
 using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
 using Classifier.Interfaces;
+using System;
 
 namespace myoddweb.classifier.core
 {
@@ -14,6 +15,10 @@ namespace myoddweb.classifier.core
 
     public Magnets(IClassify1 classifyEngine)
     {
+      if( null == classifyEngine)
+      {
+        throw new ArgumentNullException(nameof(classifyEngine));
+      }
       _classifyEngine = classifyEngine;
     }
 
