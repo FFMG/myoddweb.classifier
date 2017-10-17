@@ -2,7 +2,7 @@
 
 namespace myoddweb.classifier.core
 {
-  public class Category
+  public sealed class Category
   {
     /// <summary>
     /// The given name
@@ -41,7 +41,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="unescaped"></param>
     /// <returns></returns>
-    protected static string XmlEscape(string unescaped)
+    private static string XmlEscape(string unescaped)
     {
       var doc = new XmlDocument();
       var node = doc.CreateElement("root");
@@ -63,7 +63,7 @@ namespace myoddweb.classifier.core
       return !(lhs == rhs);
     }
 
-    protected bool Equals(Category other)
+    private bool Equals(Category other)
     {
       return string.Equals(Name, other.Name) && Id == other.Id && string.Equals(FolderId, other.FolderId);
     }

@@ -3,7 +3,7 @@ using System;
 
 namespace myoddweb.classifier.core
 {
-  public class Options : IOptions
+  public sealed class Options : IOptions
   {
     private readonly IConfig _config;
 

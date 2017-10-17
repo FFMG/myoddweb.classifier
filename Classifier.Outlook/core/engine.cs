@@ -4,7 +4,7 @@ using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
 {
-  public class Engine : IEngine
+  public sealed class Engine : IEngine
   {
     /// <summary>
     /// all the categories.
@@ -98,7 +98,7 @@ namespace myoddweb.classifier.core
       Release();
     }
 
-    public virtual void Release()
+    public void Release()
     {
       // release the engine
       ReleaseEngine();

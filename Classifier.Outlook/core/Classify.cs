@@ -7,22 +7,22 @@ using System.Linq;
 
 namespace myoddweb.classifier.core
 {
-  public class Classify : IClassify
+  public sealed class Classify : IClassify
   {
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 ClassifyEngine;
+    private readonly IClassify1 _classifyEngine;
 
     /// <summary>
     /// The options
     /// </summary>
-    private readonly IOptions Options;
+    private readonly IOptions _options;
 
     public Classify(IClassify1 classifyEngine, IOptions options)
     {
-      ClassifyEngine = classifyEngine;
-      Options = options;
+      _classifyEngine = classifyEngine;
+      _options = options;
     }
 
     public int Categorize(string categoryText, uint minPercentage, out List<WordCategory> wordsCategory, out Dictionary<int, double> categoryProbabilities)
@@ -36,7 +36,7 @@ namespace myoddweb.classifier.core
       {
         throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
       }
-      return ClassifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory, out categoryProbabilities) ?? -1;
+      return _classifyEngine?.Categorize(categoryText, minPercentage, out wordsCategory, out categoryProbabilities) ?? -1;
     }
 
     public int Categorize(string categoryText, uint minPercentage)
@@ -48,12 +48,12 @@ namespace myoddweb.classifier.core
         throw new ArgumentException("The categotry minimum range cannot be more than 100%.");
       }
 
-      return ClassifyEngine?.Categorize(categoryText, minPercentage) ?? -1;
+      return _classifyEngine?.Categorize(categoryText, minPercentage) ?? -1;
     }
 
     public int Categorize(Dictionary<MailStringCategories, string> categoryList)
     {
-      return Categorize(string.Join(";", categoryList.Select(x => x.Value)), Options.MinPercentage);
+      return Categorize(string.Join(";", categoryList.Select(x => x.Value)), _options.MinPercentage);
     }
 
     public bool Train(string categoryName, string textToCategorise, string uniqueIdentifier, int weight)
@@ -62,12 +62,12 @@ namespace myoddweb.classifier.core
       {
         throw new ArgumentException("The weight cannot be 0 or less!");
       }
-      return ClassifyEngine?.Train(categoryName, textToCategorise, uniqueIdentifier, weight) ?? false;
+      return _classifyEngine?.Train(categoryName, textToCategorise, uniqueIdentifier, weight) ?? false;
     }
 
     public bool UnTrain(string uniqueIdentifier, string textToCategorise)
     {
-      return ClassifyEngine?.UnTrain(uniqueIdentifier, textToCategorise) ?? false;
+      return _classifyEngine?.UnTrain(uniqueIdentifier, textToCategorise) ?? false;
     }
   }
 }

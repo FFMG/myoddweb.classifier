@@ -5,7 +5,7 @@ using Classifier.Interfaces;
 
 namespace myoddweb.classifier.core
 {
-  public class Magnets : IMagnets
+  public sealed class Magnets : IMagnets
   {
     /// <summary>
     /// The classification engine.

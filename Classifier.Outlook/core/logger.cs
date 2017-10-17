@@ -7,7 +7,7 @@ using myoddweb.classifier.utils;
 
 namespace myoddweb.classifier.core
 {
-  public class Logger : ILogger
+  public sealed class Logger : ILogger
   {
     /// <summary>
     /// The classification engine.
@@ -29,7 +29,7 @@ namespace myoddweb.classifier.core
     /// Log an error message
     /// </summary>
     /// <param name="message"></param>
-    public virtual void LogError(string message)
+    public void LogError(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Error);
@@ -39,7 +39,7 @@ namespace myoddweb.classifier.core
     /// Log a warning message
     /// </summary>
     /// <param name="message"></param>
-    public virtual void LogWarning(string message)
+    public void LogWarning(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Warning);
@@ -49,7 +49,7 @@ namespace myoddweb.classifier.core
     /// Log an information message
     /// </summary>
     /// <param name="message"></param>
-    public virtual void LogInformation(string message)
+    public void LogInformation(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Information);
@@ -59,7 +59,7 @@ namespace myoddweb.classifier.core
     /// Log a verbose message
     /// </summary>
     /// <param name="message"></param>
-    public virtual void LogVerbose(string message)
+    public void LogVerbose(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Verbose);
