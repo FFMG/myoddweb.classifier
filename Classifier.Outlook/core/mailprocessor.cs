@@ -581,7 +581,7 @@ namespace myoddweb.classifier.core
     {
       if (mail == null)
       {
-        throw new ArgumentNullException();
+        throw new ArgumentNullException( nameof(mail));
       }
 
       if (mail.SenderEmailType != "EX")

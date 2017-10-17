@@ -44,17 +44,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The logger.
     /// </summary>
-    public ILogger Logger => _logger ?? (_logger = new Logger(ClassifyEngine, Options));
+    public ILogger Logger => _logger ?? (_logger = new Logger(_classifyEngine, Options));
 
     /// <summary>
     /// The logger.
     /// </summary>
-    public IConfig Config => _config ?? (_config = new Config(ClassifyEngine));
+    public IConfig Config => _config ?? (_config = new Config(_classifyEngine));
 
     /// <summary>
     /// Get the magnets
     /// </summary>
-    public IMagnets Magnets => _magnets ?? (_magnets = new Magnets(ClassifyEngine));
+    public IMagnets Magnets => _magnets ?? (_magnets = new Magnets(_classifyEngine));
 
     /// <summary>
     /// Public accessor of the options.
@@ -64,17 +64,17 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The categories manager
     /// </summary>
-    public ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Config ));
+    public ICategories Categories => _categories ?? (_categories = new Categories(_classifyEngine, Config ));
 
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private IClassify1 ClassifyEngine { get; set; }
+    private readonly IClassify1 _classifyEngine;
 
     /// <summary>
     /// The classifucation engine.
     /// </summary>
-    public IClassify Classify => _classify ?? (_classify = new Classify(ClassifyEngine, Options));
+    public IClassify Classify => _classify ?? (_classify = new Classify(_classifyEngine, Options));
 
     /// <summary>
     /// Get all the folders.
@@ -89,7 +89,7 @@ namespace myoddweb.classifier.core
     {
       // save the classify engine.
       // ReSharper disable once VirtualMemberCallInConstructor
-      ClassifyEngine = classifyEngine;
+      _classifyEngine = classifyEngine;
     }
 
     ~Engine()
@@ -111,16 +111,13 @@ namespace myoddweb.classifier.core
     private void ReleaseEngine()
     {
       //  do we have an engine to release?
-      if (null == ClassifyEngine)
+      if (null == _classifyEngine)
       {
         return;
       }
 
       // release it then.
-      ClassifyEngine.Release();
-
-      // and free the memory
-      ClassifyEngine = null;
+      _classifyEngine.Release();
     }
     
     /// <summary>
@@ -129,7 +126,7 @@ namespace myoddweb.classifier.core
     /// <returns>int the engine version number</returns>
     public int GetEngineVersionNumber()
     {
-      return ClassifyEngine.GetEngineVersion();
+      return _classifyEngine.GetEngineVersion();
     }
 
     /// <summary>
