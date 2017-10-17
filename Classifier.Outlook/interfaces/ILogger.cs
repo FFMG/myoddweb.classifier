@@ -44,5 +44,20 @@ namespace myoddweb.classifier.interfaces
     /// <param name="max">The max number of log entries we want to get.</param>
     /// <returns></returns>
     List<LogEntry> GetLogEntries(int max);
+
+    /// <summary>
+    /// Log a message to the database
+    /// </summary>
+    /// <param name="source">Unique to the souce, something like "myapp.information", max 255 chars</param>
+    /// <param name="entry">The entry we are logging, max 1024 chars.</param>
+    /// <returns>the entry id.</returns>
+    int Log(string source, string entry);
+
+    /// <summary>
+    /// Clear log entries that are older than a certain date
+    /// </summary>
+    /// <param name="olderThan"> the date we want to delte.</param>
+    /// <returns>success or not</returns>
+    bool ClearLogEntries(int olderThan);
   }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Classifier.Interfaces;
 using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
-using Classifier.Interfaces;
 using Newtonsoft.Json;
 using myoddweb.classifier.utils;
 
@@ -23,18 +23,6 @@ namespace myoddweb.classifier.core
     {
       _classifyEngine = classifyEngine;
       _options = options;
-    }
-
-    /// <summary>
-    /// Get up to 'max' log entries.
-    /// </summary>
-    /// <param name="max">The max number of log entries we want to get.</param>
-    /// <returns></returns>
-    public List<LogEntry> GetLogEntries(int max)
-    {
-      // get the log entries,
-      List<LogEntry> entries;
-      return -1 == _classifyEngine.GetLogEntries(out entries, max) ? null : entries;
     }
 
     /// <summary>
@@ -102,6 +90,41 @@ namespace myoddweb.classifier.core
     private static string LogSource(LogLevels level)
     {
       return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
+    }
+
+    /// <summary>
+    /// Log a message to the database
+    /// </summary>
+    /// <param name="source">Unique to the souce, something like "myapp.information", max 255 chars</param>
+    /// <param name="entry">The entry we are logging, max 1024 chars.</param>
+    /// <returns>the entry id.</returns>
+    public int Log(string source, string entry)
+    {
+      return _classifyEngine?.Log(source, entry) ?? -1;
+    }
+
+    /// <summary>
+    /// Get a list of log entries.
+    /// </summary>
+    /// <param name="max">The max number of entries we are getting.</param>
+    /// <returns>the entries or null if there was an error.</returns>
+    public List<LogEntry> GetLogEntries(int max)
+    {
+      // the entries we gor
+      var entries = new List<LogEntry>();
+
+      // return null if there was an error, errors are logged.
+      return -1 == (_classifyEngine?.GetLogEntries(out entries, max) ?? -1) ? null : entries;
+    }
+
+    /// <summary>
+    /// Clear log entries that are older than a certain date
+    /// </summary>
+    /// <param name="olderThan"> the date we want to delte.</param>
+    /// <returns>success or not</returns>
+    public bool ClearLogEntries(int olderThan)
+    {
+      return _classifyEngine?.ClearLogEntries(olderThan) ?? false;
     }
   }
 }

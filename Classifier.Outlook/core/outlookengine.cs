@@ -8,8 +8,21 @@ using System.Timers;
 
 namespace myoddweb.classifier.core
 {
-  public class OutlookEngine : Engine
+  public class OutlookEngine : IEngine
   {
+    /// <summary>
+    /// All the folders.
+    /// </summary>
+    private IFolders _folders;
+
+    /// <summary>
+    /// The logger
+    /// </summary>
+    private ILogger _logger;
+
+    /// <summary>
+    /// the root folder.
+    /// </summary>
     private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
@@ -23,20 +36,53 @@ namespace myoddweb.classifier.core
     private const string EventViewSource = "myoddweb.classifier";
 
     /// <summary>
+    /// The parent engine
+    /// </summary>
+    private readonly IEngine _parent;
+
+    public ICategories Categories => _parent.Categories;
+
+    public IClassify Classify => _parent.Classify;
+
+    public IMagnets Magnets => _parent.Magnets;
+
+    public IConfig Config => _parent.Config;
+
+    public IOptions Options => _parent.Options;
+
+    /// <summary>
     /// The logger.
     /// </summary>
-    public override ILogger Logger => _logger ?? (_logger = new OutlookLogger(EventViewSource, ClassifyEngine, Options));
+    public ILogger Logger => _logger ?? (_logger = new OutlookLogger(EventViewSource, _parent.Logger ));
 
     /// <summary>
     /// Get all the folders.
     /// </summary>
-    public override IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
+    public IFolders Folders => _folders ?? (_folders = new OutlookFolders(GetRootFolder()));
+
+    public Version GetEngineVersion()
+    {
+      return _parent.GetEngineVersion();
+    }
+
+    public OutlookEngine() : this(new Engine(InitialiseEngine()))
+    {
+    }
 
     /// <summary>
     /// The engine constructor.
     /// </summary>
-    public OutlookEngine() : base( InitialiseEngine() )
-    {         
+    public OutlookEngine( IEngine parent )
+    {
+      //  this cannot be null!
+      if (parent == null)
+      {
+        throw new ArgumentNullException(nameof(parent));
+      }
+
+      // the parent engine
+      _parent = parent;
+
       // start the 'cleanup' timer.
       StartLogCleanupTimer();
     }
@@ -47,11 +93,8 @@ namespace myoddweb.classifier.core
       Release();
     }
 
-    public override void Release()
+    public void Release()
     {
-      // base release
-      base.Release();
-
       // stop the time
       StopLogCleanupTimer();
     }
@@ -78,7 +121,7 @@ namespace myoddweb.classifier.core
 
     private void OnTimedLogEvent(object source, ElapsedEventArgs e)
     {
-      if (null == ClassifyEngine)
+      if (null == Classify)
       {
         return;
       }
@@ -95,7 +138,7 @@ namespace myoddweb.classifier.core
       var date = DateTime.UtcNow.AddDays(daysRetention * -1);
 
       // delete old entries.
-      ClassifyEngine.ClearLogEntries(Helpers.DateTimeToUnix(date));
+      Logger.ClearLogEntries(Helpers.DateTimeToUnix(date));
     }
 
 

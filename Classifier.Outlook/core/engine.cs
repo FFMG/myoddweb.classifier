@@ -9,77 +9,77 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// all the categories.
     /// </summary>
-    protected ICategories _categories;
+    private ICategories _categories;
 
     /// <summary>
     /// All the options
     /// </summary>
-    protected IOptions _options;
+    private IOptions _options;
 
     /// <summary>
     /// The configuration handler.
     /// </summary>
-    protected IConfig _config;
+    private IConfig _config;
 
     /// <summary>
     /// The magnets.
     /// </summary>
-    protected IMagnets _magnets;
+    private IMagnets _magnets;
 
     /// <summary>
     /// All the folders.
     /// </summary>
-    protected IFolders _folders;
+    private IFolders _folders;
 
     /// <summary>
     /// The logger
     /// </summary>
-    protected ILogger _logger;
+    private ILogger _logger;
 
     /// <summary>
     /// The classify engne.
     /// </summary>
-    protected IClassify _classify;
-
-    /// <summary>
-    /// The classifucation engine.
-    /// </summary>
-    public virtual IClassify Classify => _classify ?? (_classify = new Classify( ClassifyEngine, Options ));
+    private IClassify _classify;
 
     /// <summary>
     /// The logger.
     /// </summary>
-    public virtual ILogger Logger => _logger ?? (_logger = new Logger(ClassifyEngine, Options));
+    public ILogger Logger => _logger ?? (_logger = new Logger(ClassifyEngine, Options));
 
     /// <summary>
     /// The logger.
     /// </summary>
-    public virtual IConfig Config => _config ?? (_config = new Config(ClassifyEngine));
+    public IConfig Config => _config ?? (_config = new Config(ClassifyEngine));
 
     /// <summary>
     /// Get the magnets
     /// </summary>
-    public virtual IMagnets Magnets => _magnets ?? (_magnets = new Magnets(ClassifyEngine));
+    public IMagnets Magnets => _magnets ?? (_magnets = new Magnets(ClassifyEngine));
 
     /// <summary>
     /// Public accessor of the options.
     /// </summary>
-    public virtual IOptions Options => _options ?? (_options = new Options(Config));
+    public IOptions Options => _options ?? (_options = new Options(Config));
 
     /// <summary>
     /// The categories manager
     /// </summary>
-    public virtual ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Folders, Config ));
+    public ICategories Categories => _categories ?? (_categories = new Categories( ClassifyEngine, Folders, Config ));
 
     /// <summary>
     /// The classification engine.
     /// </summary>
-    public virtual IClassify1 ClassifyEngine { get; protected set; }
+    private IClassify1 ClassifyEngine { get; set; }
+
+    /// <summary>
+    /// The classifucation engine.
+    /// </summary>
+    public IClassify Classify => _classify ?? (_classify = new Classify(ClassifyEngine, Options));
 
     /// <summary>
     /// Get all the folders.
     /// </summary>
-    public virtual IFolders Folders => _folders ?? (_folders = new Folders());
+    public IFolders Folders => _folders ?? (_folders = new Folders());
 
     /// <summary>
     /// The engine constructor.

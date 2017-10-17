@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.forms
 {
@@ -10,9 +11,9 @@ namespace myoddweb.classifier.forms
     //  the html string parser to get the html code.
     private readonly HtmlDisplay _htmlDisplay;
 
-    public DetailsForm(IClassify1 classifyEngine, string rawText )
+    public DetailsForm(IClassify classifyEngine, ICategories categories, string rawText )
     {
-      _htmlDisplay = new HtmlDisplay(classifyEngine, rawText);
+      _htmlDisplay = new HtmlDisplay(classifyEngine, categories, rawText);
 
       // we can now init everything.
       InitializeComponent();

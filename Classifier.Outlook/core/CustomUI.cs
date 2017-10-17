@@ -256,7 +256,7 @@ namespace myoddweb.classifier.core
       // show the displays
       var categoryList = MailProcessor.GetStringFromMailItem(mailItem);
       var text = string.Join(";", categoryList.Select(x => x.Value));
-      using (var detailsForm = new DetailsForm(Engine.ClassifyEngine, text ))
+      using (var detailsForm = new DetailsForm(Engine.Classify, Engine.Categories, text ))
       {
         detailsForm.ShowDialog();
       }

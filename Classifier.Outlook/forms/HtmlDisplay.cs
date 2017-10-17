@@ -1,5 +1,4 @@
-﻿using Classifier.Interfaces;
-using Classifier.Interfaces.Helpers;
+﻿using Classifier.Interfaces.Helpers;
 using myoddweb.viewer.utils;
 using System;
 using System.Collections.Concurrent;
@@ -8,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.forms
 {
@@ -21,12 +21,20 @@ namespace myoddweb.classifier.forms
     /// <summary>
     /// The classification engine.
     /// </summary>
-    private readonly IClassify1 _classifyEngine;
+    private readonly IClassify _classifyEngine;
 
-    public HtmlDisplay(IClassify1 classifyEngine, string rawText )
+    /// <summary>
+    /// All the categories.
+    /// </summary>
+    private readonly ICategories _categories;
+
+    public HtmlDisplay(IClassify classifyEngine, ICategories categories, string rawText )
     {
       // the raw text
       _rawText = rawText;
+
+      // the categories
+      _categories = categories;
 
       // the classifier engine
       _classifyEngine = classifyEngine;
@@ -82,8 +90,8 @@ namespace myoddweb.classifier.forms
     /// <returns>String the sumary code for the selected category</returns>
     private string GetSummary(int category)
     {
-      var categories = new Dictionary<int, string>();
-      if (_classifyEngine?.GetCategories(out categories) <= 0)
+      var categories = _categories?.GetCategories() ?? new Dictionary<int, string>();
+      if (!categories.Any() )
       {
         return GetParagraph("Summary", "No categories listed!");
       }
@@ -121,9 +129,8 @@ namespace myoddweb.classifier.forms
       var raws = new ConcurrentDictionary<string, string>();
 
       // the categories
-      var categories = new Dictionary<int, string>();
-      _classifyEngine?.GetCategories(out categories);
-
+      var categories = _categories?.GetCategories() ?? new Dictionary<int, string>(); 
+      
       // the list of tasks.
       var tasks = new List<Task>(wordsCategory.Count);
 
@@ -191,8 +198,8 @@ namespace myoddweb.classifier.forms
     /// <returns>string a categories table.</returns>
     private string GetCategoriesTable(Dictionary<int, double> categoryProbabilities)
     {
-      var categories = new Dictionary<int, string>();
-      if (_classifyEngine?.GetCategories(out categories) <= 0)
+      var categories = _categories?.GetCategories() ?? new Dictionary<int, string>();
+      if (!categories.Any())
       {
         return "";
       }

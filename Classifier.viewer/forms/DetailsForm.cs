@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using myoddweb.classifier.core;
 using myoddweb.classifier.forms;
 
 namespace myoddweb.viewer.forms
@@ -9,11 +10,12 @@ namespace myoddweb.viewer.forms
   public partial class DetailsForm : Form
   {
     //  the html string parser to get the html code.
-    private HtmlDisplay HtmlDisplay;
+    private readonly HtmlDisplay _htmlDisplay;
 
     public DetailsForm(IClassify1 classifyEngine, string rawText )
     {
-      HtmlDisplay = new HtmlDisplay(classifyEngine, rawText);
+      var engine = new Engine(classifyEngine);
+      _htmlDisplay = new HtmlDisplay(engine.Classify, engine.Categories, rawText);
 
       // we can now init everything.
       InitializeComponent();
@@ -31,7 +33,7 @@ namespace myoddweb.viewer.forms
       Cursor.Current = Cursors.WaitCursor;
       {
         // get the html
-        var html = HtmlDisplay.GetHtml();
+        var html = _htmlDisplay.GetHtml();
 
         // display it.
         DisplayHtml( html );

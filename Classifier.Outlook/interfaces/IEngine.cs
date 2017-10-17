@@ -39,11 +39,6 @@ namespace myoddweb.classifier.interfaces
     /// Public accessor of the options.
     /// </summary>
     IOptions Options { get; }
-
-    /// <summary>
-    /// The classification engine.
-    /// </summary>
-    IClassify1 ClassifyEngine { get; }
     
     /// <summary>
     /// Get the current version number of the engine.

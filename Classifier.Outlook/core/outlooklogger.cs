@@ -1,9 +1,10 @@
-﻿using Classifier.Interfaces;
+﻿using System.Collections.Generic;
+using Classifier.Interfaces.Helpers;
 using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier.core
 {
-  public class OutlookLogger : Logger
+  public class OutlookLogger : ILogger
   {
     /// <summary>
     /// Name for logging in the event viewer,
@@ -11,14 +12,22 @@ namespace myoddweb.classifier.core
     private readonly string _eventViewSource;
 
     /// <summary>
+    /// The parent logger
+    /// </summary>
+    private readonly ILogger _parent;
+
+    /// <summary>
     /// If NULL we have not check for event source.
     /// Any other value, we will check for.
     /// </summary>
     private bool? _eventSource;
 
-    public OutlookLogger( string eventSource, IClassify1 classifyEngine, IOptions options) : 
-      base(classifyEngine, options)
+    public OutlookLogger( string eventSource, ILogger parent )
     {
+      // the parent, (can be null)
+      _parent = parent;
+
+      // the even source
       _eventViewSource = eventSource;
     }
 
@@ -45,15 +54,17 @@ namespace myoddweb.classifier.core
       }
 
       // one last check.
-      return InstallAndValidateSource();
+      return (bool)_eventSource;
     }
 
     /// <summary>
     /// Log an error message
     /// </summary>
     /// <param name="message"></param>
-    public override void LogError(string message)
+    public void LogError(string message)
     {
+      _parent?.LogError(message);
+
       // log to the event log.
       if (!InstallAndValidateSource())
       {
@@ -68,8 +79,10 @@ namespace myoddweb.classifier.core
     /// Log a warning message
     /// </summary>
     /// <param name="message"></param>
-    public override void LogWarning(string message)
+    public void LogWarning(string message)
     {
+      _parent?.LogWarning(message);
+
       // log to the event log.
       if (!InstallAndValidateSource())
       {
@@ -84,8 +97,10 @@ namespace myoddweb.classifier.core
     /// Log an information message
     /// </summary>
     /// <param name="message"></param>
-    public override void LogInformation(string message)
+    public void LogInformation(string message)
     {
+      _parent?.LogInformation(message);
+
       // log to the event log.
       if (!InstallAndValidateSource())
       {
@@ -96,13 +111,28 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
     }
 
+    public List<LogEntry> GetLogEntries(int max)
+    {
+      return _parent?.GetLogEntries(max);
+    }
+
+    public int Log(string source, string entry)
+    {
+      return _parent?.Log(source, entry) ?? -1;
+    }
+
+    public bool ClearLogEntries(int olderThan)
+    {
+      return _parent?.ClearLogEntries(olderThan) ?? false;
+    }
+
     /// <summary>
     /// Log a verbose message
     /// </summary>
     /// <param name="message"></param>
-    public override void LogVerbose(string message)
+    public void LogVerbose(string message)
     {
-      base.LogVerbose(message);
+      _parent?.LogVerbose(message);
 
       // log to the event log.
       if (!InstallAndValidateSource())
