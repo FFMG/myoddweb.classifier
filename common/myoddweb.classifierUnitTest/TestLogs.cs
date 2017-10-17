@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using myoddweb.classifier.core;
 using myoddweb.classifier.utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
