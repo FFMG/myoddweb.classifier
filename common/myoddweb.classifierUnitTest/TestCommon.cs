@@ -257,6 +257,12 @@ namespace myoddweb.classifierUnitTest
       return random.Next();
     }
 
+    public static double RandomDouble()
+    {
+      var random = new Random(Guid.NewGuid().GetHashCode());
+      return random.NextDouble();
+    }
+
     public static string RandomStringWithSpaces(int wordcount)
     {
       var randomWordCount = new Random(Guid.NewGuid().GetHashCode());

@@ -99,6 +99,7 @@
     <Compile Include="TestMailProcessor.cs" />
     <Compile Include="TestUnProcessedFolders.cs" />
     <Compile Include="TestCategory.cs" />
+    <Compile Include="TestWordCategory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Classifier.Interfaces\Classifier.Interfaces.csproj">
