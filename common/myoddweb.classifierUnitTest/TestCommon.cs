@@ -207,22 +207,28 @@ namespace myoddweb.classifierUnitTest
       return result;
     }
 
-    protected static string RandomString(int lenght)
+    public static string RandomString(int length)
     {
       const string chars = "abcdefghejklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       var random = new Random(Guid.NewGuid().GetHashCode());
       var result = new string(
-          Enumerable.Repeat(chars, lenght)
+          Enumerable.Repeat(chars, length)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
       return result;
     }
 
-    protected static uint RandomId()
+    public static uint RandomId()
     {
       var random = new Random(Guid.NewGuid().GetHashCode());
       var result = (uint)random.Next();
       return result;
+    }
+
+    public static int RandomInt()
+    {
+      var random = new Random(Guid.NewGuid().GetHashCode());
+      return random.Next();
     }
 
     public static string RandomStringWithSpaces(int wordcount)

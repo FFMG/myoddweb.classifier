@@ -65,9 +65,9 @@ namespace myoddweb.classifierUnitTest
     {
       var classify = new Mock<IClassify1>();
 
-      var cat = It.IsAny<int>();
-      var rule = It.IsAny<int>();
-      var name = It.IsAny<string>();
+      var cat = TestCommon.RandomInt();
+      var rule = TestCommon.RandomInt();
+      var name = TestCommon.RandomString(10);
       var magnet = new Magnet
       {
         Id = 0,
@@ -86,15 +86,111 @@ namespace myoddweb.classifierUnitTest
     }
 
     [Test]
+    public void UpdateMagnet_OnlyCategoryChanges()
+    {
+      var classify = new Mock<IClassify1>();
+
+      var cat = TestCommon.RandomInt();
+      var rule = TestCommon.RandomInt();
+      var name = TestCommon.RandomString(10);
+      var magnet = new Magnet
+      {
+        Id = 0,
+        Name = name,
+        Rule = rule,
+        Category = cat
+      };
+
+      var magnets = new Magnets(classify.Object);
+
+      // new category
+      var cat1 = TestCommon.RandomInt();
+      while( cat == cat1 )
+      {
+        cat1 = TestCommon.RandomInt();
+      }
+
+      classify.Setup(c => c.UpdateMagnet(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+      Assert.True(magnets.UpdateMagnet(magnet, name, rule, cat1));
+
+      // it was never updated...
+      classify.Verify(m => m.UpdateMagnet(magnet.Id, name, rule, cat1), Times.Once);
+    }
+
+    [Test]
+    public void UpdateMagnet_OnlyRuleChanges()
+    {
+      var classify = new Mock<IClassify1>();
+
+      var cat = TestCommon.RandomInt();
+      var rule = TestCommon.RandomInt();
+      var name = TestCommon.RandomString(10);
+      var magnet = new Magnet
+      {
+        Id = 0,
+        Name = name,
+        Rule = rule,
+        Category = cat
+      };
+
+      var magnets = new Magnets(classify.Object);
+
+      // new name
+      var rule1 = TestCommon.RandomInt();
+      while (rule == rule1)
+      {
+        rule1 = TestCommon.RandomInt();
+      }
+
+      classify.Setup(c => c.UpdateMagnet(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+      Assert.True(magnets.UpdateMagnet(magnet, name, rule1, cat));
+
+      // it was never updated...
+      classify.Verify(m => m.UpdateMagnet(magnet.Id, name, rule1, cat), Times.Once);
+    }
+
+    [Test]
+    public void UpdateMagnet_OnlyNameChanges()
+    {
+      var classify = new Mock<IClassify1>();
+
+      var cat = TestCommon.RandomInt();
+      var rule = TestCommon.RandomInt();
+      var name = TestCommon.RandomString(10);
+      var magnet = new Magnet
+      {
+        Id = 0,
+        Name = name,
+        Rule = rule,
+        Category = cat
+      };
+
+      var magnets = new Magnets(classify.Object);
+
+      // new name
+      var name1 = TestCommon.RandomString(10);
+      while( name == name1 )
+      {
+        name1 = TestCommon.RandomString(10);
+      }
+
+      classify.Setup(c => c.UpdateMagnet(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+      Assert.True(magnets.UpdateMagnet(magnet, name1, rule, cat));
+
+      // it was never updated...
+      classify.Verify(m => m.UpdateMagnet(magnet.Id, name1, rule, cat), Times.Once);
+    }
+
+    [Test]
     public void UpdateMagnet_NullMagnetReturnsFalse()
     {
       var classify = new Mock<IClassify1>();
 
       var magnets = new Magnets(classify.Object);
 
-      var cat = It.IsAny<int>();
-      var rule = It.IsAny<int>();
-      var name = It.IsAny<string>();
+      var cat = TestCommon.RandomInt();
+      var rule = TestCommon.RandomInt();
+      var name = TestCommon.RandomString(10);
       Assert.False(magnets.UpdateMagnet(null, name, rule, cat));
 
       // it was never updated...
