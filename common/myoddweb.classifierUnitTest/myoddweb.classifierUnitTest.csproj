@@ -77,6 +77,7 @@
     <Compile Include="TestCommon.cs" />
     <Compile Include="TestGeneral.cs" />
     <Compile Include="TestHelpers.cs" />
+    <Compile Include="TestMagnet.cs" />
     <Compile Include="TestMagnets.cs" />
     <Compile Include="TestMailProcessor.cs" />
     <Compile Include="TestOutlookLogger.cs" />
