@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="TestCommon.cs" />
     <Compile Include="TestGeneral.cs" />
+    <Compile Include="TestLogEntry.cs" />
     <Compile Include="TestLogs.cs" />
     <Compile Include="TestMagnet.cs" />
     <Compile Include="TestMagnets.cs" />

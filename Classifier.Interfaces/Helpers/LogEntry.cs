@@ -4,7 +4,8 @@
   {
     public LogEntry()
     {
-      Id = Unixtime = 0;
+      Id = -1;
+      Unixtime = 0;
       Source = Entry = "";
     }
 
