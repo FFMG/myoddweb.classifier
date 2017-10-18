@@ -98,35 +98,24 @@ namespace myoddweb.classifier.core
       Release();
     }
 
-    public void Release()
-    {
-      // release the engine
-      ReleaseEngine();
-    }
-
     /// <summary>
     /// Release the engine and do all the cleanup needed.
     /// Normally closed when the app is closing down.
     /// </summary>
-    private void ReleaseEngine()
+    public void Release()
     {
       //  do we have an engine to release?
-      if (null == _classifyEngine)
-      {
-        return;
-      }
-
       // release it then.
-      _classifyEngine.Release();
+      _classifyEngine?.Release();
     }
-    
+
     /// <summary>
     /// Get the current version number of the engine.
     /// </summary>
     /// <returns>int the engine version number</returns>
     public int GetEngineVersionNumber()
     {
-      return _classifyEngine.GetEngineVersion();
+      return _classifyEngine?.GetEngineVersion() ?? 0;
     }
 
     /// <summary>
@@ -137,6 +126,10 @@ namespace myoddweb.classifier.core
     {
       //  get the version
       var engineVersion = GetEngineVersionNumber();
+      if (engineVersion < 0)
+      {
+        return new Version(0, 0, 0, 0);
+      }
       var major = (int)(engineVersion / 1000000.0);
 
       engineVersion -= (major * 1000000);

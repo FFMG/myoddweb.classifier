@@ -82,6 +82,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="TestCommon.cs" />
+    <Compile Include="TestEngine.cs" />
     <Compile Include="TestGeneral.cs" />
     <Compile Include="TestLogEntry.cs" />
     <Compile Include="TestLogs.cs" />
