@@ -29,19 +29,45 @@ namespace myoddweb.classifierUnitTest
     public static string DatabaseFullPath { get; private set; }
     public static string CleanDatabaseFullPath { get; private set; }
 
-    protected static string GetDirectory()
+    protected static string GetDirectoryInCurrentDomain()
     {
+      var architecture = "86";
+      if (Environment.Is64BitOperatingSystem)
+      {
+        architecture = "64";
+      }
+
       // the paths we will be using.
       var directoryName = AppDomain.CurrentDomain.BaseDirectory;
-      if (File.Exists($"{directoryName}\\x64\\classifier.engine.dll"))
+      if (File.Exists($"{directoryName}\\x{architecture}\\classifier.engine.dll"))
       {
         return directoryName;
       }
 
+      directoryName = Directory.GetParent(directoryName).FullName;
+      if (File.Exists($"{directoryName}\\x{architecture}\\classifier.engine.dll"))
+      {
+        return directoryName;
+      }
+
+      // not found.
+      return null;
+    }
+
+    protected static string GetDirectory()
+    {
+      var posibleDirectory = GetDirectoryInCurrentDomain();
+      if (null != posibleDirectory)
+      {
+        return posibleDirectory;
+      }
+
+
+      // look in the current domain.
       var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
       foreach (var loadedAssembly in loadedAssemblies)
       {
-        directoryName = Path.GetDirectoryName(loadedAssembly.Location);
+        var directoryName = Path.GetDirectoryName(loadedAssembly.Location);
         for (; directoryName!= null;)
         {
           if (File.Exists($"{directoryName}\\x64\\classifier.engine.dll"))
