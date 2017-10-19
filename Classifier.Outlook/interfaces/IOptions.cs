@@ -9,7 +9,13 @@
     LogLevel = LogLevels.Error,
     LogRetention = 30,
     LogDisplaySize = 100,
-    ClassifyDelaySeconds = 1
+    ClassifyDelaySeconds = 1,
+    ReCheckCategories = 1,
+    ReAutomaticallyTrainMagnetMessages = 1,
+    ReAutomaticallyTrainMessages = 0,
+    ReCheckIfCtrlKeyIsDown = 1,
+    CheckUnProcessedEmailsOnStartUp = 1,
+    CheckIfUnKnownCategory = 1
   }
 
   public interface IOptions
