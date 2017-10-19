@@ -43,6 +43,9 @@ namespace myoddweb.classifier.core
       var lastProccessed = _mailprocessor.LastProcessed;
       var filter = $"[ReceivedTime]>'{lastProccessed.ToString("g")}'";
 
+      // log the filter.
+      _logger.LogVerbose( $"Looking for messages received after : '{lastProccessed.ToString("g")}'" );
+
       // then parse all the folders.
       var ids = GetUnprocessedEmailsInFolders( folders, filter);
       _mailprocessor.Add(ids);
