@@ -50,7 +50,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Our lock...
     /// </summary>
-    private ReaderWriterLockSlim Lock = new ReaderWriterLockSlim();
+    private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
     /// <summary>
     /// Get the last time we processed an email
@@ -59,7 +59,7 @@ namespace myoddweb.classifier.core
     public DateTime LastProcessed {
       get
       {
-        Lock.EnterReadLock();
+        _lock.EnterReadLock();
         try
         {
           var last = Convert.ToInt32(_engine.Config.GetConfigWithDefault(ConfigName, "-1"));
@@ -71,7 +71,7 @@ namespace myoddweb.classifier.core
         }
         finally
         {
-          Lock.ExitReadLock();
+          _lock.ExitReadLock();
         }
       }
     }
@@ -109,14 +109,14 @@ namespace myoddweb.classifier.core
     /// <param name="ids"></param>
     public void Add(List<string> ids)
     {
-      Lock.EnterWriteLock();
+      _lock.EnterWriteLock();
       try
       {
         AddInLock(ids);
       }
       finally
       {
-        Lock.ExitWriteLock();
+        _lock.ExitWriteLock();
       }
     }
 
@@ -181,7 +181,7 @@ namespace myoddweb.classifier.core
 
     private async Task<bool> HandleTimer()
     {
-      Lock.EnterWriteLock();
+      _lock.EnterWriteLock();
       try
       {
         if( _ticker == null )
@@ -192,7 +192,7 @@ namespace myoddweb.classifier.core
       }
       finally
       {
-        Lock.ExitWriteLock();
+        _lock.ExitWriteLock();
       }
     }
 
@@ -410,20 +410,12 @@ namespace myoddweb.classifier.core
 
       // get that conversation
       Outlook._Conversation conv = mailItem.GetConversation();
-      if (conv == null)
-      {
-        return false;
-      }
 
       // get the delete rule.
-      var delete = conv.GetAlwaysDelete(_session.DefaultStore);
-      if( Outlook.OlAlwaysDeleteConversation.olAlwaysDelete == delete )
-      {
-        return true;
-      }
+      var delete = conv?.GetAlwaysDelete(_session.DefaultStore) ?? Outlook.OlAlwaysDeleteConversation.olDoNotDelete;
 
-      // 
-      return false;
+      // if we want to delete the conversation, then we can assume it is ignored.
+      return Outlook.OlAlwaysDeleteConversation.olAlwaysDelete == delete;
     }
 
     /// <summary>
@@ -699,7 +691,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="className">The classname we are checking</param>
     /// <returns>boolean if we can/could classify this mail item or not.</returns>
-    static public bool IsUsableClassNameForClassification(string className)
+    public static bool IsUsableClassNameForClassification(string className)
     {
       switch (className)
       {
