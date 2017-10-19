@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using myoddweb.classifier.interfaces;
 
-namespace myoddweb.classifierUnitTest64
+namespace myoddweb.classifierUnitTest
 {
   [TestFixture]
   class TestUnProcessedFolders
@@ -16,15 +16,15 @@ namespace myoddweb.classifierUnitTest64
       var en = new Mock<IEngine>();
       var mp = new MailProcessor( en.Object, ns.Object );
 
-      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders( null, mp ));
+      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders( mp, null));
     }
 
     [Test]
     public void TestConstructorMailProcessorCannotBeNull()
     {
-      var en = new Mock<IEngine>();
+      var lo = new Mock<ILogger>();
 
-      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders(en.Object, null ));
+      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders(null, lo.Object ));
     }
   }
 }

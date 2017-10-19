@@ -89,7 +89,7 @@ namespace myoddweb.classifier
     // parse all the unprocessed emails.
     private void ParseUnprocessedEmails()
     {
-      var folders = new UnProcessedFolders(TheEngine, TheMailProcessor);
+      var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
       folders.Process(_folders);
     }
 

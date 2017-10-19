@@ -8,22 +8,28 @@ namespace myoddweb.classifier.core
 {
   public class UnProcessedFolders
   {
+    /// <summary>
+    /// What will be processing the emails themselves.
+    /// </summary>
     private readonly MailProcessor _mailprocessor;
 
-    private readonly IEngine _engine;
+    /// <summary>
+    /// Used to log messages.
+    /// </summary>
+    private readonly ILogger _logger;
 
-    public UnProcessedFolders( IEngine engine, MailProcessor mailprocessor )
+    public UnProcessedFolders( MailProcessor mailprocessor, ILogger logger )
     {
-      if (engine == null)
+      if (logger == null)
       {
-        throw new ArgumentNullException(nameof(engine));
+        throw new ArgumentNullException(nameof(logger));
       }
       if (mailprocessor == null)
       {
         throw new ArgumentNullException(nameof(mailprocessor));
       }
 
-      _engine = engine;
+      _logger = logger;
       _mailprocessor = mailprocessor;
     }
 
@@ -66,7 +72,7 @@ namespace myoddweb.classifier.core
       }
       catch (Exception e)
       {
-        _engine.Logger.LogError($"There was an exception looking at unprocessed folders : {e}");
+        _logger.LogError($"There was an exception looking at unprocessed folders : {e}");
       }
       return ids;
     }
@@ -104,11 +110,11 @@ namespace myoddweb.classifier.core
           // add this to the mail processor...
           ids.Add(mailItem.EntryID);
 
-          _engine.Logger.LogInformation($"Found unprocessed email...{mailItem.Subject}.");
+          _logger.LogInformation($"Found unprocessed email...{mailItem.Subject}.");
         }
         catch (Exception e)
         {
-          _engine.Logger.LogError($"There was an exception looking at unprocessed folder : {e}");
+          _logger.LogError($"There was an exception looking at unprocessed folder : {e}");
         }
       }
       return ids;
