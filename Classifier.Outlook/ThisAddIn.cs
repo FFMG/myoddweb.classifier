@@ -3,6 +3,8 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
+using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier
 {
@@ -45,11 +47,43 @@ namespace myoddweb.classifier
       // listen for new folders
       RegisterAllFolders();
 
+      // log the version 
+      LogStartupInformation();
+      
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
         _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
       }
+    }
+
+    /// <summary>
+    /// Log uselfull information on startup
+    /// </summary>
+    private void LogStartupInformation()
+    {
+      // are we logging this?
+      if (!TheEngine.Options.CanLog(LogLevels.Information))
+      {
+        return;
+      }
+
+      //  get the file version
+      var version = GetFileVersion();
+
+      // get the engine version.
+      var engineVersion = _engine.GetEngineVersion();
+
+      //Version version = Assembly.GetEntryAssembly().GetName().Version;
+      var text = $"Started Classifier - [{version.Major}.{version.Minor}.{version.Build}.{version.Revision}] - (Engine [{engineVersion.Major}.{engineVersion.Minor}.{engineVersion.Build}])";
+      TheEngine.Logger.LogInformation( text );
+    }
+
+    private static Version GetFileVersion()
+    {
+      var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+      var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+      return new Version(fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart, fvi.FilePrivatePart);
     }
 
     // parse all the unprocessed emails.

@@ -424,7 +424,7 @@ namespace myoddweb.classifier.forms
       }
     }
 
-    private Version GetFileVersion()
+    private static Version GetFileVersion()
     {
       var assembly = System.Reflection.Assembly.GetExecutingAssembly();
       var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
