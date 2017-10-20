@@ -6,6 +6,7 @@ namespace myoddweb.classifier.interfaces
   public enum LogLevels
   {
     None,
+    Exception,
     Error,
     Warning,
     Information,
@@ -37,6 +38,12 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <param name="message"></param>
     void LogInformation(string message);
+
+    /// <summary>
+    /// Log a system exception.
+    /// </summary>
+    /// <param name="exception"></param>
+    void LogException(System.Exception exception);
 
     /// <summary>
     /// Get up to 'max' log entries.

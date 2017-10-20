@@ -75,7 +75,8 @@ namespace myoddweb.classifier.core
       }
       catch (Exception e)
       {
-        _logger.LogError($"There was an exception looking at unprocessed folders : {e}");
+        _logger.LogError("There was an exception looking at unprocessed folders");
+        _logger.LogException(e);
       }
       return ids;
     }
@@ -117,7 +118,8 @@ namespace myoddweb.classifier.core
         }
         catch (Exception e)
         {
-          _logger.LogError($"There was an exception looking at unprocessed folder : {e}");
+          _logger.LogError( "There was an exception looking at unprocessed folder");
+          _logger.LogException(e);
         }
       }
       return ids;

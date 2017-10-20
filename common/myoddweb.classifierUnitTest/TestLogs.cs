@@ -35,16 +35,24 @@ namespace myoddweb.classifierUnitTest
     }
 
     [Test]
+    public void TestSetLogLevelException()
+    {
+      TheEngine.Options.LogLevel = LogLevels.Exception;
+      Assert.AreEqual(LogLevels.Exception, TheEngine.Options.LogLevel);
+    }
+
+    [Test]
     public void TestSetLogLevelInfo()
     {
       TheEngine.Options.LogLevel = LogLevels.Information;
       Assert.AreEqual(LogLevels.Information, TheEngine.Options.LogLevel);
     }
-
+    
     [Test]
     public void TestCanLogLevelInfo()
     {
       TheEngine.Options.LogLevel = LogLevels.Information;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Exception));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Information));
@@ -62,6 +70,7 @@ namespace myoddweb.classifierUnitTest
     public void TestCanLogLevelNone()
     {
       TheEngine.Options.LogLevel = LogLevels.None;
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Exception));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Error));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Warning));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
@@ -79,6 +88,7 @@ namespace myoddweb.classifierUnitTest
     public void TestCanLogLevelWarning()
     {
       TheEngine.Options.LogLevel = LogLevels.Warning;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Exception));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
@@ -96,6 +106,7 @@ namespace myoddweb.classifierUnitTest
     public void TestCanLogLevelVerbose()
     {
       TheEngine.Options.LogLevel = LogLevels.Verbose;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Exception));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Warning));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Information));
@@ -113,7 +124,19 @@ namespace myoddweb.classifierUnitTest
     public void TestCanLogLevelError()
     {
       TheEngine.Options.LogLevel = LogLevels.Error;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Exception));
       Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Error));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Warning));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));
+    }
+
+    [Test]
+    public void TestCanLogLevelException()
+    {
+      TheEngine.Options.LogLevel = LogLevels.Exception;
+      Assert.IsTrue(TheEngine.Options.CanLog(LogLevels.Exception));
+      Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Error));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Warning));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Information));
       Assert.IsFalse(TheEngine.Options.CanLog(LogLevels.Verbose));

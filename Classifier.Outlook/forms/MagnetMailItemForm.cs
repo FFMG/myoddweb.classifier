@@ -161,7 +161,7 @@ namespace myoddweb.classifier.forms
       var itemsAlreadyAdded = new List<string>();
 
       // the 'from' rules.
-      var address = MailProcessor.GetSmtpMailAddressForSender( _mailItem );
+      var address = MailProcessor.GetSmtpMailAddressForSender( _mailItem, _logger );
       if (address != null)
       {
         // add them to the combo.
@@ -174,7 +174,7 @@ namespace myoddweb.classifier.forms
       }
 
       // the 'to' rules.
-      var toAddresses = MailProcessor.GetSmtpMailAddressForRecipients(_mailItem);
+      var toAddresses = MailProcessor.GetSmtpMailAddressForRecipients(_mailItem, _logger );
       foreach( var toAddress in toAddresses )
       {
         // check if this address already exists.

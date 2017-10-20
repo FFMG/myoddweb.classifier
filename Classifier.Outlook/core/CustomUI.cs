@@ -36,7 +36,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The mail processor
     /// </summary>
-    private MailProcessor MailProcessor => Globals.ThisAddIn.TheMailProcessor;
+    private static MailProcessor MailProcessor => Globals.ThisAddIn.TheMailProcessor;
 
     private Office.IRibbonUI _ribbon;
 
@@ -46,7 +46,7 @@ namespace myoddweb.classifier.core
 
     #region IRibbonExtensibility Members
 
-    public string GetCustomUI(string ribbonID)
+    public string GetCustomUI(string ribbonId)
     {
       return GetResourceText("myoddweb.classifier.Core.CustomUI.xml");
     }
@@ -112,7 +112,7 @@ namespace myoddweb.classifier.core
         var item = selectionItem as _MailItem;
         if (null != item)
         {
-          if( !MailProcessor.IsUsableClassNameForClassification(item?.MessageClass) )
+          if( !MailProcessor.IsUsableClassNameForClassification(item.MessageClass) )
           {
             continue;
           }
@@ -254,7 +254,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // show the displays
-      var categoryList = MailProcessor.GetStringFromMailItem(mailItem);
+      var categoryList = MailProcessor.GetStringFromMailItem(mailItem, Engine.Logger);
       var text = string.Join(";", categoryList.Select(x => x.Value));
       using (var detailsForm = new DetailsForm(Engine.Classify, Engine.Categories, text ))
       {

@@ -191,9 +191,9 @@
     <Compile Include="core\Categories.cs" />
     <Compile Include="core\Classify.cs" />
     <Compile Include="core\Config.cs" />
-    <Compile Include="core\Folders.cs" />
+    <Compile Include="core\folders.cs" />
     <Compile Include="core\logger.cs" />
-    <Compile Include="core\Magnets.cs" />
+    <Compile Include="core\magnets.cs" />
     <Compile Include="core\outlookengine.cs" />
     <Compile Include="core\outlooklogger.cs" />
     <Compile Include="interfaces\ICategories.cs" />

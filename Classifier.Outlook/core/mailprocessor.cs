@@ -220,7 +220,7 @@ namespace myoddweb.classifier.core
     private async Task HandleAllItemsInLock()
     {
       // wait for all the tasks now.
-      await Task.WhenAll(_mailItems.Select(HandleItemInLock).Cast<Task>().ToArray());
+      await Task.WhenAll(_mailItems.Select(HandleItemInLock).Cast<Task>().ToArray() ).ConfigureAwait( false );
 
       // clear the list.
       _mailItems = new List<string>();
@@ -259,9 +259,9 @@ namespace myoddweb.classifier.core
         // new email has arrived, we need to try and classify it.
         mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook._MailItem;
       }
-      catch (System.Runtime.InteropServices.COMException e)
+      catch (Exception e)
       {
-        _engine.Logger.LogError(e.ToString());
+        _engine.Logger.LogException( e );
       }
 
       if (mailItem == null)
@@ -373,7 +373,7 @@ namespace myoddweb.classifier.core
       }
       catch (Exception ex)
       {
-        _engine.Logger.LogError(ex.ToString());
+        _engine.Logger.LogException(ex);
         return false;
       }
       return true;
@@ -445,7 +445,7 @@ namespace myoddweb.classifier.core
       magnetWasUsed = (magnetCategory != -1);
 
       // otherwise, use the engine direclty.
-      return magnetWasUsed ? magnetCategory : _engine.Classify.Categorize(GetStringFromMailItem(mailItem));
+      return magnetWasUsed ? magnetCategory : _engine.Classify.Categorize(GetStringFromMailItem(mailItem, _engine.Logger ));
     }
 
     /// <summary>
@@ -503,7 +503,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.Logger.LogError(e.ToString());
+                _engine.Logger.LogException(e);
               }
             }
             break;
@@ -535,7 +535,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.Logger.LogError(e.ToString());
+                _engine.Logger.LogException(e);
               }
             }
             break;
@@ -607,8 +607,9 @@ namespace myoddweb.classifier.core
     /// Given a mail item, we try and build an array of strings.
     /// </summary>
     /// <param name="mailItem">The mail item that has the information we are after.</param>
+    /// <param name="logger"></param>
     /// <returns>List list of items</returns>
-    public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem)
+    public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem, ILogger logger )
     {
       if (null == mailItem)
       {
@@ -626,7 +627,7 @@ namespace myoddweb.classifier.core
       {
         {MailStringCategories.Bcc, mailItem.BCC},
         {MailStringCategories.To, mailItem.To},
-        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem)?.Address},
+        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem, logger)?.Address},
         {MailStringCategories.SenderName, mailItem.SenderName},
         {MailStringCategories.Cc, mailItem.CC},
         {MailStringCategories.Subject, mailItem.Subject},
@@ -668,8 +669,9 @@ namespace myoddweb.classifier.core
     /// Given the mail item we try and get the email address of the sender.
     /// </summary>
     /// <param name="mail">the mail item that has the address</param>
+    /// <param name="logger">The logger</param>
     /// <returns>MailAddress or null if it does not exist.</returns>
-    public static MailAddress GetSmtpMailAddressForSender(Outlook._MailItem mail)
+    public static MailAddress GetSmtpMailAddressForSender(Outlook._MailItem mail, ILogger logger  )
     {
       try
       {
@@ -680,8 +682,9 @@ namespace myoddweb.classifier.core
         }
         return new MailAddress(address);
       }
-      catch (FormatException)
+      catch (FormatException e )
       {
+        logger?.LogException(e);
         return null;
       }
     }
@@ -717,7 +720,7 @@ namespace myoddweb.classifier.core
     public async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight)
     {
       return await ClassifyAsync(GetUniqueIdentifierString(mailItem),
-                                  GetStringFromMailItem(mailItem),
+                                  GetStringFromMailItem(mailItem, _engine.Logger),
                                   id,
                                   weight).ConfigureAwait(false);
     }
@@ -806,8 +809,9 @@ namespace myoddweb.classifier.core
     /// Get all the mail addresses for the recipients.
     /// </summary>
     /// <param name="mail">The mail item</param>
+    /// <param name="logger"></param>
     /// <returns></returns>
-    public static List<MailAddress> GetSmtpMailAddressForRecipients(Outlook._MailItem mail)
+    public static List<MailAddress> GetSmtpMailAddressForRecipients(Outlook._MailItem mail, ILogger logger )
     {
       var mailAddresses = new List<MailAddress>();
       var addresses = GetSmtpAddressForRecipients(mail);
@@ -817,9 +821,10 @@ namespace myoddweb.classifier.core
         {
           mailAddresses.Add(new MailAddress(address));
         }
-        catch (FormatException)
+        catch (FormatException e)
         {
           // ignore invalid formats
+          logger.LogException(e);
         }
       }
       return mailAddresses;

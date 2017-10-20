@@ -129,7 +129,7 @@ namespace myoddweb.classifier
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
-        TheEngine.Logger.LogError(e.ToString());
+        TheEngine.Logger.LogException(e);
       }
     }
 
@@ -182,7 +182,7 @@ namespace myoddweb.classifier
       }
       catch (Exception ex)
       {
-        TheEngine.Logger.LogError(ex.ToString());
+        TheEngine.Logger.LogException(ex);
         return Task.FromResult(false);
       }
       return Task.FromResult(true);
