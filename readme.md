@@ -52,9 +52,10 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.5 (19/10/2017)
+#### 0.7.0.5 (22/10/2017)
 
 - Added - On start up we now log version number + engine number.
+- Added Exception logging, (higher lever than error)
 - Changed the way he handle emails when the wait time is 0, (we handle it right away).
 - Ignored conversations no longer cause messages to be classified, (as they are normally deleted)
 - Did some code cleanup
