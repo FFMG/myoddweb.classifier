@@ -36,7 +36,7 @@ namespace myoddweb.classifier
       TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
 
       // get the explorers.
-      _explorers = this.Application.Explorers;
+      _explorers = Application.Explorers;
 
       // new email arrives.
       Application.NewMailEx += Application_NewMailEx;
@@ -116,16 +116,16 @@ namespace myoddweb.classifier
         }
 
         // the message note.
-        if (!MailProcessor.IsUsableClassNameForClassification(mailItem?.MessageClass))
+        if (!MailProcessor.IsUsableClassNameForClassification(mailItem.MessageClass))
         {
           return;
         }
 
         // get the new folder id
-        var folderId = ((Outlook.MAPIFolder)mailItem?.Parent).EntryID;
+        var folderId = ((Outlook.MAPIFolder)mailItem.Parent).EntryID;
 
         // get the item id
-        var itemId = mailItem?.EntryID;
+        var itemId = mailItem.EntryID;
       }
       catch (System.Runtime.InteropServices.COMException e)
       {
@@ -133,12 +133,12 @@ namespace myoddweb.classifier
       }
     }
 
-    private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+    private void ThisAddIn_Shutdown(object sender, EventArgs e)
     {
       _engine?.Release();
       _engine = null;
 
-      Task.WaitAll(_tasks?.ToArray());
+      Task.WaitAll(_tasks.ToArray());
       _tasks = null;
       // Note: Outlook no longer raises this event. If you have code that 
       //    must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
@@ -161,8 +161,8 @@ namespace myoddweb.classifier
     /// </summary>
     private void InternalStartup()
     {
-      this.Startup += new System.EventHandler(ThisAddIn_Startup);
-      this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+      Startup += ThisAddIn_Startup;
+      Shutdown += ThisAddIn_Shutdown;
     }
 
     #endregion
