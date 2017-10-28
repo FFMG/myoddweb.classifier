@@ -4,17 +4,27 @@ using System.Threading.Tasks;
 
 namespace myoddweb.classifier.core
 {
-  class TasksController : IDisposable
+  internal class TasksController : IDisposable
   {
+    /// <summary>
+    /// The one and only controller.
+    /// </summary>
+    private static TasksController _controller;
+
+    /// <summary>
+    /// Create the controller when needed.
+    /// </summary>
+    private static TasksController Controller => _controller ?? (_controller = new TasksController());
+
     /// <summary>
     /// Our lock
     /// </summary>
-    private object _lock = new object();
+    private readonly object _lock = new object();
 
     // all the ongoing tasks.
-    private List<Task> _tasks;
+    private readonly List<Task> _tasks;
 
-    public TasksController()
+    private TasksController()
     {
       _tasks = new List<Task>();
     }
@@ -22,6 +32,34 @@ namespace myoddweb.classifier.core
     public void Dispose()
     {
       WaitAll();
+    }
+
+    /// <summary>
+    /// Add a task to our list
+    /// </summary>
+    /// <param name="run"></param>
+    private void _Add( Task run )
+    {
+      //  remove all the completed tasks
+      RemoveAllCompleted();
+
+      // and add the new task
+      lock (_lock)
+      {
+        _tasks.Add(run);
+      }
+    }
+
+    /// <summary>
+    /// Wait for all the tasks to complete.
+    /// </summary>
+    private void _WaitAll()
+    {
+      lock (_lock)
+      {
+        Task.WaitAll(_tasks.ToArray());
+      }
+      RemoveAllCompleted();
     }
 
     /// <summary>
@@ -38,29 +76,18 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Wait for all the tasks to complete.
     /// </summary>
-    public void WaitAll()
+    public static void WaitAll()
     {
-      lock (_lock)
-      {
-        Task.WaitAll(_tasks.ToArray());
-      }
-      RemoveAllCompleted();
+      Controller._WaitAll();
     }
 
     /// <summary>
     /// Add a task to our list
     /// </summary>
     /// <param name="run"></param>
-    public void Add(Task run)
+    public static void Add(Task run)
     {
-      //  remove all the completed tasks
-      RemoveAllCompleted();
-
-      // and add the new task
-      lock (_lock)
-      {
-        _tasks.Add(run);
-      }
+      Controller._Add( run );
     }
   }
 }

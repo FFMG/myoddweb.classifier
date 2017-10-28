@@ -1,7 +1,6 @@
 ﻿using myoddweb.classifier.core;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using myoddweb.classifier.interfaces;
@@ -23,9 +22,6 @@ namespace myoddweb.classifier
 
     private MailProcessor _mailProcessor;
 
-    // all the ongoing tasks.
-    private TasksController _tasks;
-
     public ItemMove TheIemMove => _itemMove ?? (_itemMove = new ItemMove( TheEngine.Logger ));
 
     public OutlookEngine TheEngine => _engine ?? (_engine = new OutlookEngine());
@@ -34,9 +30,6 @@ namespace myoddweb.classifier
 
     private void ThisAddIn_Startup(object sender, EventArgs e)
     {
-      // the tasks controller.
-      _tasks = new TasksController();
-
       // tell the engine what the folders are.
       TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
 
@@ -50,12 +43,12 @@ namespace myoddweb.classifier
       _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
 
       // look for item moves.
-      _tasks.Add(Task.Run(() => MonitorItemMove()));
+      TasksController.Add(Task.Run(() => MonitorItemMove()));
      
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
-        _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
+        TasksController.Add(Task.Run(() => ParseUnprocessedEmails()));
       }
 
       // log the version 
@@ -77,7 +70,7 @@ namespace myoddweb.classifier
       _itemMove = null;
 
       // wait for the tasks to be done
-      _tasks = null;
+      TasksController.WaitAll();
 
       // release the engine
       _engine?.Release();
@@ -156,7 +149,7 @@ namespace myoddweb.classifier
     private void Application_NewMailEx(string entryIdItem)
     {
       //  just call the async version of this
-      _tasks.Add( Application_NewMailExAsync(entryIdItem) );
+      TasksController.Add( Application_NewMailExAsync(entryIdItem) );
     }
 
     /// <summary>
