@@ -188,15 +188,16 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="core\Categories.cs" />
-    <Compile Include="core\Classify.cs" />
-    <Compile Include="core\Config.cs" />
+    <Compile Include="core\categories.cs" />
+    <Compile Include="core\classify.cs" />
+    <Compile Include="core\config.cs" />
     <Compile Include="core\folders.cs" />
     <Compile Include="core\itemmove.cs" />
     <Compile Include="core\logger.cs" />
     <Compile Include="core\magnets.cs" />
     <Compile Include="core\outlookengine.cs" />
     <Compile Include="core\outlooklogger.cs" />
+    <Compile Include="core\taskscontroller.cs" />
     <Compile Include="interfaces\ICategories.cs" />
     <Compile Include="interfaces\IClassify.cs" />
     <Compile Include="interfaces\IConfig.cs" />
@@ -206,12 +207,12 @@
     <Compile Include="interfaces\ILogger.cs" />
     <Compile Include="core\mailprocessor.cs" />
     <Compile Include="core\options.cs" />
-    <Compile Include="core\Rule.cs" />
-    <Compile Include="core\Rules.cs" />
+    <Compile Include="core\rule.cs" />
+    <Compile Include="core\rules.cs" />
     <Compile Include="core\outlookfolder.cs" />
     <Compile Include="core\outlookfolders.cs" />
     <Compile Include="core\unprocessedfolders.cs" />
-    <Compile Include="forms\LogForm.cs">
+    <Compile Include="forms\logform.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="forms\LogForm.Designer.cs">

@@ -24,7 +24,7 @@ namespace myoddweb.classifier
     private MailProcessor _mailProcessor;
 
     // all the ongoing tasks.
-    private List<Task> _tasks;
+    private TasksController _tasks;
 
     public ItemMove TheIemMove => _itemMove ?? (_itemMove = new ItemMove( TheEngine.Logger ));
 
@@ -34,7 +34,8 @@ namespace myoddweb.classifier
 
     private void ThisAddIn_Startup(object sender, EventArgs e)
     {
-      _tasks = new List<Task>();
+      // the tasks controller.
+      _tasks = new TasksController();
 
       // tell the engine what the folders are.
       TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
@@ -76,7 +77,6 @@ namespace myoddweb.classifier
       _itemMove = null;
 
       // wait for the tasks to be done
-      Task.WaitAll(_tasks.ToArray());
       _tasks = null;
 
       // release the engine
@@ -156,7 +156,7 @@ namespace myoddweb.classifier
     private void Application_NewMailEx(string entryIdItem)
     {
       //  just call the async version of this
-      Application_NewMailExAsync(entryIdItem).Wait();
+      _tasks.Add( Application_NewMailExAsync(entryIdItem) );
     }
 
     /// <summary>
