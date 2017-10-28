@@ -192,6 +192,7 @@
     <Compile Include="core\Classify.cs" />
     <Compile Include="core\Config.cs" />
     <Compile Include="core\folders.cs" />
+    <Compile Include="core\itemmove.cs" />
     <Compile Include="core\logger.cs" />
     <Compile Include="core\magnets.cs" />
     <Compile Include="core\outlookengine.cs" />
