@@ -9,21 +9,46 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The one and only controller.
     /// </summary>
-    private static TasksController _controller;
-
-    /// <summary>
-    /// Create the controller when needed.
-    /// </summary>
-    private static TasksController Controller => _controller ?? (_controller = new TasksController());
+    private static volatile TasksController _controller;
 
     /// <summary>
     /// Our lock
     /// </summary>
-    private readonly object _lock = new object();
+    private static readonly object Lock = new object();
 
-    // all the ongoing tasks.
+    /// <summary>
+    /// Create the controller when needed.
+    /// </summary>
+    private static TasksController Controller
+    {
+      get
+      {
+        // check the value
+        if (_controller != null)
+        {
+          return _controller;
+        }
+        lock (Lock)
+        {
+          // check the value again.
+          if (_controller == null)
+          {
+            _controller = new TasksController();
+          }
+        }
+        return _controller;
+      }
+    }
+
+    /// <summary>
+    /// All the tasks we are currently managing.
+    /// Some might be finished.
+    /// </summary>
     private readonly List<Task> _tasks;
 
+    /// <summary>
+    /// The one constructor.
+    /// </summary>
     private TasksController()
     {
       _tasks = new List<Task>();
@@ -44,7 +69,7 @@ namespace myoddweb.classifier.core
       RemoveAllCompleted();
 
       // and add the new task
-      lock (_lock)
+      lock (Lock)
       {
         _tasks.Add(run);
       }
@@ -55,7 +80,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     private void _WaitAll()
     {
-      lock (_lock)
+      lock (Lock)
       {
         Task.WaitAll(_tasks.ToArray());
       }
@@ -67,7 +92,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     private void RemoveAllCompleted()
     {
-      lock(_lock)
+      lock(Lock)
       {
         _tasks.RemoveAll(t => t.IsCompleted);
       }
