@@ -265,6 +265,7 @@
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="interfaces\IMagnets.cs" />
+    <Compile Include="interfaces\IMailProcessor.cs" />
     <Compile Include="interfaces\IOptions.cs" />
     <Compile Include="utils\errors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

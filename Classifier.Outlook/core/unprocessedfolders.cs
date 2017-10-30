@@ -11,14 +11,14 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// What will be processing the emails themselves.
     /// </summary>
-    private readonly MailProcessor _mailprocessor;
+    private readonly IMailProcessor _mailprocessor;
 
     /// <summary>
     /// Used to log messages.
     /// </summary>
     private readonly ILogger _logger;
 
-    public UnProcessedFolders( MailProcessor mailprocessor, ILogger logger )
+    public UnProcessedFolders( IMailProcessor mailprocessor, ILogger logger )
     {
       if (logger == null)
       {

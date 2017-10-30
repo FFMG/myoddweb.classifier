@@ -31,7 +31,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private IEngine Engine => Globals.ThisAddIn.TheEngine;
+    private static IEngine Engine => Globals.ThisAddIn.TheEngine;
 
     /// <summary>
     /// The mail processor

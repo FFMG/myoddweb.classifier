@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace myoddweb.classifier.core
 {
-  public class OutlookEngine : IEngine
+  public class OutlookEngine : IEngine, IDisposable
   {
     /// <summary>
     /// All the folders.
@@ -23,7 +23,7 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// the root folder.
     /// </summary>
-    private Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
+    private readonly Microsoft.Office.Interop.Outlook.MAPIFolder _rootFolder;
 
     /// <summary>
     /// The timer we use to call the clean log function.
@@ -65,8 +65,9 @@ namespace myoddweb.classifier.core
       return _parent.GetEngineVersion();
     }
 
-    public OutlookEngine() : this(new Engine(InitialiseEngine()))
+    public OutlookEngine(Microsoft.Office.Interop.Outlook.MAPIFolder rootFolder) : this(new Engine(InitialiseEngine()))
     {
+      _rootFolder = rootFolder;
     }
 
     /// <summary>
@@ -93,7 +94,12 @@ namespace myoddweb.classifier.core
       Release();
     }
 
-    public void Release()
+    public void Dispose()
+    {
+      Release();
+    }
+
+    private void Release()
     {
       // stop the time
       StopLogCleanupTimer();
@@ -208,13 +214,6 @@ namespace myoddweb.classifier.core
         return null;
       }
       return classifyEngine;
-    }
-
-
-    public void SetRootFolder(Microsoft.Office.Interop.Outlook.MAPIFolder rootFolder)
-    {
-      // set the root folder.
-      _rootFolder = rootFolder;
     }
 
     private Microsoft.Office.Interop.Outlook.MAPIFolder GetRootFolder()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using myoddweb.viewer.utils;
@@ -11,7 +12,7 @@ using System.Net.Mail;
 
 namespace myoddweb.classifier.core
 {
-  public class MailProcessor
+  public class MailProcessor : IMailProcessor
   {
     /// <summary>
     /// Unique identitider to all messages that will contain our unique key.
@@ -41,6 +42,11 @@ namespace myoddweb.classifier.core
     /// The current session
     /// </summary>
     private readonly Outlook._NameSpace _session;
+
+    /// <summary>
+    /// The mail items we are currently processing
+    /// </summary>
+    private ConcurrentBag<string> _mailItemsBeingProcessed;
 
     /// <summary>
     /// The mail items we want to move and the categories we are moving them to.
@@ -92,6 +98,7 @@ namespace myoddweb.classifier.core
       _engine = engine;
       _session = session;
       _mailItems = new List<string>();
+      _mailItemsBeingProcessed = new ConcurrentBag<string>();
     }
 
     /// <summary>
@@ -103,6 +110,7 @@ namespace myoddweb.classifier.core
       Add(new List<string> { entryIdItem });
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Add a range of mail entry ids to our list.
     /// </summary>
@@ -251,8 +259,40 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="entryIdItem">The email we want to handle.</param>
     /// <returns></returns>
-    private async Task<bool> HandleItemInLock( string entryIdItem)
+    private async Task<bool> HandleItemInLock(string entryIdItem)
     {
+      try
+      {
+        //  flag this item as been processed.
+        _mailItemsBeingProcessed.Add( entryIdItem);
+        return await HandleItemFlagedAsBeingProcessedInLock( entryIdItem ).ConfigureAwait( false );
+      }
+      finally
+      {
+        // we are done processing this.
+        _mailItemsBeingProcessed = new ConcurrentBag<string>(_mailItemsBeingProcessed.Except(new[] { entryIdItem }));
+      }
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Are we currently busy with this mail item?
+    /// </summary>
+    /// <param name="itemId"></param>
+    /// <returns></returns>
+    public bool IsProccessing(string itemId)
+    {
+      // do we have that mail item in our list?
+      return _mailItemsBeingProcessed.Any( m => m == itemId );
+    }
+
+    /// <summary>
+    /// Handle the email
+    /// </summary>
+    /// <param name="entryIdItem">The email we want to handle.</param>
+    /// <returns></returns>
+    private async Task<bool> HandleItemFlagedAsBeingProcessedInLock(string entryIdItem)
+    { 
       Outlook._MailItem mailItem = null;
       try
       {
@@ -569,7 +609,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mail"></param>
     /// <returns>string or null if the address does not exist.</returns>
-    public static string GetSmtpAddressForSender(Outlook._MailItem mail)
+    private static string GetSmtpAddressForSender(Outlook._MailItem mail)
     {
       if (mail == null)
       {
@@ -609,7 +649,7 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">The mail item that has the information we are after.</param>
     /// <param name="logger"></param>
     /// <returns>List list of items</returns>
-    public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem, ILogger logger )
+    public Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem, ILogger logger )
     {
       if (null == mailItem)
       {
@@ -689,12 +729,13 @@ namespace myoddweb.classifier.core
       }
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Given a mail item class name, we check if this is one we could classify.
     /// </summary>
     /// <param name="className">The classname we are checking</param>
     /// <returns>boolean if we can/could classify this mail item or not.</returns>
-    public static bool IsUsableClassNameForClassification(string className)
+    public bool IsUsableClassNameForClassification(string className)
     {
       switch (className)
       {

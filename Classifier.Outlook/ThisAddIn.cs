@@ -9,38 +9,31 @@ namespace myoddweb.classifier
 {
   public partial class ThisAddIn
   {
-    /// <summary>
-    /// The engine that does the classification.
-    /// </summary>
-    private OutlookEngine _engine;
-
     private Outlook._Explorers _explorers;
 
     private Outlook._Folders _folders;
 
-    private ItemMove _itemMove;
+    private ItemMove TheIemMove { get; set; }
 
-    private MailProcessor _mailProcessor;
+    public IEngine TheEngine { get; set; }
 
-    public ItemMove TheIemMove => _itemMove ?? (_itemMove = new ItemMove( TheEngine.Logger ));
-
-    public OutlookEngine TheEngine => _engine ?? (_engine = new OutlookEngine());
-
-    public MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
+    public MailProcessor TheMailProcessor { get; private set; }
 
     private void ThisAddIn_Startup(object sender, EventArgs e)
     {
-      // tell the engine what the folders are.
-      TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
-
       // get the explorers.
       _explorers = Application.Explorers;
 
+      // get all the folders.
+      _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
+
+      // create all the required values.
+      CreateEngine();
+      CreateMailProcessor();
+      CreateItemMove();
+
       // new email arrives.
       Application.NewMailEx += Application_NewMailEx;
-
-      // monitor for folder changes
-      _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
 
       // look for item moves.
       TasksController.Add(Task.Run(() => MonitorItemMove()));
@@ -66,22 +59,70 @@ namespace myoddweb.classifier
     /// <param name="e"></param>
     private void ThisAddIn_Shutdown(object sender, EventArgs e)
     {
-      // unregister all the folders.
-      _itemMove = null;
-
       // wait for the tasks to be done
       TasksController.WaitAll();
 
-      // release the engine
-      _engine?.Release();
-      _engine = null;
+      // unregister all the folders.
+      TheIemMove = null;
+
+      // we can now clear the engine as well.
+      TheEngine = null;
     }
-    
+
+    /// <summary>
+    /// Create the engine.
+    /// </summary>
+    private void CreateEngine()
+    {
+      TheEngine = new OutlookEngine(Application.Session.DefaultStore.GetRootFolder());
+    }
+
+    /// <summary>
+    /// Create the mail processor.
+    /// </summary>
+    private void CreateMailProcessor()
+    {
+      if (null == TheEngine)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+      if (null == _explorers)
+      {
+        throw new ArgumentNullException(nameof(_explorers));
+      }
+
+      // then create the mail processor
+      TheMailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session);
+    }
+
+    /// <summary>
+    /// Create the item mpve 
+    /// </summary>
+    private void CreateItemMove()
+    {
+      if (null == TheMailProcessor)
+      {
+        throw new ArgumentNullException(nameof(TheMailProcessor));
+      }
+      if (null == TheEngine)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+
+      // then start monitoring folders for user moving files.
+      TheIemMove = new ItemMove(TheMailProcessor, TheEngine.Logger);
+    }
+
     /// <summary>
     /// Log uselfull information on startup
     /// </summary>
     private void LogStartupInformation()
     {
+      if (TheEngine == null)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+
       // are we logging this?
       if (!TheEngine.Options.CanLog(LogLevels.Information))
       {
@@ -92,7 +133,7 @@ namespace myoddweb.classifier
       var version = GetFileVersion();
 
       // get the engine version.
-      var engineVersion = _engine.GetEngineVersion();
+      var engineVersion = TheEngine.GetEngineVersion();
 
       //Version version = Assembly.GetEntryAssembly().GetName().Version;
       var text = $"Started Classifier - [{version.Major}.{version.Minor}.{version.Build}.{version.Revision}] - (Engine [{engineVersion.Major}.{engineVersion.Minor}.{engineVersion.Build}])";

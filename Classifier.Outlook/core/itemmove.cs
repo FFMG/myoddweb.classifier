@@ -14,6 +14,11 @@ namespace myoddweb.classifier.core
     private Dictionary<string, Outlook.Folder> _observedFolders = new Dictionary<string, Outlook.Folder>();
 
     /// <summary>
+    /// The current mail processor.
+    /// </summary>
+    private readonly IMailProcessor _mailProcessor;
+
+    /// <summary>
     /// The logger
     /// </summary>
     private readonly ILogger _logger;
@@ -21,9 +26,19 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The constructor.
     /// </summary>
+    /// <param name="mailProcessor">The mail processor</param>
     /// <param name="logger"></param>
-    public ItemMove( ILogger logger )
+    public ItemMove( IMailProcessor mailProcessor, ILogger logger )
     {
+      if (mailProcessor == null)
+      {
+        throw new ArgumentNullException(nameof(mailProcessor));
+      }
+      if (logger == null)
+      {
+        throw new ArgumentNullException(nameof(logger));
+      }
+      _mailProcessor = mailProcessor;
       _logger = logger;
     }
 
@@ -98,17 +113,23 @@ namespace myoddweb.classifier.core
           return;
         }
 
-        // the message note.
-        if (!MailProcessor.IsUsableClassNameForClassification(mailItem.MessageClass))
+        // get the item id
+        var itemId = mailItem.EntryID;
+
+        // are we currently processing this item?
+        if (_mailProcessor.IsProccessing(itemId))
+        {
+          return;
+        }
+
+        // is it something we even care about
+        if (!_mailProcessor.IsUsableClassNameForClassification(mailItem.MessageClass))
         {
           return;
         }
 
         // get the new folder id
         // var folderId = moveto.EntryID;
-
-        // get the item id
-        // var itemId = mailItem.EntryID;
 
         _logger.LogVerbose($"About to move mail '{mailItem.Subject}' to folder '{moveto.Name}'");
       }
