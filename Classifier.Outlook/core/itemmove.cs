@@ -151,6 +151,23 @@ namespace myoddweb.classifier.core
           return;
         }
 
+        // is it permanently deleted?
+        if (moveto == null)
+        {
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was permanently deleted.");
+          return;
+        }
+
+        // do we want to use the message for training?
+        if (!_options.ReAutomaticallyTrainMoveMessages)
+        {
+          // log that we found nothing.
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' but the option is set not to use this for training.");
+
+          // done
+          return;
+        }
+
         // get the new folder id
         var folderId = moveto.EntryID;
 

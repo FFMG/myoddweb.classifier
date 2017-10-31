@@ -38,6 +38,8 @@ namespace myoddweb.classifier.core
 
     private uint? _classifyDelaySeconds;
 
+    private bool? _reAutomaticallyTrainMoveMessages;
+    
     /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
@@ -114,6 +116,25 @@ namespace myoddweb.classifier.core
         _config.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", (value ? "1" : "0"));
       }
     }
+
+    /// <summary>
+    /// Check if we want to train the message because we moved it from one folder to another
+    /// Assuming that the folder we moved it to has a category we can train to.
+    /// </summary>
+    public bool ReAutomaticallyTrainMoveMessages
+    {
+      get
+      {
+        return (bool)(_reAutomaticallyTrainMoveMessages ??
+                       (_reAutomaticallyTrainMoveMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMoveMessages", "1"))));
+      }
+      set
+      {
+        _reAutomaticallyTrainMoveMessages = value;
+        _config.SetConfig("Option.ReAutomaticallyTrainMoveMessages", (value ? "1" : "0"));
+      }
+    }
+
 
     /// <summary>
     /// Check if we want to automaticlly train messages when they arrive.

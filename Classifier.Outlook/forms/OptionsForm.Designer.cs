@@ -44,6 +44,10 @@
       this.labelUserTrained = new System.Windows.Forms.Label();
       this.labelMagnets = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.label12 = new System.Windows.Forms.Label();
+      this.numericMinPercentage = new System.Windows.Forms.NumericUpDown();
+      this.labelMinPercentage = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
       this.checkUnProcessedEmails = new System.Windows.Forms.CheckBox();
       this.label8 = new System.Windows.Forms.Label();
       this.labelDefaultClassifyDelay = new System.Windows.Forms.Label();
@@ -66,17 +70,14 @@
       this.labelDefaultLogLevel = new System.Windows.Forms.Label();
       this.comboLogLevel = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.numericMinPercentage = new System.Windows.Forms.NumericUpDown();
-      this.labelMinPercentage = new System.Windows.Forms.Label();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label12 = new System.Windows.Forms.Label();
+      this.checkAutomaticallyMoveTrain = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClassifyDelay)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).BeginInit();
       this.groupBox4.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).BeginInit();
       this.SuspendLayout();
       // 
       // reCheckCategories
@@ -93,7 +94,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(266, 501);
+      this.ok.Location = new System.Drawing.Point(376, 517);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -104,7 +105,7 @@
       // button1
       // 
       this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(347, 501);
+      this.button1.Location = new System.Drawing.Point(457, 517);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(79, 23);
       this.button1.TabIndex = 9;
@@ -118,7 +119,7 @@
       this.groupBox1.Controls.Add(this.reCheckCategories);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(414, 100);
+      this.groupBox1.Size = new System.Drawing.Size(524, 100);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Debug";
@@ -179,7 +180,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(13, 492);
+      this.Categories.Location = new System.Drawing.Point(13, 517);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -189,7 +190,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(98, 492);
+      this.Magnets.Location = new System.Drawing.Point(98, 517);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -207,7 +208,7 @@
       this.groupBox2.Controls.Add(this.comboUser);
       this.groupBox2.Location = new System.Drawing.Point(13, 118);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(414, 83);
+      this.groupBox2.Size = new System.Drawing.Size(523, 83);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Weights";
@@ -215,7 +216,7 @@
       // labelUserTrained
       // 
       this.labelUserTrained.AutoSize = true;
-      this.labelUserTrained.Location = new System.Drawing.Point(254, 48);
+      this.labelUserTrained.Location = new System.Drawing.Point(360, 48);
       this.labelUserTrained.Name = "labelUserTrained";
       this.labelUserTrained.Size = new System.Drawing.Size(45, 13);
       this.labelUserTrained.TabIndex = 9;
@@ -224,7 +225,7 @@
       // labelMagnets
       // 
       this.labelMagnets.AutoSize = true;
-      this.labelMagnets.Location = new System.Drawing.Point(254, 19);
+      this.labelMagnets.Location = new System.Drawing.Point(360, 19);
       this.labelMagnets.Name = "labelMagnets";
       this.labelMagnets.Size = new System.Drawing.Size(45, 13);
       this.labelMagnets.TabIndex = 8;
@@ -232,6 +233,7 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.checkAutomaticallyMoveTrain);
       this.groupBox3.Controls.Add(this.label12);
       this.groupBox3.Controls.Add(this.numericMinPercentage);
       this.groupBox3.Controls.Add(this.labelMinPercentage);
@@ -249,15 +251,59 @@
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(414, 170);
+      this.groupBox3.Size = new System.Drawing.Size(524, 195);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
       // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(82, 47);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(15, 13);
+      this.label12.TabIndex = 23;
+      this.label12.Text = "%";
+      // 
+      // numericMinPercentage
+      // 
+      this.numericMinPercentage.Location = new System.Drawing.Point(7, 45);
+      this.numericMinPercentage.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericMinPercentage.Name = "numericMinPercentage";
+      this.numericMinPercentage.Size = new System.Drawing.Size(72, 20);
+      this.numericMinPercentage.TabIndex = 22;
+      this.numericMinPercentage.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // labelMinPercentage
+      // 
+      this.labelMinPercentage.AutoSize = true;
+      this.labelMinPercentage.Location = new System.Drawing.Point(361, 47);
+      this.labelMinPercentage.Name = "labelMinPercentage";
+      this.labelMinPercentage.Size = new System.Drawing.Size(45, 13);
+      this.labelMinPercentage.TabIndex = 21;
+      this.labelMinPercentage.Text = "[default]";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(113, 48);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(131, 13);
+      this.label11.TabIndex = 20;
+      this.label11.Text = "Minimum category percent";
+      // 
       // checkUnProcessedEmails
       // 
       this.checkUnProcessedEmails.AutoSize = true;
-      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 145);
+      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 168);
       this.checkUnProcessedEmails.Name = "checkUnProcessedEmails";
       this.checkUnProcessedEmails.Size = new System.Drawing.Size(203, 17);
       this.checkUnProcessedEmails.TabIndex = 19;
@@ -267,7 +313,7 @@
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(79, 121);
+      this.label8.Location = new System.Drawing.Point(84, 144);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(27, 13);
       this.label8.TabIndex = 18;
@@ -276,7 +322,7 @@
       // labelDefaultClassifyDelay
       // 
       this.labelDefaultClassifyDelay.AutoSize = true;
-      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(255, 121);
+      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(361, 144);
       this.labelDefaultClassifyDelay.Name = "labelDefaultClassifyDelay";
       this.labelDefaultClassifyDelay.Size = new System.Drawing.Size(45, 13);
       this.labelDefaultClassifyDelay.TabIndex = 17;
@@ -285,7 +331,7 @@
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(112, 121);
+      this.label6.Location = new System.Drawing.Point(127, 144);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(130, 13);
       this.label6.TabIndex = 16;
@@ -293,7 +339,7 @@
       // 
       // numericUpDownClassifyDelay
       // 
-      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 119);
+      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 142);
       this.numericUpDownClassifyDelay.Minimum = new decimal(new int[] {
             1,
             0,
@@ -358,7 +404,7 @@
       // labelCommonWord
       // 
       this.labelCommonWord.AutoSize = true;
-      this.labelCommonWord.Location = new System.Drawing.Point(255, 22);
+      this.labelCommonWord.Location = new System.Drawing.Point(361, 21);
       this.labelCommonWord.Name = "labelCommonWord";
       this.labelCommonWord.Size = new System.Drawing.Size(45, 13);
       this.labelCommonWord.TabIndex = 10;
@@ -385,9 +431,9 @@
       this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
       this.groupBox4.Controls.Add(this.comboLogLevel);
       this.groupBox4.Controls.Add(this.label5);
-      this.groupBox4.Location = new System.Drawing.Point(12, 383);
+      this.groupBox4.Location = new System.Drawing.Point(13, 408);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(414, 103);
+      this.groupBox4.Size = new System.Drawing.Size(524, 103);
       this.groupBox4.TabIndex = 15;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Log";
@@ -395,7 +441,7 @@
       // labelDisplaySizeDefault
       // 
       this.labelDisplaySizeDefault.AutoSize = true;
-      this.labelDisplaySizeDefault.Location = new System.Drawing.Point(254, 73);
+      this.labelDisplaySizeDefault.Location = new System.Drawing.Point(361, 73);
       this.labelDisplaySizeDefault.Name = "labelDisplaySizeDefault";
       this.labelDisplaySizeDefault.Size = new System.Drawing.Size(45, 13);
       this.labelDisplaySizeDefault.TabIndex = 21;
@@ -420,9 +466,9 @@
       // 
       // Log
       // 
-      this.Log.Location = new System.Drawing.Point(329, 41);
+      this.Log.Location = new System.Drawing.Point(445, 43);
       this.Log.Name = "Log";
-      this.Log.Size = new System.Drawing.Size(79, 23);
+      this.Log.Size = new System.Drawing.Size(73, 23);
       this.Log.TabIndex = 16;
       this.Log.Text = "&Log ...";
       this.Log.UseVisualStyleBackColor = true;
@@ -431,7 +477,7 @@
       // labelDefaultRetention
       // 
       this.labelDefaultRetention.AutoSize = true;
-      this.labelDefaultRetention.Location = new System.Drawing.Point(254, 46);
+      this.labelDefaultRetention.Location = new System.Drawing.Point(361, 46);
       this.labelDefaultRetention.Name = "labelDefaultRetention";
       this.labelDefaultRetention.Size = new System.Drawing.Size(45, 13);
       this.labelDefaultRetention.TabIndex = 18;
@@ -457,7 +503,7 @@
       // labelDefaultLogLevel
       // 
       this.labelDefaultLogLevel.AutoSize = true;
-      this.labelDefaultLogLevel.Location = new System.Drawing.Point(254, 19);
+      this.labelDefaultLogLevel.Location = new System.Drawing.Point(361, 19);
       this.labelDefaultLogLevel.Name = "labelDefaultLogLevel";
       this.labelDefaultLogLevel.Size = new System.Drawing.Size(45, 13);
       this.labelDefaultLogLevel.TabIndex = 15;
@@ -480,55 +526,21 @@
       this.label5.TabIndex = 0;
       this.label5.Text = "Level";
       // 
-      // numericMinPercentage
+      // checkAutomaticallyMoveTrain
       // 
-      this.numericMinPercentage.Location = new System.Drawing.Point(7, 45);
-      this.numericMinPercentage.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericMinPercentage.Name = "numericMinPercentage";
-      this.numericMinPercentage.Size = new System.Drawing.Size(72, 20);
-      this.numericMinPercentage.TabIndex = 22;
-      this.numericMinPercentage.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      // 
-      // labelMinPercentage
-      // 
-      this.labelMinPercentage.AutoSize = true;
-      this.labelMinPercentage.Location = new System.Drawing.Point(256, 48);
-      this.labelMinPercentage.Name = "labelMinPercentage";
-      this.labelMinPercentage.Size = new System.Drawing.Size(45, 13);
-      this.labelMinPercentage.TabIndex = 21;
-      this.labelMinPercentage.Text = "[default]";
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(113, 48);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(131, 13);
-      this.label11.TabIndex = 20;
-      this.label11.Text = "Minimum category percent";
-      // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(82, 47);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(15, 13);
-      this.label12.TabIndex = 23;
-      this.label12.Text = "%";
+      this.checkAutomaticallyMoveTrain.AutoSize = true;
+      this.checkAutomaticallyMoveTrain.Location = new System.Drawing.Point(7, 119);
+      this.checkAutomaticallyMoveTrain.Name = "checkAutomaticallyMoveTrain";
+      this.checkAutomaticallyMoveTrain.Size = new System.Drawing.Size(294, 17);
+      this.checkAutomaticallyMoveTrain.TabIndex = 24;
+      this.checkAutomaticallyMoveTrain.Text = "Automatically use messages moved to folders for training.";
+      this.checkAutomaticallyMoveTrain.UseVisualStyleBackColor = true;
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(437, 528);
+      this.ClientSize = new System.Drawing.Size(548, 552);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
@@ -551,11 +563,11 @@
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClassifyDelay)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericCommonPercent)).EndInit();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericMinPercentage)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -604,5 +616,6 @@
     private System.Windows.Forms.NumericUpDown numericMinPercentage;
     private System.Windows.Forms.Label labelMinPercentage;
     private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.CheckBox checkAutomaticallyMoveTrain;
   }
 }

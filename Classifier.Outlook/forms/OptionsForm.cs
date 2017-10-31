@@ -297,6 +297,9 @@ namespace myoddweb.classifier.forms
       // automatically train messages with magnet
       _engine.Options.ReAutomaticallyTrainMagnetMessages = checkAutomaticallyMagnetTrain.Checked;
 
+      // automatically train messages when we move it
+      _engine.Options.ReAutomaticallyTrainMoveMessages = checkAutomaticallyMoveTrain.Checked;
+
       // automatically train messages?
       _engine.Options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
 
@@ -463,6 +466,9 @@ namespace myoddweb.classifier.forms
       // check if we want to train new messages that used a magnet or not.
       checkAutomaticallyMagnetTrain.Checked = _engine.Options.ReAutomaticallyTrainMagnetMessages;
 
+      // automatically train messages when we move it
+      checkAutomaticallyMoveTrain.Checked = _engine.Options.ReAutomaticallyTrainMoveMessages;
+
       // rebuild the combo
       RebuildCombos();
 
@@ -489,13 +495,13 @@ namespace myoddweb.classifier.forms
       labelCommonWord.ForeColor = Color.DarkGray;
 
       labelMinPercentage.Text = $"[ {(int)DefaultOptions.MinPercentage}% ]";
-      labelCommonWord.ForeColor = Color.DarkGray;
+      labelMinPercentage.ForeColor = Color.DarkGray;
 
       labelDefaultLogLevel.Text = $"[ {(LogLevels)DefaultOptions.LogLevel} ]";
       labelDefaultLogLevel.ForeColor = Color.DarkGray;
 
       labelDefaultRetention.Text = $"[ {(int)DefaultOptions.LogRetention} Days ]";
-      labelCommonWord.ForeColor = Color.DarkGray;
+      labelDefaultRetention.ForeColor = Color.DarkGray;
 
       labelDefaultClassifyDelay.Text = $"[ {(int)DefaultOptions.ClassifyDelaySeconds} Seconds ]";
       labelDefaultClassifyDelay.ForeColor = Color.DarkGray;

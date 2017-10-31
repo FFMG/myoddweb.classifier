@@ -175,7 +175,7 @@ namespace myoddweb.classifierUnitTest
       // and that the correct param was passed.
       config.Verify(h => h.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", It.IsAny<string>()), Times.Once);
     }
-
+   
     [Test]
     [TestCase("1")]
     [TestCase("0")]
@@ -191,6 +191,36 @@ namespace myoddweb.classifierUnitTest
       config.Verify(h => h.SetConfig(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
       // and that the correct param was passed.
       config.Verify(h => h.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", value), Times.Once);
+    }
+
+    [Test]
+    public void ReAutomaticallyTrainMoveMessages_GetDefault()
+    {
+      var config = CreateDefaultMock();
+      var options = new Options(config.Object);
+      Assert.That(options.ReAutomaticallyTrainMoveMessages == ((uint)DefaultOptions.ReAutomaticallyTrainMoveMessages == 1));
+
+      // check that we only called the function once
+      config.Verify(h => h.GetConfigWithDefault(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+      // and that the correct param was passed.
+      config.Verify(h => h.GetConfigWithDefault("Option.ReAutomaticallyTrainMoveMessages", It.IsAny<string>()), Times.Once);
+    }
+
+    [Test]
+    [TestCase("1")]
+    [TestCase("0")]
+    public void ReAutomaticallyTrainMoveMessages_SetValue(string value)
+    {
+      var config = CreateSetMock(value);
+      var options = new Options(config.Object)
+      {
+        ReAutomaticallyTrainMoveMessages = 1 == Convert.ToUInt32(value)
+      };
+
+      // check that we only called the function once
+      config.Verify(h => h.SetConfig(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+      // and that the correct param was passed.
+      config.Verify(h => h.SetConfig("Option.ReAutomaticallyTrainMoveMessages", value), Times.Once);
     }
 
     [Test]

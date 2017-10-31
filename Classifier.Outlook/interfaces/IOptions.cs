@@ -12,6 +12,7 @@
     ClassifyDelaySeconds = 1,
     ReCheckCategories = 1,
     ReAutomaticallyTrainMagnetMessages = 1,
+    ReAutomaticallyTrainMoveMessages = 1,
     ReAutomaticallyTrainMessages = 0,
     ReCheckIfCtrlKeyIsDown = 1,
     CheckUnProcessedEmailsOnStartUp = 1,
@@ -83,6 +84,12 @@
     /// Check if we want to train the message because we used a magnet.
     /// </summary>
     bool ReAutomaticallyTrainMagnetMessages { get; set; }
+
+    /// <summary>
+    /// Check if we want to train the message because we moved it from one folder to another
+    /// Assuming that the folder we moved it to has a category we can train to.
+    /// </summary>
+    bool ReAutomaticallyTrainMoveMessages { get; set; }
 
     /// <summary>
     /// (re) Check all the categories all the time.
