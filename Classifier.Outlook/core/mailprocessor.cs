@@ -751,6 +751,36 @@ namespace myoddweb.classifier.core
       return false;
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    /// Classify an item given an entry id.
+    /// </summary>
+    /// <param name="entryIdItem">The item we want to classify</param>
+    /// <param name="categoryId">The category of the item</param>
+    /// <param name="weight">The classification weight.</param>
+    /// <returns></returns>
+    public async Task<bool> ClassifyAsync(string entryIdItem, uint categoryId, uint weight)
+    {
+      Outlook._MailItem mailItem = null;
+      try
+      {
+        // new email has arrived, we need to try and classify it.
+        mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook._MailItem;
+      }
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
+      }
+
+      if (mailItem == null)
+      {
+        _engine.Logger.LogWarning($"Could not locate mail item {entryIdItem} to classify.");
+        return false;
+      }
+      return (await ClassifyAsync(mailItem, categoryId, weight).ConfigureAwait( false ) == Errors.Success);
+    }
+
+
     /// <summary>
     /// Try and classify a mail assyncroniously.
     /// </summary>
@@ -758,7 +788,7 @@ namespace myoddweb.classifier.core
     /// <param name="id">the category we are setting it to.</param>
     /// <param name="weight">The classification weight we will be using.</param>
     /// <returns></returns>
-    public async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight)
+    private async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight)
     {
       return await ClassifyAsync(GetUniqueIdentifierString(mailItem),
                                   GetStringFromMailItem(mailItem, _engine.Logger),

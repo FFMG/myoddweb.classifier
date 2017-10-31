@@ -110,7 +110,7 @@ namespace myoddweb.classifier
       }
 
       // then start monitoring folders for user moving files.
-      TheIemMove = new ItemMove(TheMailProcessor, TheEngine.Logger);
+      TheIemMove = new ItemMove(TheEngine.Categories, TheMailProcessor, TheEngine.Options, TheEngine.Logger);
     }
 
     /// <summary>

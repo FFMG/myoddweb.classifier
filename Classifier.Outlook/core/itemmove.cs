@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using myoddweb.classifier.interfaces;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -24,15 +25,35 @@ namespace myoddweb.classifier.core
     private readonly ILogger _logger;
 
     /// <summary>
+    /// All the otpions.
+    /// </summary>
+    private readonly IOptions _options;
+
+    /// <summary>
+    /// All the available categories.
+    /// </summary>
+    private readonly ICategories _categories;
+
+    /// <summary>
     /// The constructor.
     /// </summary>
+    /// <param name="categories"></param>
     /// <param name="mailProcessor">The mail processor</param>
+    /// <param name="options"></param>
     /// <param name="logger"></param>
-    public ItemMove( IMailProcessor mailProcessor, ILogger logger )
+    public ItemMove( ICategories categories, IMailProcessor mailProcessor, IOptions options, ILogger logger )
     {
+      if (categories == null)
+      {
+        throw new ArgumentNullException(nameof(categories));
+      }
       if (mailProcessor == null)
       {
         throw new ArgumentNullException(nameof(mailProcessor));
+      }
+      if (options == null)
+      {
+        throw new ArgumentNullException(nameof(options));
       }
       if (logger == null)
       {
@@ -40,6 +61,8 @@ namespace myoddweb.classifier.core
       }
       _mailProcessor = mailProcessor;
       _logger = logger;
+      _categories = categories;
+      _options = options;
     }
 
     public void Monitor( Outlook._Folders folders)
@@ -129,9 +152,38 @@ namespace myoddweb.classifier.core
         }
 
         // get the new folder id
-        // var folderId = moveto.EntryID;
+        var folderId = moveto.EntryID;
 
-        _logger.LogVerbose($"About to move mail '{mailItem.Subject}' to folder '{moveto.Name}'");
+        // and guess where we might be wanting to go.
+        var posibleCategories = _categories.FindCategoriesByFolderId(folderId).ToList();
+        if (!posibleCategories.Any())
+        {
+          // log that we found nothing.
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' but I found no matching categories to classify it with.");
+
+          // if we cannot guess a valid category
+          // then there is nothing we can do.
+          return;
+        }
+
+        // log it
+        _logger.LogVerbose($"About to move mail '{mailItem.Subject}' to folder '{moveto.Name}' and I found {posibleCategories.Count} posible categories.");
+
+        // we found one or more posible, valid categories.
+        // if we have more than one, then we have to ask the user to pick.
+        // but if we only have one, then no need to ask anything always select the one.
+        if (posibleCategories.Count == 1)
+        {
+          // get the one item we selected.
+          var category = posibleCategories.First();
+
+          // we know this is a user selected item
+          // so we can get the weight from the options.
+          TasksController.Add( _mailProcessor.ClassifyAsync(itemId, category.Id, _options.UserWeight));
+
+          // log it
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' and classified as '{category.Name}'");
+        }
       }
       catch (Exception e)
       {

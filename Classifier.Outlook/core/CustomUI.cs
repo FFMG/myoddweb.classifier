@@ -180,7 +180,7 @@ namespace myoddweb.classifier.core
 
           // we have all the information we need
           // we can now categorize the mail.
-          if (Errors.Success == await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
+          if ( await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
           {
             // stop the timer and say how long it took...
             watch.Stop( "  [Success] Classifying took {0}." );
@@ -217,11 +217,12 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">The mail item we wish to categorise</param>
     /// <param name="id">The category id number we want to set this to.</param>
     /// <returns>boolean success or not.</returns>
-    private async Task<Errors> ClassifyMailAsync( _MailItem mailItem, uint id )
+    private async Task<bool> ClassifyMailAsync( _MailItem mailItem, uint id )
     {
       // we know this is a user selected item
       // so we can get the weight from the options.
-      return await MailProcessor.ClassifyAsync(mailItem, id, Engine.Options.UserWeight).ConfigureAwait(false);
+      var entryIdItem = mailItem.EntryID;
+      return await MailProcessor.ClassifyAsync(entryIdItem, id, Engine.Options.UserWeight).ConfigureAwait(false);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace myoddweb.classifier.interfaces
 {
@@ -23,6 +24,15 @@ namespace myoddweb.classifier.interfaces
     /// </summary>
     /// <param name="entryIdItem">The item we are moving.</param>
     void Add(string entryIdItem);
+
+    /// <summary>
+    /// Classify an item given an entry id.
+    /// </summary>
+    /// <param name="entryIdItem">The item we want to classify</param>
+    /// <param name="categoryId">The category of the item</param>
+    /// <param name="weight">The classification weight.</param>
+    /// <returns></returns>
+    Task<bool> ClassifyAsync(string entryIdItem, uint categoryId, uint weight);
 
     /// <summary>
     /// Add a range of mail entry ids to our list.
