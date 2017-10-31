@@ -92,6 +92,7 @@ namespace myoddweb.classifier.core
       return _classifyEngine?.GetCategoryFromUniqueId(uniqueIdentifier) ?? -1;
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Find a category given a category id.
     /// </summary>
@@ -115,6 +116,17 @@ namespace myoddweb.classifier.core
       // if we found a folder, then return it
       // otherwise return nothing at all.
       return category?.FolderId ?? "";
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Find all the posible categories, given a folder id.
+    /// </summary>
+    /// <param name="folderId"></param>
+    /// <returns></returns>
+    public IEnumerable<Category> FindCategoriesByFolderId(string folderId)
+    {
+      return _collection.FindCategoriesByFolderId(folderId);
     }
 
     /// <summary>
