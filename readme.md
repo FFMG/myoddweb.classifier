@@ -52,8 +52,9 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.5 (22/10/2017)
+#### 0.7.0.5 (31/10/2017)
 
+- Added - Added an option to train items that are manually moved from one folder to another.
 - Added - On start up we now log version number + engine number.
 - Added Exception logging, (higher lever than error)
 - Changed the way he handle emails when the wait time is 0, (we handle it right away).
@@ -62,6 +63,7 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
   - Changed from MSTest to NUnit, (because of Moq)
   - Create multiple interfaces for the engine.
 - Fixed an issue with logging, not all types of logs were added to the db.  
+- Fixed a couple of colour issues in the option dialog.
 
 #### 0.7.0.2-0.7.0.4 (04/10/2017)
 
