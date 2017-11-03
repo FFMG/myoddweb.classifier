@@ -13,6 +13,8 @@ namespace myoddweb.classifier
 
     private Outlook._Folders _folders;
 
+    private CustomUI _customUI;
+
     private ItemMove TheIemMove { get; set; }
 
     public IEngine TheEngine { get; set; }
@@ -74,7 +76,11 @@ namespace myoddweb.classifier
     /// </summary>
     private void CreateEngine()
     {
+      // create the engine
       TheEngine = new OutlookEngine(Application.Session.DefaultStore.GetRootFolder());
+
+      // set the engine
+      _customUI.SetEngine(TheEngine);
     }
 
     /// <summary>
@@ -93,6 +99,9 @@ namespace myoddweb.classifier
 
       // then create the mail processor
       TheMailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session);
+
+      // the mail processor
+      _customUI.SetMailProcessor(TheMailProcessor);
     }
 
     /// <summary>
@@ -164,13 +173,15 @@ namespace myoddweb.classifier
       folders.Process(_folders);
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Create a new menu item to handle inbox items. 
     /// </summary>
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI();
+      _customUI = new CustomUI();
+      return _customUI;
     }
 
     #region VSTO generated code
