@@ -119,7 +119,8 @@ protected:
   enum ProcType
   {
     procUnk = 0,
-    procInitialise,
+    procFirst = 1,
+    procInitialise = procFirst,
     procSetConfig,
     procGetConfig,
     procTrainEx,
@@ -143,19 +144,15 @@ protected:
     procGetLogEntries,
 
     procRelease,
+
+    procLast
   };
 
   HINSTANCE _hGetProcIDDLL;
-  HINSTANCE GetUnmanagedHinstance();
-  FARPROC GetUnmanagedFunction(ProcType procType);
+  const FARPROC GetUnmanagedFunction(ProcType procType) const;
 
   typedef std::unordered_map<ProcType, FARPROC> ProcsFarProc;
   ProcsFarProc _farProcs;
-
-private:
-  std::string _enginePath;
-
-  bool SetUnmanagedEnginePath( String^ enginePath );
 
 protected:
   // the name of the event viewer source.
@@ -170,5 +167,11 @@ private:
   bool _canUseEventLog;
   bool CanUseLog() const;
   void SetCanUseLog();
+
+private:
+  bool InitialiseUnmanagedHinstance(String^ enginePath);
+  bool InitialiseUnmanagedFunctions();
+  bool InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType procType);
+  bool CallUnmanagedInitialise(String^ databasePath);
 };
 
