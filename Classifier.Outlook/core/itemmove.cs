@@ -210,6 +210,9 @@ namespace myoddweb.classifier.core
         // do we want to be asked for multiple categories?
         if ( !_options.ReConfirmMultipleTainingCategory)
         {
+          // log that we found nothing.
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' but the option is set not to use this for training as there were more than one category to choose.");
+
           return;
         }
 
