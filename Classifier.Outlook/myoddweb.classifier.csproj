@@ -198,6 +198,12 @@
     <Compile Include="core\outlookengine.cs" />
     <Compile Include="core\outlooklogger.cs" />
     <Compile Include="core\taskscontroller.cs" />
+    <Compile Include="forms\ChooseCategoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\ChooseCategoryForm.Designer.cs">
+      <DependentUpon>ChooseCategoryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="interfaces\ICategories.cs" />
     <Compile Include="interfaces\IClassify.cs" />
     <Compile Include="interfaces\IConfig.cs" />
@@ -275,6 +281,9 @@
     <Compile Include="utils\LogData.cs" />
     <Compile Include="utils\StopWatch.cs" />
     <Compile Include="utils\typeloader.cs" />
+    <EmbeddedResource Include="forms\ChooseCategoryForm.resx">
+      <DependentUpon>ChooseCategoryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="forms\LogForm.resx">
       <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using myoddweb.classifier.forms;
 using myoddweb.classifier.interfaces;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -200,7 +202,45 @@ namespace myoddweb.classifier.core
 
           // log it
           _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' and classified as '{category.Name}'");
+
+          // done
+          return;
         }
+
+        // do we want to be asked for multiple categories?
+        if ( !_options.ReConfirmMultipleTainingCategory)
+        {
+          return;
+        }
+
+        // we have more than one item
+        using (var chooseCategoriesForm = new ChooseCategoryForm(posibleCategories, _categories, _options))
+        {
+          if (chooseCategoriesForm.ShowDialog() != DialogResult.OK)
+          {          // log it
+            _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' but was not classified as the user pressed 'Cancel'.");
+
+            // done
+            return;
+          }
+
+          // get the selected category.
+          var category = chooseCategoriesForm.SelectedCategory;
+          if (null == category )
+          {          // log it
+            _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' but was not classified as the user did not choose a category.");
+
+            // done
+            return;
+          }
+
+          // the user selected an item
+          TasksController.Add(_mailProcessor.ClassifyAsync(itemId, category.Id, _options.UserWeight));
+
+          // log it
+          _logger.LogInformation($"Mail '{mailItem.Subject}' was manually moved to folder '{moveto.Name}' and the user chose to have it classified as '{category.Name}'");
+        }
+
       }
       catch (Exception e)
       {
