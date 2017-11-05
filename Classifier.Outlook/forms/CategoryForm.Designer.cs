@@ -1,4 +1,4 @@
-﻿namespace myoddweb.classifier
+﻿namespace myoddweb.classifier.forms
 {
   partial class CategoryForm
   {

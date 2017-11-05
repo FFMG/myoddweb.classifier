@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Windows.Forms;
-using myoddweb.classifier.core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using myoddweb.classifier.core;
 using myoddweb.classifier.interfaces;
-using Outlook = Microsoft.Office.Interop.Outlook;
 
-namespace myoddweb.classifier
+namespace myoddweb.classifier.forms
 {
   public partial class CategoryForm : Form
   {
@@ -23,7 +22,7 @@ namespace myoddweb.classifier
     /// <summary>
     /// The outlook folder.
     /// </summary>
-    public IFolders _folders;
+    private readonly IFolders _folders;
 
     private Category GivenCategory { get; set; }
 
@@ -87,7 +86,7 @@ namespace myoddweb.classifier
       comboBoxFolders.DataSource = items;
 
       // do we have any folders?
-      if (_folders.GetFolders().Count() == 0)
+      if (!_folders.GetFolders().Any())
       {
         // there is nothing to select here, nothing much we can do really.
         // so we select the first item, (the 'n/a' one)
