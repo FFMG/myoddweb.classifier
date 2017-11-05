@@ -52,7 +52,7 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.5 (31/10/2017)
+#### 0.7.0.5 (05/11/2017)
 
 - Added - Added an option to train items that are manually moved from one folder to another.
   - Also added option to ask the user if they want to select category in the case where we have more than one.
