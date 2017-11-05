@@ -9,13 +9,13 @@ namespace myoddweb.classifier.forms
 {
   public partial class OptionsForm : Form
   {
-    public class ComboboxLogSizeValue
+    private class ComboboxLogSizeValue
     {
       public uint Size { get; set; }
       public override string ToString() { return Convert.ToString(Size); }
     }
 
-    public class ComboboxWeightValue
+    private class ComboboxWeightValue
     {
       public uint Weight { get; set; }
       public override string ToString() { return Convert.ToString(  Weight ); }
@@ -199,6 +199,9 @@ namespace myoddweb.classifier.forms
     /// </summary>
     private void RebuildMagnetsCombo()
     {
+      // don't sort it.
+      comboMagnets.Sorted = false;
+
       // remove everything
       comboMagnets.Items.Clear();
 
@@ -299,6 +302,9 @@ namespace myoddweb.classifier.forms
 
       // automatically train messages when we move it
       _engine.Options.ReAutomaticallyTrainMoveMessages = checkAutomaticallyMoveTrain.Checked;
+
+      // do we want to ask the user to choose when more than one category to choose from.
+      _engine.Options.ReConfirmMultipleTainingCategory = checkConfirmCategoryWhenMultiple.Checked;
 
       // automatically train messages?
       _engine.Options.ReAutomaticallyTrainMessages = checkAutomaticallyTrain.Checked;
@@ -469,6 +475,12 @@ namespace myoddweb.classifier.forms
       // automatically train messages when we move it
       checkAutomaticallyMoveTrain.Checked = _engine.Options.ReAutomaticallyTrainMoveMessages;
 
+      // do we want to ask the user what category to use when more than one.
+      checkConfirmCategoryWhenMultiple.Checked = _engine.Options.ReConfirmMultipleTainingCategory;
+
+      // if we are not training on move, then nothing to confirm
+      checkConfirmCategoryWhenMultiple.Enabled = checkAutomaticallyMoveTrain.Checked;
+
       // rebuild the combo
       RebuildCombos();
 
@@ -540,6 +552,11 @@ namespace myoddweb.classifier.forms
       {
         logForm.ShowDialog();
       }
+    }
+
+    private void checkAutomaticallyMoveTrain_CheckedChanged(object sender, EventArgs e)
+    {
+      checkConfirmCategoryWhenMultiple.Enabled = checkAutomaticallyMoveTrain.Checked;
     }
   }
 }

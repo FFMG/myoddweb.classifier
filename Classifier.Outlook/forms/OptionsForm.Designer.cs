@@ -30,7 +30,7 @@
     {
       this.reCheckCategories = new System.Windows.Forms.CheckBox();
       this.ok = new System.Windows.Forms.Button();
-      this.button1 = new System.Windows.Forms.Button();
+      this.btnCancel = new System.Windows.Forms.Button();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.reCheckIfCtrl = new System.Windows.Forms.CheckBox();
       this.checkCategoryIfUnknown = new System.Windows.Forms.CheckBox();
@@ -44,6 +44,7 @@
       this.labelUserTrained = new System.Windows.Forms.Label();
       this.labelMagnets = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.checkAutomaticallyMoveTrain = new System.Windows.Forms.CheckBox();
       this.label12 = new System.Windows.Forms.Label();
       this.numericMinPercentage = new System.Windows.Forms.NumericUpDown();
       this.labelMinPercentage = new System.Windows.Forms.Label();
@@ -70,7 +71,7 @@
       this.labelDefaultLogLevel = new System.Windows.Forms.Label();
       this.comboLogLevel = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.checkAutomaticallyMoveTrain = new System.Windows.Forms.CheckBox();
+      this.checkConfirmCategoryWhenMultiple = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -94,7 +95,7 @@
       // ok
       // 
       this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.ok.Location = new System.Drawing.Point(376, 517);
+      this.ok.Location = new System.Drawing.Point(375, 537);
       this.ok.Name = "ok";
       this.ok.Size = new System.Drawing.Size(75, 23);
       this.ok.TabIndex = 8;
@@ -102,15 +103,15 @@
       this.ok.UseVisualStyleBackColor = true;
       this.ok.Click += new System.EventHandler(this.Ok_Click);
       // 
-      // button1
+      // btnCancel
       // 
-      this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.button1.Location = new System.Drawing.Point(457, 517);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(79, 23);
-      this.button1.TabIndex = 9;
-      this.button1.Text = "&Cancel";
-      this.button1.UseVisualStyleBackColor = true;
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(456, 537);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(79, 23);
+      this.btnCancel.TabIndex = 9;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -180,7 +181,7 @@
       // 
       // Categories
       // 
-      this.Categories.Location = new System.Drawing.Point(13, 517);
+      this.Categories.Location = new System.Drawing.Point(12, 537);
       this.Categories.Name = "Categories";
       this.Categories.Size = new System.Drawing.Size(79, 23);
       this.Categories.TabIndex = 6;
@@ -190,7 +191,7 @@
       // 
       // Magnets
       // 
-      this.Magnets.Location = new System.Drawing.Point(98, 517);
+      this.Magnets.Location = new System.Drawing.Point(97, 537);
       this.Magnets.Name = "Magnets";
       this.Magnets.Size = new System.Drawing.Size(79, 23);
       this.Magnets.TabIndex = 7;
@@ -233,6 +234,7 @@
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.checkConfirmCategoryWhenMultiple);
       this.groupBox3.Controls.Add(this.checkAutomaticallyMoveTrain);
       this.groupBox3.Controls.Add(this.label12);
       this.groupBox3.Controls.Add(this.numericMinPercentage);
@@ -251,10 +253,21 @@
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Location = new System.Drawing.Point(12, 207);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(524, 195);
+      this.groupBox3.Size = new System.Drawing.Size(524, 215);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
+      // 
+      // checkAutomaticallyMoveTrain
+      // 
+      this.checkAutomaticallyMoveTrain.AutoSize = true;
+      this.checkAutomaticallyMoveTrain.Location = new System.Drawing.Point(7, 119);
+      this.checkAutomaticallyMoveTrain.Name = "checkAutomaticallyMoveTrain";
+      this.checkAutomaticallyMoveTrain.Size = new System.Drawing.Size(294, 17);
+      this.checkAutomaticallyMoveTrain.TabIndex = 24;
+      this.checkAutomaticallyMoveTrain.Text = "Automatically use messages moved to folders for training.";
+      this.checkAutomaticallyMoveTrain.UseVisualStyleBackColor = true;
+      this.checkAutomaticallyMoveTrain.CheckedChanged += new System.EventHandler(this.checkAutomaticallyMoveTrain_CheckedChanged);
       // 
       // label12
       // 
@@ -303,7 +316,7 @@
       // checkUnProcessedEmails
       // 
       this.checkUnProcessedEmails.AutoSize = true;
-      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 168);
+      this.checkUnProcessedEmails.Location = new System.Drawing.Point(6, 191);
       this.checkUnProcessedEmails.Name = "checkUnProcessedEmails";
       this.checkUnProcessedEmails.Size = new System.Drawing.Size(203, 17);
       this.checkUnProcessedEmails.TabIndex = 19;
@@ -313,7 +326,7 @@
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(84, 144);
+      this.label8.Location = new System.Drawing.Point(84, 167);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(27, 13);
       this.label8.TabIndex = 18;
@@ -322,7 +335,7 @@
       // labelDefaultClassifyDelay
       // 
       this.labelDefaultClassifyDelay.AutoSize = true;
-      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(361, 144);
+      this.labelDefaultClassifyDelay.Location = new System.Drawing.Point(362, 167);
       this.labelDefaultClassifyDelay.Name = "labelDefaultClassifyDelay";
       this.labelDefaultClassifyDelay.Size = new System.Drawing.Size(45, 13);
       this.labelDefaultClassifyDelay.TabIndex = 17;
@@ -331,7 +344,7 @@
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(127, 144);
+      this.label6.Location = new System.Drawing.Point(117, 167);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(130, 13);
       this.label6.TabIndex = 16;
@@ -339,7 +352,7 @@
       // 
       // numericUpDownClassifyDelay
       // 
-      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 142);
+      this.numericUpDownClassifyDelay.Location = new System.Drawing.Point(6, 165);
       this.numericUpDownClassifyDelay.Minimum = new decimal(new int[] {
             1,
             0,
@@ -431,7 +444,7 @@
       this.groupBox4.Controls.Add(this.labelDefaultLogLevel);
       this.groupBox4.Controls.Add(this.comboLogLevel);
       this.groupBox4.Controls.Add(this.label5);
-      this.groupBox4.Location = new System.Drawing.Point(13, 408);
+      this.groupBox4.Location = new System.Drawing.Point(13, 428);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(524, 103);
       this.groupBox4.TabIndex = 15;
@@ -526,28 +539,28 @@
       this.label5.TabIndex = 0;
       this.label5.Text = "Level";
       // 
-      // checkAutomaticallyMoveTrain
+      // checkConfirmCategoryWhenMultiple
       // 
-      this.checkAutomaticallyMoveTrain.AutoSize = true;
-      this.checkAutomaticallyMoveTrain.Location = new System.Drawing.Point(7, 119);
-      this.checkAutomaticallyMoveTrain.Name = "checkAutomaticallyMoveTrain";
-      this.checkAutomaticallyMoveTrain.Size = new System.Drawing.Size(294, 17);
-      this.checkAutomaticallyMoveTrain.TabIndex = 24;
-      this.checkAutomaticallyMoveTrain.Text = "Automatically use messages moved to folders for training.";
-      this.checkAutomaticallyMoveTrain.UseVisualStyleBackColor = true;
+      this.checkConfirmCategoryWhenMultiple.AutoSize = true;
+      this.checkConfirmCategoryWhenMultiple.Location = new System.Drawing.Point(23, 142);
+      this.checkConfirmCategoryWhenMultiple.Name = "checkConfirmCategoryWhenMultiple";
+      this.checkConfirmCategoryWhenMultiple.Size = new System.Drawing.Size(249, 17);
+      this.checkConfirmCategoryWhenMultiple.TabIndex = 25;
+      this.checkConfirmCategoryWhenMultiple.Text = "Confirm training category when multiple choices";
+      this.checkConfirmCategoryWhenMultiple.UseVisualStyleBackColor = true;
       // 
       // OptionsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(548, 552);
+      this.ClientSize = new System.Drawing.Size(548, 572);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.Magnets);
       this.Controls.Add(this.Categories);
       this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.button1);
+      this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.ok);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
@@ -576,7 +589,7 @@
 
     private System.Windows.Forms.CheckBox reCheckCategories;
     private System.Windows.Forms.Button ok;
-    private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button btnCancel;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.CheckBox checkCategoryIfUnknown;
     private System.Windows.Forms.CheckBox reCheckIfCtrl;
@@ -617,5 +630,6 @@
     private System.Windows.Forms.Label labelMinPercentage;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.CheckBox checkAutomaticallyMoveTrain;
+    private System.Windows.Forms.CheckBox checkConfirmCategoryWhenMultiple;
   }
 }

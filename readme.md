@@ -55,9 +55,11 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 #### 0.7.0.5 (31/10/2017)
 
 - Added - Added an option to train items that are manually moved from one folder to another.
+  - Also added option to ask the user if they want to select category in the case where we have more than one.
 - Added - On start up we now log version number + engine number.
 - Added Exception logging, (higher lever than error)
 - Updated to 1.6.5 engine.
+  - Sqlite 3.21.0
 - Changed the way he handle emails when the wait time is 0, (we handle it right away).
 - Ignored conversations no longer cause messages to be classified, (as they are normally deleted)
 - Did some code cleanup
