@@ -25,6 +25,26 @@ namespace myoddweb.classifier.core
       _options = options;
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    /// Log a system exception.
+    /// </summary>
+    /// <param name="exception"></param>
+    public void LogException(System.Exception exception)
+    {
+      while (true)
+      {
+        LogMessageToEngine(exception.ToString(), LogLevels.Exception );
+        if (exception.InnerException != null)
+        {
+          exception = exception.InnerException;
+          continue;
+        }
+        break;
+      }
+    }
+
+    /// <inheritdoc />
     /// <summary>
     /// Log an error message
     /// </summary>

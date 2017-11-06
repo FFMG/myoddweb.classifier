@@ -52,15 +52,21 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.5 (19/10/2017)
+#### 0.7.0.5 (05/11/2017)
 
+- Added - Added an option to train items that are manually moved from one folder to another.
+  - Also added option to ask the user if they want to select category in the case where we have more than one.
 - Added - On start up we now log version number + engine number.
+- Added Exception logging, (higher lever than error)
+- Updated to 1.6.5 engine.
+  - Sqlite 3.21.0
 - Changed the way he handle emails when the wait time is 0, (we handle it right away).
 - Ignored conversations no longer cause messages to be classified, (as they are normally deleted)
 - Did some code cleanup
   - Changed from MSTest to NUnit, (because of Moq)
   - Create multiple interfaces for the engine.
 - Fixed an issue with logging, not all types of logs were added to the db.  
+- Fixed a couple of colour issues in the option dialog.
 
 #### 0.7.0.2-0.7.0.4 (04/10/2017)
 

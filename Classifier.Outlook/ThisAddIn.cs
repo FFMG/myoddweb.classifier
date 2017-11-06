@@ -1,7 +1,6 @@
 ﻿using myoddweb.classifier.core;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using myoddweb.classifier.interfaces;
@@ -10,51 +9,117 @@ namespace myoddweb.classifier
 {
   public partial class ThisAddIn
   {
-    /// <summary>
-    /// The engine that does the classification.
-    /// </summary>
-    private OutlookEngine _engine;
-
-    private Outlook.Explorers _explorers;
+    private Outlook._Explorers _explorers;
 
     private Outlook._Folders _folders;
 
-    private MailProcessor _mailProcessor;
+    private CustomUI _customUI;
 
-    // all the ongoing tasks.
-    private List<Task> _tasks;
+    private ItemMove TheIemMove { get; set; }
 
-    public OutlookEngine TheEngine => _engine ?? (_engine = new OutlookEngine());
+    public IEngine TheEngine { get; set; }
 
-    public MailProcessor TheMailProcessor => _mailProcessor ?? (_mailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session));
+    public MailProcessor TheMailProcessor { get; private set; }
 
     private void ThisAddIn_Startup(object sender, EventArgs e)
     {
-      _tasks = new List<Task>();
-
-      // tell the engine what the folders are.
-      TheEngine.SetRootFolder(Application.Session.DefaultStore.GetRootFolder());
-
       // get the explorers.
-      _explorers = this.Application.Explorers;
+      _explorers = Application.Explorers;
+
+      // get all the folders.
+      _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
+
+      // create all the required values.
+      CreateEngine();
+      CreateMailProcessor();
+      CreateItemMove();
 
       // new email arrives.
       Application.NewMailEx += Application_NewMailEx;
 
-      // monitor for folder changes
-      _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
-
-      // listen for new folders
-      RegisterAllFolders();
-
-      // log the version 
-      LogStartupInformation();
-      
+      // look for item moves.
+      TasksController.Add(Task.Run(() => MonitorItemMove()));
+     
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
-        _tasks.Add(Task.Run(() => ParseUnprocessedEmails()));
+        TasksController.Add(Task.Run(() => ParseUnprocessedEmails()));
       }
+
+      // log the version 
+      LogStartupInformation();
+    }
+
+    /// <summary>
+    /// Note: This coode is run when the users unloads the add-on
+    ///       And the Startup function is called when the user re-loads it
+    ///       So it is not a terrible idea to unregister things here
+    /// Note: Outlook no longer raises this event. If you have code that 
+    ///       must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ThisAddIn_Shutdown(object sender, EventArgs e)
+    {
+      // wait for the tasks to be done
+      TasksController.WaitAll();
+
+      // unregister all the folders.
+      TheIemMove = null;
+
+      // we can now clear the engine as well.
+      TheEngine = null;
+    }
+
+    /// <summary>
+    /// Create the engine.
+    /// </summary>
+    private void CreateEngine()
+    {
+      // create the engine
+      TheEngine = new OutlookEngine(Application.Session.DefaultStore.GetRootFolder());
+
+      // set the engine
+      _customUI.SetEngine(TheEngine);
+    }
+
+    /// <summary>
+    /// Create the mail processor.
+    /// </summary>
+    private void CreateMailProcessor()
+    {
+      if (null == TheEngine)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+      if (null == _explorers)
+      {
+        throw new ArgumentNullException(nameof(_explorers));
+      }
+
+      // then create the mail processor
+      TheMailProcessor = new MailProcessor(TheEngine, _explorers.Application.Session);
+
+      // the mail processor
+      _customUI.SetMailProcessor(TheMailProcessor);
+    }
+
+    /// <summary>
+    /// Create the item mpve 
+    /// </summary>
+    private void CreateItemMove()
+    {
+      if (null == TheMailProcessor)
+      {
+        throw new ArgumentNullException(nameof(TheMailProcessor));
+      }
+      if (null == TheEngine)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+
+      // then start monitoring folders for user moving files.
+      TheIemMove = new ItemMove(TheEngine.Categories, TheMailProcessor, TheEngine.Options, TheEngine.Logger);
     }
 
     /// <summary>
@@ -62,6 +127,11 @@ namespace myoddweb.classifier
     /// </summary>
     private void LogStartupInformation()
     {
+      if (TheEngine == null)
+      {
+        throw new ArgumentNullException(nameof(TheEngine));
+      }
+
       // are we logging this?
       if (!TheEngine.Options.CanLog(LogLevels.Information))
       {
@@ -72,7 +142,7 @@ namespace myoddweb.classifier
       var version = GetFileVersion();
 
       // get the engine version.
-      var engineVersion = _engine.GetEngineVersion();
+      var engineVersion = TheEngine.GetEngineVersion();
 
       //Version version = Assembly.GetEntryAssembly().GetName().Version;
       var text = $"Started Classifier - [{version.Major}.{version.Minor}.{version.Build}.{version.Revision}] - (Engine [{engineVersion.Major}.{engineVersion.Minor}.{engineVersion.Build}])";
@@ -86,71 +156,32 @@ namespace myoddweb.classifier
       return new Version(fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart, fvi.FilePrivatePart);
     }
 
-    // parse all the unprocessed emails.
+    /// <summary>
+    /// Start monitoring all emails moving.
+    /// </summary>
+    private void MonitorItemMove()
+    {
+      TheIemMove.Monitor(_folders);
+    }
+
+    /// <summary>
+    /// parse all the unprocessed emails.
+    /// </summary>
     private void ParseUnprocessedEmails()
     {
       var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
       folders.Process(_folders);
     }
 
-    private void RegisterAllFolders()
-    {
-      foreach (Outlook.MAPIFolder folder in _folders)
-      {
-        folder.Items.ItemAdd += FolderItemAdd;
-      }
-    }
-
-    /// <summary>
-    /// Called when an item is added to a folder.
-    /// </summary>
-    /// <param name="item">What is been added.</param>
-    private void FolderItemAdd(object item)
-    {
-      try
-      {
-        var mailItem = (Outlook._MailItem)item;
-        if (mailItem == null)
-        {
-          return;
-        }
-
-        // the message note.
-        if (!MailProcessor.IsUsableClassNameForClassification(mailItem?.MessageClass))
-        {
-          return;
-        }
-
-        // get the new folder id
-        var folderId = ((Outlook.MAPIFolder)mailItem?.Parent).EntryID;
-
-        // get the item id
-        var itemId = mailItem?.EntryID;
-      }
-      catch (System.Runtime.InteropServices.COMException e)
-      {
-        TheEngine.Logger.LogError(e.ToString());
-      }
-    }
-
-    private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
-    {
-      _engine?.Release();
-      _engine = null;
-
-      Task.WaitAll(_tasks?.ToArray());
-      _tasks = null;
-      // Note: Outlook no longer raises this event. If you have code that 
-      //    must run when Outlook shuts down, see http://go.microsoft.com/fwlink/?LinkId=506785
-    }
-
+    /// <inheritdoc />
     /// <summary>
     /// Create a new menu item to handle inbox items. 
     /// </summary>
     /// <returns>CustomUI</returns>
     protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
     {
-      return new CustomUI();
+      _customUI = new CustomUI();
+      return _customUI;
     }
 
     #region VSTO generated code
@@ -161,8 +192,8 @@ namespace myoddweb.classifier
     /// </summary>
     private void InternalStartup()
     {
-      this.Startup += new System.EventHandler(ThisAddIn_Startup);
-      this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+      Startup += ThisAddIn_Startup;
+      Shutdown += ThisAddIn_Shutdown;
     }
 
     #endregion
@@ -170,9 +201,14 @@ namespace myoddweb.classifier
     private void Application_NewMailEx(string entryIdItem)
     {
       //  just call the async version of this
-      Application_NewMailExAsync(entryIdItem).Wait();
+      TasksController.Add( Application_NewMailExAsync(entryIdItem) );
     }
 
+    /// <summary>
+    /// Called when a new email arrives.
+    /// </summary>
+    /// <param name="entryIdItem">The new email</param>
+    /// <returns></returns>
     private Task<bool> Application_NewMailExAsync(string entryIdItem)
     {
       try
@@ -182,7 +218,7 @@ namespace myoddweb.classifier
       }
       catch (Exception ex)
       {
-        TheEngine.Logger.LogError(ex.ToString());
+        TheEngine.Logger.LogException(ex);
         return Task.FromResult(false);
       }
       return Task.FromResult(true);

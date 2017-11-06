@@ -78,6 +78,12 @@ namespace myoddweb.classifier.interfaces
     /// <returns></returns>
     string FindFolderIdByCategoryId(int categoryId);
 
+    /// <summary>
+    /// Find all the posible categories, given a folder id.
+    /// </summary>
+    /// <param name="folderId"></param>
+    /// <returns></returns>
+    IEnumerable<Category> FindCategoriesByFolderId(string folderId);
 
     /// <summary>
     /// Reload all the categories from the list of categories.

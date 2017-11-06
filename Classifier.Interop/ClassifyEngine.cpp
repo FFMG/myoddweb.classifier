@@ -2,6 +2,7 @@
 #include "ClassifyEngine.h"
 
 #include <msclr\marshal_cppstd.h>
+
 using namespace msclr::interop;
 
 using namespace System;
@@ -122,27 +123,149 @@ void ClassifyEngine::LogEventInfo(String^ sEvent)
   appLog->WriteEntry(sEvent, EventLogEntryType::Information);
 }
 
-FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
+/**
+ * Get an unmanaged function
+ * We will throw if the function does not exist. But this should never happen 
+ * As we check for all the functions at Load time.
+ * @param ProcType procType the function id we are looking for.
+ * @return const FARPROC the proc
+ */
+const FARPROC ClassifyEngine::GetUnmanagedFunction( ProcType procType) const
 {
   //  check if we have already loaded this function.
-  ProcsFarProc::const_iterator it = _farProcs.find(procType);
-  if (it != _farProcs.end())
+  auto it = _farProcs.find(procType);
+  if (it == _farProcs.end())
   {
-    return it->second;
+    throw new std::exception("Could not locate proc, was 'Initialise()' called?");
+  }
+  return it->second;
+}
+
+/***
+ * Get or create the unmanaged instance.
+ * @param String^ enginePath the path to the engine dll.
+ * @return bool
+ */
+bool ClassifyEngine::InitialiseUnmanagedHinstance(String^ enginePath)
+{
+  //  do we have it already?
+  if (nullptr != _hGetProcIDDLL)
+  {
+    // why are we trying to re-initialise the engine?
+    LogEventWarning("Trying to re-initialise the engine.");
+
+    // free the library and clear the value.
+    FreeLibrary(_hGetProcIDDLL);
+    _hGetProcIDDLL = nullptr;
   }
 
-  //  get the instance.
-  HINSTANCE hInstance = GetUnmanagedHinstance();
-  if (nullptr == hInstance)
+  // try and load the library
+  if ( enginePath->Length == 0)
   {
-    return nullptr;
+    LogEventError("The engine path is empty and not valid.");
+    return false;
   }
 
+  // does it exist?
+  if (!File::Exists(enginePath))
+  {
+    LogEventError(String::Format("Unable to locate the given engine '{0}'", enginePath));
+    return false;
+  }
+
+  // load the library
+  auto std_enginePath = marshal_as<std::string>(enginePath);
+  _hGetProcIDDLL = LoadLibraryA(std_enginePath.c_str() );
+  if (nullptr == _hGetProcIDDLL)
+  {
+    //  could not load the dll.
+    LogEventError("Could not load the Classifier.Engine.dll, is it in the correct location?");
+    return false;
+  }
+
+  // we are done
+  return true;
+}
+
+/***
+ * Inititalize the c++ plugins.
+ * @param String^ eventViewSource the source name we will be using in the event viewer.
+ * @param String^ enginePath the path to the dll engine.
+ * @param String^ databasePath the path to the database we want to use.
+ * @return boolean success or not.
+ */
+bool ClassifyEngine::Initialise(String^ eventViewSource, String^ enginePath, String^ databasePath)
+{
+  // set the event view first as might log things.
+  _eventViewSource = marshal_as<std::string>(eventViewSource);
+
+  // try and load the dll
+  if (!InitialiseUnmanagedHinstance(enginePath))
+  {
+    return false;
+  }
+
+  // prepare all the unmanaged functions.
+  if (!InitialiseUnmanagedFunctions( ))
+  {
+    return false;
+  }
+
+  // call the unmanaged function now and return the result for it
+  return CallUnmanagedInitialise( databasePath );
+}
+
+/**
+ * Call the unmanaged 'initialise' function, should only happen once.
+ * @param String^ databasePath the database we will be using.
+ * @return boolean
+ */
+bool ClassifyEngine::CallUnmanagedInitialise( String^ databasePath)
+{
+  // nowe we can try and do the actuall initialize call.
+  try
+  {
+    // the initialise function.
+    f_Initialise funci = (f_Initialise)GetUnmanagedFunction( ProcType::procInitialise );
+
+    // did it work?
+    if (nullptr == funci)
+    {
+      LogEventWarning("Could not locate the Classifier.Engine 'Initialise()' function?");
+      return false;
+    }
+
+    // call the actual function.
+    bool resultOfFunctionCall = funci( marshal_as<std::string>(databasePath).c_str() );
+
+    // log that it worked.
+    LogEventInfo("Classifier.Engine.dll has been initialised");
+
+    // return the result of the function call.
+    return resultOfFunctionCall;
+  }
+  catch (Exception^ ex )
+  {
+    //  there was a problem loading this here.
+    LogEventWarning(ex->Message);
+  }
+
+  // if we are here, then we did not manage to get the data.
+  return false;
+}
+
+/**
+ * Load a single unmanaged function and add it to the list.
+ * We will throw if the function does not exist.
+ * @return boolean success or not.
+ */
+bool ClassifyEngine::InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType procType)
+{
   FARPROC procAddress = nullptr;
   switch (procType)
   {
   case procRelease:
-    procAddress = GetProcAddress(_hGetProcIDDLL, "Release");
+    procAddress = GetProcAddress(hInstance, "Release");
     break;
 
   case procInitialise:
@@ -226,117 +349,49 @@ FARPROC ClassifyEngine::GetUnmanagedFunction(ProcType procType)
     break;
 
   default:
-    break;
+    auto s = marshal_as<std::string>(
+      String::Format("Could not locate the name of the given unmanaged function id. {0}", (int)procType)
+      );
+    throw new std::invalid_argument(s);
   }
 
   // save it, for next time.
+  if (procAddress == nullptr)
+  {
+    return false;
+  }
+
+  // add it to our list.
   _farProcs[procType] = procAddress;
-
-  // return what we found.
-  return procAddress;
-}
-
-/***
- * Get or create the unmanaged instance.
- * @return HINSTANCE the created instance or nullptr if it could not be created.
- */
-HINSTANCE ClassifyEngine::GetUnmanagedHinstance()
-{
-  //  do we have it already?
-  if (nullptr != _hGetProcIDDLL)
-  {
-    return _hGetProcIDDLL;
-  }
-
-  if (_enginePath.length() == 0)
-  {
-    LogEventWarning("The engine path has not been set?");
-    return false;
-  }
-
-  // load the library
-  _hGetProcIDDLL = LoadLibraryA( _enginePath.c_str() );
-  if (nullptr == _hGetProcIDDLL)
-  {
-    //  could not load the dll.
-    LogEventError("Could not load the Classifier.Engine.dll, is it in the correct location?");
-    return nullptr;
-  }
-
-  // we are done
-  return _hGetProcIDDLL;
-}
-
-bool ClassifyEngine::SetUnmanagedEnginePath(String^ enginePath)
-{
-  // assume that we have nothing
-  _enginePath.clear();
-
-  // does this file exist?
-  if (!File::Exists(enginePath))
-  {
-    LogEventError( String::Format( "Unable to locate the given engine '{0}'", enginePath ) );
-    return false;
-  }
-
-  // set the path to the dll.
-  _enginePath = marshal_as<std::string>( enginePath );
-
-  // log the success
-  LogEventInfo(String::Format("The engine path has been set '{0}'", enginePath));
-
-  // success
   return true;
 }
 
-/***
- * Inititalize the c++ plugins.
- * @param String^ eventViewSource the source name we will be using in the event viewer.
- * @param String^ enginePath the path to the dll engine.
- * @param String^ databasePath the path to the database we want to use.
- * @return boolean success or not.
+/**
+ * Load all the unmaneged functions and make sure that they are placed ub the unordered map
+ * @return boolean if anything went wrong.
  */
-bool ClassifyEngine::Initialise(String^ eventViewSource, String^ enginePath, String^ databasePath )
+bool ClassifyEngine::InitialiseUnmanagedFunctions()
 {
-  // set the event view first as might log things.
-  _eventViewSource = marshal_as<std::string>(eventViewSource);
-
-  // does this file exist?
-  if (!SetUnmanagedEnginePath(enginePath))
+  if (nullptr == _hGetProcIDDLL)
   {
+    LogEventInfo("Trying to load the unmanaged function, but the engine could not be loaded.");
     return false;
   }
 
-  // nowe we can try and do the actuall initialize call.
-  try
+  // load all the functions.
+  for (int i = ProcType::procFirst; i < ProcType::procLast; ++i)
   {
-    // the initialise function.
-    f_Initialise funci = (f_Initialise)GetUnmanagedFunction( ProcType::procInitialise );
-
-    // did it work?
-    if (nullptr == funci)
+    // try and load that function
+    if (!InitialiseUnmanagedFunction(_hGetProcIDDLL, static_cast<ProcType>(i)))
     {
-      LogEventWarning("Could not locate the Classifier.Engine 'Initialise()' function?");
+      // something clearly did not work for one of the functions.
+      // maybe we did not map a new value?
       return false;
     }
-
-    // call the actual function.
-    bool resultOfFunctionCall = funci( marshal_as<std::string>(databasePath).c_str() );
-
-    // log that it worked.
-    LogEventInfo("Classifier.Engine.dll has been initialised");
-
-    // return the result of the function call.
-    return resultOfFunctionCall;
-  }
-  catch (Exception^ ex )
-  {
-    //  there was a problem loading this here.
-    LogEventWarning(ex->Message);
   }
 
-  // if we are here, then we did not manage to get the data.
-  return false;
+  // all good.
+  return true;
 }
 
 bool ClassifyEngine::SetConfig(String^ configName, String^ configValue)

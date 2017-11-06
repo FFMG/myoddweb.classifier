@@ -11,14 +11,14 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// What will be processing the emails themselves.
     /// </summary>
-    private readonly MailProcessor _mailprocessor;
+    private readonly IMailProcessor _mailprocessor;
 
     /// <summary>
     /// Used to log messages.
     /// </summary>
     private readonly ILogger _logger;
 
-    public UnProcessedFolders( MailProcessor mailprocessor, ILogger logger )
+    public UnProcessedFolders( IMailProcessor mailprocessor, ILogger logger )
     {
       if (logger == null)
       {
@@ -75,7 +75,8 @@ namespace myoddweb.classifier.core
       }
       catch (Exception e)
       {
-        _logger.LogError($"There was an exception looking at unprocessed folders : {e}");
+        _logger.LogError("There was an exception looking at unprocessed folders");
+        _logger.LogException(e);
       }
       return ids;
     }
@@ -117,7 +118,8 @@ namespace myoddweb.classifier.core
         }
         catch (Exception e)
         {
-          _logger.LogError($"There was an exception looking at unprocessed folder : {e}");
+          _logger.LogError( "There was an exception looking at unprocessed folder");
+          _logger.LogException(e);
         }
       }
       return ids;

@@ -15,6 +15,11 @@ namespace myoddweb.classifier.core
     /// </summary>
     public int Count => Categories?.Count() ?? 0;
 
+    /// <summary>
+    /// Find a category given a category id.
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
     public Category FindCategoryById( int categoryId )
     {
       // find the fist item in the list that will match.
@@ -39,6 +44,14 @@ namespace myoddweb.classifier.core
       Categories = values;
     }
 
-
+    /// <summary>
+    /// Find all the posible categories, given a folder id.
+    /// </summary>
+    /// <param name="folderId">The folder id we are looking for.</param>
+    /// <returns></returns>
+    public IEnumerable<Category> FindCategoriesByFolderId(string folderId)
+    {
+      return Categories?.Where(f => f.FolderId == folderId) ?? new List<Category>();
+    }
   }
 }

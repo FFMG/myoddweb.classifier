@@ -31,12 +31,12 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The engine that does the classification.
     /// </summary>
-    private IEngine Engine => Globals.ThisAddIn.TheEngine;
+    private IEngine _engine;
 
     /// <summary>
     /// The mail processor
     /// </summary>
-    private MailProcessor MailProcessor => Globals.ThisAddIn.TheMailProcessor;
+    private MailProcessor _mailProcessor;
 
     private Office.IRibbonUI _ribbon;
 
@@ -44,9 +44,27 @@ namespace myoddweb.classifier.core
     {
     }
 
+    public void SetMailProcessor(MailProcessor mailProcessor)
+    {
+      if (mailProcessor == null)
+      {
+        throw new ArgumentNullException(nameof(mailProcessor));
+      }
+      _mailProcessor = mailProcessor;
+    }
+
+    public void SetEngine(IEngine engine)
+    {
+      if (engine == null)
+      {
+        throw new ArgumentNullException(nameof(engine));
+      }
+      _engine = engine;
+    }
+
     #region IRibbonExtensibility Members
 
-    public string GetCustomUI(string ribbonID)
+    public string GetCustomUI(string ribbonId)
     {
       return GetResourceText("myoddweb.classifier.Core.CustomUI.xml");
     }
@@ -92,13 +110,13 @@ namespace myoddweb.classifier.core
     //  https://naimhamadi.wordpress.com/2014/07/15/adding-a-custom-context-menu-item-to-outlook-2013/
     //
 
-    private static _MailItem GetMailItemFromRibbonControl(Office.IRibbonControl control)
+    private _MailItem GetMailItemFromRibbonControl(Office.IRibbonControl control)
     {
       var items = GetMultipleMailItemFromRibbonControl( control );
       return items?.First();
     }
 
-    private static List<_MailItem> GetMultipleMailItemFromRibbonControl(Office.IRibbonControl control)
+    private List<_MailItem> GetMultipleMailItemFromRibbonControl(Office.IRibbonControl control)
     {
       var explorer = Globals.ThisAddIn.Application.ActiveExplorer();
       if (explorer?.Selection == null || explorer.Selection.Count <= 0)
@@ -112,7 +130,7 @@ namespace myoddweb.classifier.core
         var item = selectionItem as _MailItem;
         if (null != item)
         {
-          if( !MailProcessor.IsUsableClassNameForClassification(item?.MessageClass) )
+          if( !_mailProcessor.IsUsableClassNameForClassification(item.MessageClass) )
           {
             continue;
           }
@@ -173,14 +191,14 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          var watch = StopWatch.Start(Engine.Logger);
+          var watch = StopWatch.Start(_engine.Logger);
 
           // log a message to indicate when we are trying to do.
           Debug.WriteLine($"Classifying message id {mailItem.EntryID} to category {categoryId}");
 
           // we have all the information we need
           // we can now categorize the mail.
-          if (Errors.Success == await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
+          if ( await ClassifyMailAsync(mailItem, categoryId).ConfigureAwait(false) )
           {
             // stop the timer and say how long it took...
             watch.Stop( "  [Success] Classifying took {0}." );
@@ -194,7 +212,7 @@ namespace myoddweb.classifier.core
           watch.Stop("  [Failed] Classifying took {0}.");
 
           // log the error
-          Engine.Logger.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
+          _engine.Logger.LogError($"There was a problem setting the mail for message id {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // no need to go further, something broke.
           return false;
@@ -202,7 +220,7 @@ namespace myoddweb.classifier.core
         catch
         {
           // log that this did not work.
-          Engine.Logger.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
+          _engine.Logger.LogError($"I was unable to categorise mail {mailItem.EntryID} ('{mailItem.Subject}').");
 
           // bail out.
           return false;
@@ -217,11 +235,12 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem">The mail item we wish to categorise</param>
     /// <param name="id">The category id number we want to set this to.</param>
     /// <returns>boolean success or not.</returns>
-    private async Task<Errors> ClassifyMailAsync( _MailItem mailItem, uint id )
+    private async Task<bool> ClassifyMailAsync( _MailItem mailItem, uint id )
     {
       // we know this is a user selected item
       // so we can get the weight from the options.
-      return await MailProcessor.ClassifyAsync(mailItem, id, Engine.Options.UserWeight).ConfigureAwait(false);
+      var entryIdItem = mailItem.EntryID;
+      return await _mailProcessor.ClassifyAsync(entryIdItem, id, _engine.Options.UserWeight).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -230,14 +249,15 @@ namespace myoddweb.classifier.core
     /// <param name="control"></param>
     public void OnManageMore(Office.IRibbonControl control)
     {
-      if (null == Engine.Options )
+      if (null == _engine.Options )
       {
         return;
       }
 
-      using (var optionsForm = new OptionsForm( engine: Engine, categories: Engine.Categories ))
+      using (var optionsForm = new OptionsForm( _engine, _engine.Categories ))
       {
-        optionsForm.ShowDialog();
+        optionsForm.StartPosition = FormStartPosition.CenterScreen;
+        optionsForm.ShowDialog( );
       }
     }
 
@@ -254,9 +274,9 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // show the displays
-      var categoryList = MailProcessor.GetStringFromMailItem(mailItem);
+      var categoryList = _mailProcessor.GetStringFromMailItem(mailItem, _engine.Logger);
       var text = string.Join(";", categoryList.Select(x => x.Value));
-      using (var detailsForm = new DetailsForm(Engine.Classify, Engine.Categories, text ))
+      using (var detailsForm = new DetailsForm(_engine.Classify, _engine.Categories, text ))
       {
         detailsForm.ShowDialog();
       }
@@ -275,7 +295,7 @@ namespace myoddweb.classifier.core
       var mailItem = items.First();
 
       // update the magnets list.
-      using (var magnetMailItemForm = new MagnetMailItemForm( Engine.Logger, Engine.Magnets, Engine.Categories, mailItem ))
+      using (var magnetMailItemForm = new MagnetMailItemForm( _engine.Logger, _engine.Magnets, _engine.Categories, mailItem ))
       {
         magnetMailItemForm.ShowDialog();
       }
@@ -318,17 +338,17 @@ namespace myoddweb.classifier.core
         WasMagnetUsed = false
       };
 
-      if ( !Engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
+      if ( !_engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
       {
         // if we do not want to check options, then we don't want to do that.
-        if ( !Engine.Options.ReCheckCategories )
+        if ( !_engine.Options.ReCheckCategories )
         {
           return guessCategoryResponse;
         }
 
         // if we currently have a category and we only want to check the
         // unknown categories, then we musn't check.
-        if (currentCategoryId != -1 && Engine.Options.CheckIfUnKnownCategory)
+        if (currentCategoryId != -1 && _engine.Options.CheckIfUnKnownCategory)
         {
           return guessCategoryResponse;
         }
@@ -338,19 +358,19 @@ namespace myoddweb.classifier.core
       Cursor.Current = Cursors.WaitCursor;
 
       // start the wath
-      var watch = StopWatch.Start(Engine.Logger);
+      var watch = StopWatch.Start(_engine.Logger);
 
       try
       {
         // guess where it could be going to now.
         if (mailItem != null)
         {
-          guessCategoryResponse = await MailProcessor.CategorizeAsync(mailItem).ConfigureAwait(false);
+          guessCategoryResponse = await _mailProcessor.CategorizeAsync(mailItem).ConfigureAwait(false);
         }
       }
       catch (Exception e)
       {
-        Engine.Logger.LogError(e.ToString());
+        _engine.Logger.LogError(e.ToString());
 
         // @todo we need to log that there was an issue.
         guessCategoryResponse = new MailProcessor.CategorizeResponse
@@ -384,22 +404,22 @@ namespace myoddweb.classifier.core
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if ( Engine.Categories.Count == 0 )
+      if ( _engine.Categories.Count == 0 )
       {
         return "";
       }
 
       // do we know the current category?
-      var currentCategory = mailItem == null ? null : MailProcessor.GetCategoryFromMailItem(mailItem);
+      var currentCategory = mailItem == null ? null : _mailProcessor.GetCategoryFromMailItem(mailItem);
 
       // get the current category if?
       var currentCategoryId = currentCategory == null ? -1 : (int)currentCategory.Id;
 
       // try and guess the new category
-      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, Engine.Categories.List).ConfigureAwait(false);
+      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, _engine.Categories.List).ConfigureAwait(false);
 
       // and create a menu for all of them.
-      foreach (var category in Engine.Categories.List )
+      foreach (var category in _engine.Categories.List )
       {
         var safeLabel = category.XmlName.Replace( "&amp;", "&amp;&amp;");
         var getImage = "";
@@ -429,7 +449,7 @@ namespace myoddweb.classifier.core
 
       // if we have existing categories, add a separator
       // otherwise we don't need to
-      if (Engine.Categories.Count > 0 )
+      if (_engine.Categories.Count > 0 )
       {
         translationsXml.Append(@"<menuSeparator id=""separator"" />");
       }
@@ -503,14 +523,14 @@ namespace myoddweb.classifier.core
     public bool IsMultipleItemsMenuVisible(Office.IRibbonControl control)
     {
       // if we have no engine, then we have a problem somehwere.
-      if (null == Engine)
+      if (null == _engine)
       {
         return false;
       }
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if (Engine.Categories.Count == 0 )
+      if (_engine.Categories.Count == 0 )
       {
         return false;
       }
@@ -527,14 +547,14 @@ namespace myoddweb.classifier.core
     public bool IsMenuVisible(Office.IRibbonControl control)
     {
       // if we have no engine, then we have a problem somehwere.
-      if (null == Engine)
+      if (null == _engine)
       {
         return false;
       }
 
       // if we have no categories then something is 'broken'
       // so we do not want our menu to show.
-      if (Engine.Categories.Count == 0  )
+      if (_engine.Categories.Count == 0  )
       {
         return false;
       }

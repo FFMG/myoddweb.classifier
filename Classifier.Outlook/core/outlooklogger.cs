@@ -57,6 +57,20 @@ namespace myoddweb.classifier.core
       return (bool)_eventSource;
     }
 
+    public void LogException( System.Exception e )
+    {
+      _parent?.LogException(e);
+
+      // log to the event log.
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
+      appLog.WriteEntry(e.ToString(), System.Diagnostics.EventLogEntryType.Error);
+    }
+
     /// <summary>
     /// Log an error message
     /// </summary>

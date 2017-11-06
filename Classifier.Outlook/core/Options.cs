@@ -38,6 +38,10 @@ namespace myoddweb.classifier.core
 
     private uint? _classifyDelaySeconds;
 
+    private bool? _reAutomaticallyTrainMoveMessages;
+
+    private bool? _reConfirmMultipleTainingCategory;
+
     /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
@@ -112,6 +116,45 @@ namespace myoddweb.classifier.core
       {
         _reAutomaticallyTrainMagnetMessages = value;
         _config.SetConfig("Option.ReAutomaticallyTrainMagnetMessages", (value ? "1" : "0"));
+      }
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Check if we want to train the message because we moved it from one folder to another
+    /// Assuming that the folder we moved it to has a category we can train to.
+    /// </summary>
+    public bool ReAutomaticallyTrainMoveMessages
+    {
+      get
+      {
+        return (bool)(_reAutomaticallyTrainMoveMessages ??
+                       (_reAutomaticallyTrainMoveMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMoveMessages", "1"))));
+      }
+      set
+      {
+        _reAutomaticallyTrainMoveMessages = value;
+        _config.SetConfig("Option.ReAutomaticallyTrainMoveMessages", (value ? "1" : "0"));
+      }
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// When we have more than one category to choose from, do we want to ask the user
+    /// To choose a category or do we assume that they picked nothing.
+    /// This is if the user does not want a dialog box to appear all the time.
+    /// </summary>
+    public bool ReConfirmMultipleTainingCategory
+    {
+      get
+      {
+        return (bool)(_reConfirmMultipleTainingCategory ??
+                      (_reConfirmMultipleTainingCategory = ("1" == _config.GetConfigWithDefault("Option.ReConfirmMultipleTainingCategory", "1"))));
+      }
+      set
+      {
+        _reConfirmMultipleTainingCategory = value;
+        _config.SetConfig("Option.ReConfirmMultipleTainingCategory", (value ? "1" : "0"));
       }
     }
 

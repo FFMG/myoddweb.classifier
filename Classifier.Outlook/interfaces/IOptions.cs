@@ -12,6 +12,8 @@
     ClassifyDelaySeconds = 1,
     ReCheckCategories = 1,
     ReAutomaticallyTrainMagnetMessages = 1,
+    ReAutomaticallyTrainMoveMessages = 1,
+    ReConfirmMultipleTainingCategory = 1,
     ReAutomaticallyTrainMessages = 0,
     ReCheckIfCtrlKeyIsDown = 1,
     CheckUnProcessedEmailsOnStartUp = 1,
@@ -83,6 +85,19 @@
     /// Check if we want to train the message because we used a magnet.
     /// </summary>
     bool ReAutomaticallyTrainMagnetMessages { get; set; }
+
+    /// <summary>
+    /// Check if we want to train the message because we moved it from one folder to another
+    /// Assuming that the folder we moved it to has a category we can train to.
+    /// </summary>
+    bool ReAutomaticallyTrainMoveMessages { get; set; }
+
+    /// <summary>
+    /// When we have more than one category to choose from, do we want to ask the user
+    /// To choose a category or do we assume that they picked nothing.
+    /// This is if the user does not want a dialog box to appear all the time.
+    /// </summary>
+    bool ReConfirmMultipleTainingCategory { get; set; }
 
     /// <summary>
     /// (re) Check all the categories all the time.

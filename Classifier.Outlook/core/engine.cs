@@ -46,16 +46,19 @@ namespace myoddweb.classifier.core
     /// </summary>
     public ILogger Logger => _logger ?? (_logger = new Logger(_classifyEngine, Options));
 
+    /// <inheritdoc />
     /// <summary>
     /// The logger.
     /// </summary>
     public IConfig Config => _config ?? (_config = new Config(_classifyEngine));
 
+    /// <inheritdoc />
     /// <summary>
     /// Get the magnets
     /// </summary>
     public IMagnets Magnets => _magnets ?? (_magnets = new Magnets(_classifyEngine));
 
+    /// <inheritdoc />
     /// <summary>
     /// Public accessor of the options.
     /// </summary>

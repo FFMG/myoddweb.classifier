@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using myoddweb.classifier.core;
 using myoddweb.classifier.interfaces;
-using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.forms
 {
@@ -21,7 +20,7 @@ namespace myoddweb.classifier.forms
     /// <summary>
     /// The folders.
     /// </summary>
-    public IFolders _folders;
+    private  readonly IFolders _folders;
 
     public CategoriesForm(ICategories categories, IConfig config, IFolders folders )
     {

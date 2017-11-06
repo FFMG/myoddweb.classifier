@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using myoddweb.viewer.utils;
@@ -11,7 +12,7 @@ using System.Net.Mail;
 
 namespace myoddweb.classifier.core
 {
-  public class MailProcessor
+  public class MailProcessor : IMailProcessor
   {
     /// <summary>
     /// Unique identitider to all messages that will contain our unique key.
@@ -41,6 +42,11 @@ namespace myoddweb.classifier.core
     /// The current session
     /// </summary>
     private readonly Outlook._NameSpace _session;
+
+    /// <summary>
+    /// The mail items we are currently processing
+    /// </summary>
+    private ConcurrentBag<string> _mailItemsBeingProcessed;
 
     /// <summary>
     /// The mail items we want to move and the categories we are moving them to.
@@ -92,6 +98,7 @@ namespace myoddweb.classifier.core
       _engine = engine;
       _session = session;
       _mailItems = new List<string>();
+      _mailItemsBeingProcessed = new ConcurrentBag<string>();
     }
 
     /// <summary>
@@ -103,6 +110,7 @@ namespace myoddweb.classifier.core
       Add(new List<string> { entryIdItem });
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Add a range of mail entry ids to our list.
     /// </summary>
@@ -220,7 +228,7 @@ namespace myoddweb.classifier.core
     private async Task HandleAllItemsInLock()
     {
       // wait for all the tasks now.
-      await Task.WhenAll(_mailItems.Select(HandleItemInLock).Cast<Task>().ToArray());
+      await Task.WhenAll(_mailItems.Select(HandleItemInLock).Cast<Task>().ToArray() ).ConfigureAwait( false );
 
       // clear the list.
       _mailItems = new List<string>();
@@ -251,17 +259,49 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="entryIdItem">The email we want to handle.</param>
     /// <returns></returns>
-    private async Task<bool> HandleItemInLock( string entryIdItem)
+    private async Task<bool> HandleItemInLock(string entryIdItem)
     {
+      try
+      {
+        //  flag this item as been processed.
+        _mailItemsBeingProcessed.Add( entryIdItem);
+        return await HandleItemFlagedAsBeingProcessedInLock( entryIdItem ).ConfigureAwait( false );
+      }
+      finally
+      {
+        // we are done processing this.
+        _mailItemsBeingProcessed = new ConcurrentBag<string>(_mailItemsBeingProcessed.Except(new[] { entryIdItem }));
+      }
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Are we currently busy with this mail item?
+    /// </summary>
+    /// <param name="itemId"></param>
+    /// <returns></returns>
+    public bool IsProccessing(string itemId)
+    {
+      // do we have that mail item in our list?
+      return _mailItemsBeingProcessed.Any( m => m == itemId );
+    }
+
+    /// <summary>
+    /// Handle the email
+    /// </summary>
+    /// <param name="entryIdItem">The email we want to handle.</param>
+    /// <returns></returns>
+    private async Task<bool> HandleItemFlagedAsBeingProcessedInLock(string entryIdItem)
+    { 
       Outlook._MailItem mailItem = null;
       try
       {
         // new email has arrived, we need to try and classify it.
         mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook._MailItem;
       }
-      catch (System.Runtime.InteropServices.COMException e)
+      catch (Exception e)
       {
-        _engine.Logger.LogError(e.ToString());
+        _engine.Logger.LogException( e );
       }
 
       if (mailItem == null)
@@ -373,7 +413,7 @@ namespace myoddweb.classifier.core
       }
       catch (Exception ex)
       {
-        _engine.Logger.LogError(ex.ToString());
+        _engine.Logger.LogException(ex);
         return false;
       }
       return true;
@@ -445,7 +485,7 @@ namespace myoddweb.classifier.core
       magnetWasUsed = (magnetCategory != -1);
 
       // otherwise, use the engine direclty.
-      return magnetWasUsed ? magnetCategory : _engine.Classify.Categorize(GetStringFromMailItem(mailItem));
+      return magnetWasUsed ? magnetCategory : _engine.Classify.Categorize(GetStringFromMailItem(mailItem, _engine.Logger ));
     }
 
     /// <summary>
@@ -503,7 +543,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.Logger.LogError(e.ToString());
+                _engine.Logger.LogException(e);
               }
             }
             break;
@@ -535,7 +575,7 @@ namespace myoddweb.classifier.core
               }
               catch (FormatException e)
               {
-                _engine.Logger.LogError(e.ToString());
+                _engine.Logger.LogException(e);
               }
             }
             break;
@@ -569,7 +609,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="mail"></param>
     /// <returns>string or null if the address does not exist.</returns>
-    public static string GetSmtpAddressForSender(Outlook._MailItem mail)
+    private static string GetSmtpAddressForSender(Outlook._MailItem mail)
     {
       if (mail == null)
       {
@@ -607,8 +647,9 @@ namespace myoddweb.classifier.core
     /// Given a mail item, we try and build an array of strings.
     /// </summary>
     /// <param name="mailItem">The mail item that has the information we are after.</param>
+    /// <param name="logger"></param>
     /// <returns>List list of items</returns>
-    public static Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem)
+    public Dictionary<MailStringCategories, string> GetStringFromMailItem(Outlook._MailItem mailItem, ILogger logger )
     {
       if (null == mailItem)
       {
@@ -626,7 +667,7 @@ namespace myoddweb.classifier.core
       {
         {MailStringCategories.Bcc, mailItem.BCC},
         {MailStringCategories.To, mailItem.To},
-        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem)?.Address},
+        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem, logger)?.Address},
         {MailStringCategories.SenderName, mailItem.SenderName},
         {MailStringCategories.Cc, mailItem.CC},
         {MailStringCategories.Subject, mailItem.Subject},
@@ -668,8 +709,9 @@ namespace myoddweb.classifier.core
     /// Given the mail item we try and get the email address of the sender.
     /// </summary>
     /// <param name="mail">the mail item that has the address</param>
+    /// <param name="logger">The logger</param>
     /// <returns>MailAddress or null if it does not exist.</returns>
-    public static MailAddress GetSmtpMailAddressForSender(Outlook._MailItem mail)
+    public static MailAddress GetSmtpMailAddressForSender(Outlook._MailItem mail, ILogger logger  )
     {
       try
       {
@@ -680,18 +722,20 @@ namespace myoddweb.classifier.core
         }
         return new MailAddress(address);
       }
-      catch (FormatException)
+      catch (FormatException e )
       {
+        logger?.LogException(e);
         return null;
       }
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// Given a mail item class name, we check if this is one we could classify.
     /// </summary>
     /// <param name="className">The classname we are checking</param>
     /// <returns>boolean if we can/could classify this mail item or not.</returns>
-    public static bool IsUsableClassNameForClassification(string className)
+    public bool IsUsableClassNameForClassification(string className)
     {
       switch (className)
       {
@@ -707,6 +751,36 @@ namespace myoddweb.classifier.core
       return false;
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    /// Classify an item given an entry id.
+    /// </summary>
+    /// <param name="entryIdItem">The item we want to classify</param>
+    /// <param name="categoryId">The category of the item</param>
+    /// <param name="weight">The classification weight.</param>
+    /// <returns></returns>
+    public async Task<bool> ClassifyAsync(string entryIdItem, uint categoryId, uint weight)
+    {
+      Outlook._MailItem mailItem = null;
+      try
+      {
+        // new email has arrived, we need to try and classify it.
+        mailItem = _session.GetItemFromID(entryIdItem, System.Reflection.Missing.Value) as Outlook._MailItem;
+      }
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
+      }
+
+      if (mailItem == null)
+      {
+        _engine.Logger.LogWarning($"Could not locate mail item {entryIdItem} to classify.");
+        return false;
+      }
+      return (await ClassifyAsync(mailItem, categoryId, weight).ConfigureAwait( false ) == Errors.Success);
+    }
+
+
     /// <summary>
     /// Try and classify a mail assyncroniously.
     /// </summary>
@@ -714,10 +788,10 @@ namespace myoddweb.classifier.core
     /// <param name="id">the category we are setting it to.</param>
     /// <param name="weight">The classification weight we will be using.</param>
     /// <returns></returns>
-    public async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight)
+    private async Task<Errors> ClassifyAsync(Outlook._MailItem mailItem, uint id, uint weight)
     {
       return await ClassifyAsync(GetUniqueIdentifierString(mailItem),
-                                  GetStringFromMailItem(mailItem),
+                                  GetStringFromMailItem(mailItem, _engine.Logger),
                                   id,
                                   weight).ConfigureAwait(false);
     }
@@ -806,8 +880,9 @@ namespace myoddweb.classifier.core
     /// Get all the mail addresses for the recipients.
     /// </summary>
     /// <param name="mail">The mail item</param>
+    /// <param name="logger"></param>
     /// <returns></returns>
-    public static List<MailAddress> GetSmtpMailAddressForRecipients(Outlook._MailItem mail)
+    public static List<MailAddress> GetSmtpMailAddressForRecipients(Outlook._MailItem mail, ILogger logger )
     {
       var mailAddresses = new List<MailAddress>();
       var addresses = GetSmtpAddressForRecipients(mail);
@@ -817,9 +892,10 @@ namespace myoddweb.classifier.core
         {
           mailAddresses.Add(new MailAddress(address));
         }
-        catch (FormatException)
+        catch (FormatException e)
         {
           // ignore invalid formats
+          logger.LogException(e);
         }
       }
       return mailAddresses;
