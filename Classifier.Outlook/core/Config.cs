@@ -106,6 +106,11 @@ namespace myoddweb.classifier.core
       // object
       if (typeof(T) == typeof(object))
       {
+        return (string)Convert.ChangeType(value, typeof(object));
+      }
+      // String
+      if (typeof(T) == typeof(string))
+      {
         return (string)Convert.ChangeType(value, typeof(string));
       }
       // Int64

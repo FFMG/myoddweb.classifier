@@ -27,14 +27,14 @@ namespace myoddweb.classifierUnitTest
     public void TestGetVersionNumber()
     {
       var versionNumber = TheEngine.GetEngineVersionNumber();
-      Assert.AreEqual(1006005, versionNumber );
+      Assert.AreEqual(1007000, versionNumber );
     }
 
     [Test]
     public void TestGetVersion()
     {
       var version = TheEngine.GetEngineVersion();
-      Assert.AreEqual( new Version(1, 6, 5, 0), version);
+      Assert.AreEqual( new Version(1, 7, 0, 0), version);
     }
   }
 }

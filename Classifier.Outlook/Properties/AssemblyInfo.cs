@@ -24,5 +24,6 @@ using System.Security;
 [assembly: Guid("0dea111e-f282-4cdc-b265-cd9b85be1eea")]
 
 // 0.8.0.1 - Some performance fixes.
+//           NewtonSoft 11.0.2
 [assembly: AssemblyVersion("0.8.0.1")]
 [assembly: AssemblyFileVersion("0.8.0.1")]
