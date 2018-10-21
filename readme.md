@@ -48,11 +48,16 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 ### From the code
 
 - Get the code
-- Build it using visual studio 2015 or later, (I have not tried the others).
+- Build it using visual studio 2017 or later, (I tried with 2015 as well ... and it works(ish)).
 - You can either debug and/or simply run outlook.
 
 ## Versions
-#### 0.7.0.5 (05/11/2017)
+#### 0.8.0.1 (xx/10/2018)
+- Some code cleanup
+- Updated to engine 1.7.0
+  - Sqlite 3.25.2
+
+#### 0.7.0.5 (09/11/2017)
 
 - Added - Added an option to train items that are manually moved from one folder to another.
   - Also added option to ask the user if they want to select category in the case where we have more than one.
