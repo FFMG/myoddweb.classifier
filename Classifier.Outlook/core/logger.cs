@@ -142,7 +142,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="olderThan"> the date we want to delte.</param>
     /// <returns>success or not</returns>
-    public bool ClearLogEntries(int olderThan)
+    public bool ClearLogEntries(long olderThan)
     {
       return _classifyEngine?.ClearLogEntries(olderThan) ?? false;
     }

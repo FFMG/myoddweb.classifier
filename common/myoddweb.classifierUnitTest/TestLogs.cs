@@ -263,7 +263,7 @@ namespace myoddweb.classifierUnitTest
 
       // 
       logger.ClearLogEntries(10);
-      iclassify.Verify(m => m.ClearLogEntries(It.IsAny<int>()), Times.Once);
+      iclassify.Verify(m => m.ClearLogEntries(It.IsAny<long>()), Times.Once);
     }
   }
 }

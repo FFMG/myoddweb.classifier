@@ -92,7 +92,7 @@ namespace myoddweb.classifierUnitTest64
     [TestCase(10)]
     [TestCase(0)]
     [TestCase(-10)]
-    public void ClearLogEntries_callsParent(int olderThan)
+    public void ClearLogEntries_callsParent(long olderThan)
     {
       var ilogger = new Mock<ILogger>();
       var logged = new OutlookLogger(EventViewSource, ilogger.Object);

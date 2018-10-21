@@ -123,7 +123,7 @@ namespace Classifier
       return _iEngine->Log(source, entry );
     }
 
-    bool Classify::ClearLogEntries(int olderThan)
+    bool Classify::ClearLogEntries(long long olderThan)
     {
       return _iEngine->ClearLogEntries(olderThan);
     }

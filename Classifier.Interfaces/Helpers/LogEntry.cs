@@ -27,6 +27,6 @@
     /// <summary>
     /// The unix date/time of the log entry
     /// </summary>
-    public int Unixtime { get; set; }
+    public long Unixtime { get; set; }
   }
 }

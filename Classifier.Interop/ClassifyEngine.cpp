@@ -871,7 +871,7 @@ int ClassifyEngine::Log(String^ source, String^ entry)
  * @param olderThan the date we want to delte.
  * @return success or not
  */
-bool ClassifyEngine::ClearLogEntries(int olderThan)
+bool ClassifyEngine::ClearLogEntries(long long olderThan)
 {
   f_ClearLogEntries funci = (f_ClearLogEntries)GetUnmanagedFunction(ProcType::procClearLogEntries);
 
