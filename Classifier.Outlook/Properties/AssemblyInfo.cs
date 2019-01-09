@@ -11,7 +11,7 @@ using System.Security;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://www.myoddweb.com")]
 [assembly: AssemblyProduct("Myoddweb.Classifier")]
-[assembly: AssemblyCopyright("Copyright (c) 2015-2017")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -24,6 +24,6 @@ using System.Security;
 [assembly: Guid("0dea111e-f282-4cdc-b265-cd9b85be1eea")]
 
 // 0.8.0.1 - Some performance fixes.
-//           NewtonSoft 11.0.2
+//           NewtonSoft 12.0.1
 [assembly: AssemblyVersion("0.8.0.1")]
 [assembly: AssemblyFileVersion("0.8.0.1")]

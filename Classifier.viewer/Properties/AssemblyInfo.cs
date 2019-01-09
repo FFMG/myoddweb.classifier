@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("myoddweb.viewer")]
-[assembly: AssemblyCopyright("Copyright (c) 2017")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
