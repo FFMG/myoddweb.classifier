@@ -25,5 +25,8 @@ using System.Security;
 
 // 0.8.0.1 - Some performance fixes.
 //           NewtonSoft 12.0.1
-[assembly: AssemblyVersion("0.8.0.1")]
-[assembly: AssemblyFileVersion("0.8.0.1")]
+// 0.9.0.0 - .NET 4.5.2.
+//           NewtonSoft 12.0.2
+//           Engine 1.7.1
+[assembly: AssemblyVersion("0.9.0.0")]
+[assembly: AssemblyFileVersion("0.9.0.0")]
