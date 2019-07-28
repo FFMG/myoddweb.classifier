@@ -891,7 +891,7 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
   // whatever happens, empty the list.
   entries = gcnew List<Classifier::Interfaces::Helpers::LogEntry^>();
 
-  f_GetLogEntries funci = (f_GetLogEntries)GetUnmanagedFunction(ProcType::procGetLogEntries );
+  const auto funci = (f_GetLogEntries)GetUnmanagedFunction(ProcType::procGetLogEntries );
 
   // did it work?
   if (nullptr == funci)

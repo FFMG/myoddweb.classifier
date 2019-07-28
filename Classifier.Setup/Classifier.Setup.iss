@@ -225,7 +225,7 @@ begin
    end
    else
    begin 
-     if not IsDotNetDetected('v4.5', 0) then begin
+     if not IsDotNetDetected('v4.5.2', 0) then begin
          MsgBox('MyOdd Classifier requires Microsoft .NET Framework 4.5.x'#13#13
                 'Please use Windows Update to install this version,'#13
                 'and then re-run the setup program.', mbInformation, MB_OK);

@@ -110,7 +110,7 @@ protected:
     int id;
     std::u16string source;
     std::u16string entry;
-    int unixtime;
+    long long unixtime;
   };
   // all the log entries, the id => LogEntry
   typedef std::unordered_map<int, LogEntry> LogEntries;
