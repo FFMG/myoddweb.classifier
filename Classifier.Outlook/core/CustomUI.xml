@@ -18,7 +18,8 @@
                    getContent="GetMultipleItemsContent"
                    getImage="GetImageClassify" />
       </contextMenu>
-  
+
+
   </contextMenus>
 </customUI>
 

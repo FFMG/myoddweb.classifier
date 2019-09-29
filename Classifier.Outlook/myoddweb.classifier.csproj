@@ -190,6 +190,8 @@
     <Compile Include="core\categories.cs" />
     <Compile Include="core\classify.cs" />
     <Compile Include="core\config.cs" />
+    <Compile Include="core\CustomUI.Folder.cs" />
+    <Compile Include="core\CustomUI.Item.cs" />
     <Compile Include="core\folders.cs" />
     <Compile Include="core\itemmove.cs" />
     <Compile Include="core\logger.cs" />
@@ -317,6 +319,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="core\CustomUI.Multiple.cs" />
     <None Include="myodd.classifier.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -343,7 +346,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="core\CustomUI.xml" />
+    <EmbeddedResource Include="core\CustomUI.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

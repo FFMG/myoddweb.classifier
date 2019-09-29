@@ -23,17 +23,23 @@ namespace myoddweb.classifier.utils
         {
           try
           {
-            Debug.WriteLine( "Trying to create instance of {0}...", t.FullName);
+            Debug.WriteLine($"Trying to create instance of {t.FullName}...");
             return assembly.CreateInstance(t.FullName) as T;
           }
           catch (TargetInvocationException e)
           {
-            if ( e.InnerException is DllNotFoundException)
+            if (e.InnerException is DllNotFoundException)
             {
               var dllNotFoundException = (DllNotFoundException) e.InnerException;
-              Debug.WriteLine( "A DllNotFoundException was thrown during the attempt to create a type instance. Are you missing some DLL dependencies?" );
+              Debug.WriteLine(
+                "A DllNotFoundException was thrown during the attempt to create a type instance. Are you missing some DLL dependencies?");
               throw dllNotFoundException;
             }
+
+            throw;
+          }
+          catch (Exception e)
+          {
             throw;
           }
         }
