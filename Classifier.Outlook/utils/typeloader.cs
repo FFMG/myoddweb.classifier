@@ -14,34 +14,35 @@ namespace myoddweb.classifier.utils
 
     public static T LoadTypeFromAssembly<T>(Assembly assembly) where T : class
     {
-      Type[] exportedTypes = assembly.GetExportedTypes();
-      foreach (Type t in exportedTypes)
+      var exportedTypes = assembly.GetExportedTypes();
+      foreach (var t in exportedTypes)
       {
         // When coming from different assemblies the types don't match, this is very fragile.
         //if( typeof( T ).IsAssignableFrom( t ) )
-        if (t.GetInterface(typeof(T).FullName, true) != null)
+        if (t.GetInterface(typeof(T).FullName ?? throw new InvalidOperationException(), true) == null)
         {
-          try
+          continue;
+        }
+        try
+        {
+          Debug.WriteLine($"Trying to create instance of {t.FullName}...");
+          return assembly.CreateInstance(t.FullName ?? throw new InvalidOperationException()) as T;
+        }
+        catch (TargetInvocationException e)
+        {
+          if (!(e.InnerException is DllNotFoundException dllNotFoundException))
           {
-            Debug.WriteLine($"Trying to create instance of {t.FullName}...");
-            return assembly.CreateInstance(t.FullName) as T;
+            throw;
           }
-          catch (TargetInvocationException e)
-          {
-            if (e.InnerException is DllNotFoundException)
-            {
-              var dllNotFoundException = (DllNotFoundException) e.InnerException;
-              Debug.WriteLine(
-                "A DllNotFoundException was thrown during the attempt to create a type instance. Are you missing some DLL dependencies?");
-              throw dllNotFoundException;
-            }
 
-            throw;
-          }
-          catch (Exception e)
-          {
-            throw;
-          }
+          Debug.WriteLine(
+            "A DllNotFoundException was thrown during the attempt to create a type instance. Are you missing some DLL dependencies?");
+          throw dllNotFoundException;
+
+        }
+        catch (Exception e)
+        {
+          throw;
         }
       }
       return null;

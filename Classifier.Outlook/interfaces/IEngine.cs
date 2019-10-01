@@ -1,5 +1,4 @@
 ﻿using System;
-using Classifier.Interfaces;
 
 namespace myoddweb.classifier.interfaces
 {
