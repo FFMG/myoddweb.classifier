@@ -32,7 +32,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -40,7 +40,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -76,24 +76,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)Output\Intermediate\$(Configuration)\Win32\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\Win32\</OutDir>
+    <IntDir>$(SolutionDir)Output\Intermediate\$(MSBuildProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)Output\Intermediate\$(Configuration)\x64\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\x64\</OutDir>
+    <IntDir>$(SolutionDir)Output\Intermediate\$(MSBuildProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>Classifier.Interop</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)Output\Intermediate\$(Configuration)\Win32\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\Win32\</OutDir>
+    <IntDir>$(SolutionDir)Output\Intermediate\$(MSBuildProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)Output\Intermediate\$(Configuration)\x64\</IntDir>
-    <OutDir>$(SolutionDir)Output\$(Configuration)\x64\</OutDir>
+    <IntDir>$(SolutionDir)Output\Intermediate\$(MSBuildProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)Output\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>Classifier.Interop</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
