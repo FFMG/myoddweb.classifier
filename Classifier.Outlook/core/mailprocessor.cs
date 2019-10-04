@@ -94,7 +94,7 @@ namespace myoddweb.classifier.core
     /// Add a range of mail entry ids to our list.
     /// </summary>
     /// <param name="ids"></param>
-    public void Add(List<string> ids)
+    public void Add( IList<string> ids)
     {
       _lock.EnterWriteLock();
       try

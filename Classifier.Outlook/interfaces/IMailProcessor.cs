@@ -38,7 +38,7 @@ namespace myoddweb.classifier.interfaces
     /// Add a range of mail entry ids to our list.
     /// </summary>
     /// <param name="ids"></param>
-    void Add(List<string> ids);
+    void Add( IList<string> ids);
 
     /// <summary>
     /// Are we currently busy with this mail item?

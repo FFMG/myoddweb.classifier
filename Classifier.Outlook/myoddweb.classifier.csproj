@@ -30,6 +30,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
@@ -45,7 +46,6 @@
     <FriendlyName>myoddweb.classifier</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -101,6 +101,7 @@
     <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MixedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <!--
     This section defines properties that are set when the "Release" configuration is selected.
@@ -192,6 +193,7 @@
     <Compile Include="core\config.cs" />
     <Compile Include="core\CustomUI.Folder.cs" />
     <Compile Include="core\CustomUI.Item.cs" />
+    <Compile Include="core\CustomUI.Multiple.cs" />
     <Compile Include="core\folders.cs" />
     <Compile Include="core\itemmove.cs" />
     <Compile Include="core\logger.cs" />
@@ -319,7 +321,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="core\CustomUI.Multiple.cs" />
     <None Include="myodd.classifier.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -388,7 +389,7 @@
     <ManifestKeyFile>myodd.classifier.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>08BD16A6EAF363C5B67DE8BEA9656E1AD066A999</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>60B831972ADCD0F77AB01C62EB5BEB3466B7464C</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

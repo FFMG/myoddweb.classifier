@@ -170,7 +170,7 @@ namespace myoddweb.classifier
     private void ParseUnprocessedEmails()
     {
       var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
-      folders.Process(_folders);
+      folders.Process(_folders, true );
     }
 
     /// <inheritdoc />

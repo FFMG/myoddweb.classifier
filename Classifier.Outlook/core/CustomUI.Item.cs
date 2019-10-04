@@ -1,6 +1,4 @@
-﻿using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Office.Interop.Outlook;
+﻿using Microsoft.Office.Core;
 
 namespace myoddweb.classifier.core
 {
@@ -11,12 +9,12 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control">The control.</param>
     /// <returns></returns>
-    public string GetContent(Microsoft.Office.Core.IRibbonControl control)
+    public string GetContent(IRibbonControl control)
     {
       // do we have a valid mail item?
       // if not then we are not going to display it.
-      var mailItem = GetMailItemFromRibbonControl(control);
-      return null == mailItem ? "" : GetContentWithPosibleMailItem(mailItem).Result;
+      var mailItem = GetMailItemFromControl(control);
+      return null == mailItem ? "" : GetContentWithPosibleMailItemAsync(mailItem).GetAwaiter().GetResult();
     }
     
     /// <summary>
@@ -24,7 +22,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    public string GetMainLabel(Microsoft.Office.Core.IRibbonControl control)
+    public string GetMainLabel(IRibbonControl control)
     {
       return "Myoddweb.Classifier";
     }
@@ -34,7 +32,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns>false if we have no valid message selected.</returns>
-    public bool IsMenuVisible(Microsoft.Office.Core.IRibbonControl control)
+    public bool IsMenuVisible(IRibbonControl control)
     {
       // if we have no engine, then we have a problem somehwere.
       if (null == _engine)
@@ -50,7 +48,7 @@ namespace myoddweb.classifier.core
       }
 
       //  if we have a valid item, then we don't return null.
-      return (GetMailItemFromRibbonControl(control) != null);
+      return (GetMailItemFromControl(control) != null);
     }
   }
 }

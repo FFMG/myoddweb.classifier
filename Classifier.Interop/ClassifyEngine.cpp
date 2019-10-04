@@ -663,13 +663,20 @@ int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
   
   // call the function
   std::map<int, std::u16string> u16categories;
-  int result = funci(u16categories);
-  if (result <= 0)
+  int result = 0;
+  try
   {
-    // either an error or nothing at all.
-    return result;
+    result = funci(u16categories);
+    if (result <= 0)
+    {
+      // either an error or nothing at all.
+      return result;
+    }
   }
-
+  catch(const std::system_error& e )
+  {
+    return 0;
+  }
   // we now need to recreate the result.
   for (std::map<int, std::u16string>::const_iterator it = u16categories.begin();
        it != u16categories.end();
