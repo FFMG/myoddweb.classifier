@@ -286,7 +286,7 @@ namespace myoddweb.classifier.core
       foreach (var mapiFolder in folders)
       {
         var unProcessedFolders = new UnProcessedFolders(Globals.ThisAddIn.TheMailProcessor, Globals.ThisAddIn.TheEngine.Logger);
-        unProcessedFolders.Process( mapiFolder, false );
+        TasksController.Add( unProcessedFolders.ProcessAsync( mapiFolder, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, false ) );
       }
     }
     
@@ -445,10 +445,10 @@ namespace myoddweb.classifier.core
 
       var menu = new StringBuilder();
 
-      menu.Append($@"<button id =""{"myoddweb.classifier_parse"}"" label=""{"Parse ..."}"" onAction=""{"OnParse"}"" />");
+      menu.Append($@"<button id=""{"myoddweb.classifier_parse"}"" label=""{"Parse ..."}"" onAction=""{"OnParse"}"" />");
 
       // add a separator
-      menu.Append(@"<menuSeparator id=""separator"" />");
+      menu.Append(BuildMenuSeparator(menu));
 
       // common menu
       menu.Append(BuildCommonMenus());
@@ -472,28 +472,33 @@ namespace myoddweb.classifier.core
       }
 
       // create the menu xml
-      var translationsXml = new StringBuilder();
+      var menu = new StringBuilder();
 
       // add all the categories.
-      translationsXml.Append( await BuildCategoriesMenusAsync(mailItem).ConfigureAwait( false ) );
-      
+      menu.Append( await BuildCategoriesMenusAsync(mailItem).ConfigureAwait( false ) );
+
       // add a separator
-      translationsXml.Append(@"<menuSeparator id=""separator"" />");
+      menu.Append(BuildMenuSeparator(menu));
 
       // show the email details
       // but only if we have selected one email.
       if (mailItem != null)
       {
-        translationsXml.Append(BuildMailItemMenu());
+        menu.Append(BuildMailItemMenu());
       }
 
       // add a separator
-      translationsXml.Append(@"<menuSeparator id=""separator"" />");
+      menu.Append(BuildMenuSeparator(menu));
 
       // add the common items.
-      translationsXml.Append(BuildCommonMenus() );
+      menu.Append(BuildCommonMenus() );
 
-      return BuildMenu(translationsXml);
+      return BuildMenu(menu);
+    }
+
+    private string BuildMenuSeparator(StringBuilder menu)
+    {
+      return $@"<menuSeparator id=""separator_{menu.Length}"" />";
     }
 
     /// <summary>
@@ -503,12 +508,12 @@ namespace myoddweb.classifier.core
     private StringBuilder BuildMailItemMenu()
     {
       var menu = new StringBuilder();
-      menu.Append( $@"<button id =""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
+      menu.Append( $@"<button id=""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
 
       // If the value is null, it means we have more than one mail item
       // we cannot set a magnet with multiple mails.
       // well, we could, but it is just to much to keep it simple to the user.
-      menu.Append( $@"<button id =""{"myoddweb.classifier_magnet"}"" label=""{"Magnet ..."}"" onAction=""{"OnMagnet"}"" />");
+      menu.Append( $@"<button id=""{"myoddweb.classifier_magnet"}"" label=""{"Magnet ..."}"" onAction=""{"OnMagnet"}"" />");
 
       return menu;
     }
@@ -530,7 +535,7 @@ namespace myoddweb.classifier.core
     private StringBuilder BuildCommonMenus()
     {
       return new StringBuilder(
-          $@"<button id =""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>"
+          $@"<button id=""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>"
         );
     }
 
@@ -578,7 +583,7 @@ namespace myoddweb.classifier.core
 
         // best guess selected image.
         menu.Append(
-          $@"<button id =""myoddweb.classifier_manage_{category.Id}"" label=""{safeLabel}"" onAction=""OnSelectCategory"" {getImage}/>"
+          $@"<button id=""myoddweb.classifier_manage_{category.Id}"" label=""{safeLabel}"" onAction=""OnSelectCategory"" {getImage}/>"
         );
       }
       return menu;

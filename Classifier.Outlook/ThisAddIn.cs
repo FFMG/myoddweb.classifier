@@ -43,7 +43,7 @@ namespace myoddweb.classifier
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
-        TasksController.Add(Task.Run(() => ParseUnprocessedEmails()));
+        TasksController.Add( ParseUnprocessedEmailsAsync() );
       }
 
       // log the version 
@@ -167,10 +167,10 @@ namespace myoddweb.classifier
     /// <summary>
     /// parse all the unprocessed emails.
     /// </summary>
-    private void ParseUnprocessedEmails()
+    private Task ParseUnprocessedEmailsAsync()
     {
       var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
-      folders.Process(_folders, true );
+      return folders.ProcessAsync(_folders, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, true );
     }
 
     /// <inheritdoc />

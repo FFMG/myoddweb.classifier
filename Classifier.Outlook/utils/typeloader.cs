@@ -40,10 +40,6 @@ namespace myoddweb.classifier.utils
           throw dllNotFoundException;
 
         }
-        catch (Exception e)
-        {
-          throw;
-        }
       }
       return null;
     }

@@ -42,6 +42,8 @@ namespace myoddweb.classifier.core
 
     private bool? _reConfirmMultipleTainingCategory;
 
+    private uint? _numberOfItemsToParse;
+
     /// <summary>
     /// (re) Check all the categories all the time.
     /// This is on by default as we have the other default option "CheckIfUnKnownCategory" also set to on.
@@ -49,11 +51,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint MinPercentage
     {
-      get
-      {
-        return (uint)(_minPercentage ??
-                       (_minPercentage = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.MinPercentage", Convert.ToString((uint)DefaultOptions.MinPercentage))))));
-      }
+      get =>
+        (uint)(_minPercentage ??
+               (_minPercentage = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.MinPercentage", Convert.ToString((uint)DefaultOptions.MinPercentage))))));
       set
       {
         _minPercentage = value;
@@ -67,11 +67,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint ClassifyDelaySeconds
     {
-      get
-      {
-        return (uint)(_classifyDelaySeconds ??
-                       (_classifyDelaySeconds = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.ClassifyDelaySeconds", "1")))));
-      }
+      get =>
+        (uint)(_classifyDelaySeconds ??
+               (_classifyDelaySeconds = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.ClassifyDelaySeconds", "1")))));
       set
       {
         _classifyDelaySeconds = value;
@@ -91,10 +89,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReCheckCategories
     {
-      get {
-        return (bool) (_reCheckCategories ??
-                       (_reCheckCategories = ("1" == _config.GetConfigWithDefault("Option.ReCheckCategories", "1"))));
-      }
+      get =>
+        (bool) (_reCheckCategories ??
+                (_reCheckCategories = ("1" == _config.GetConfigWithDefault("Option.ReCheckCategories", "1"))));
       set
       {
         _reCheckCategories = value;
@@ -107,11 +104,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReAutomaticallyTrainMagnetMessages
     {
-      get
-      {
-        return (bool)(_reAutomaticallyTrainMagnetMessages ??
-                       (_reAutomaticallyTrainMagnetMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", "1"))));
-      }
+      get =>
+        (bool)(_reAutomaticallyTrainMagnetMessages ??
+               (_reAutomaticallyTrainMagnetMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMagnetMessages", "1"))));
       set
       {
         _reAutomaticallyTrainMagnetMessages = value;
@@ -126,11 +121,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReAutomaticallyTrainMoveMessages
     {
-      get
-      {
-        return (bool)(_reAutomaticallyTrainMoveMessages ??
-                       (_reAutomaticallyTrainMoveMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMoveMessages", "1"))));
-      }
+      get =>
+        (bool)(_reAutomaticallyTrainMoveMessages ??
+               (_reAutomaticallyTrainMoveMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMoveMessages", "1"))));
       set
       {
         _reAutomaticallyTrainMoveMessages = value;
@@ -146,11 +139,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReConfirmMultipleTainingCategory
     {
-      get
-      {
-        return (bool)(_reConfirmMultipleTainingCategory ??
-                      (_reConfirmMultipleTainingCategory = ("1" == _config.GetConfigWithDefault("Option.ReConfirmMultipleTainingCategory", "1"))));
-      }
+      get =>
+        (bool)(_reConfirmMultipleTainingCategory ??
+               (_reConfirmMultipleTainingCategory = ("1" == _config.GetConfigWithDefault("Option.ReConfirmMultipleTainingCategory", "1"))));
       set
       {
         _reConfirmMultipleTainingCategory = value;
@@ -165,11 +156,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReAutomaticallyTrainMessages
     {
-      get
-      {
-        return (bool)(_reAutomaticallyTrainMessages ??
-                       (_reAutomaticallyTrainMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMessages", "0"))));
-      }
+      get =>
+        (bool)(_reAutomaticallyTrainMessages ??
+               (_reAutomaticallyTrainMessages = ("1" == _config.GetConfigWithDefault("Option.ReAutomaticallyTrainMessages", "0"))));
       set
       {
         _reAutomaticallyTrainMessages = value;
@@ -183,11 +172,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool ReCheckIfCtrlKeyIsDown
     {
-      get
-      {
-        return (bool)(_reCheckIfCtrlIsDown ??
-                       (_reCheckIfCtrlIsDown = ("1" == _config.GetConfigWithDefault("Option.ReCheckIfCtrlKeyIsDown", "1"))));
-      }
+      get =>
+        (bool)(_reCheckIfCtrlIsDown ??
+               (_reCheckIfCtrlIsDown = ("1" == _config.GetConfigWithDefault("Option.ReCheckIfCtrlKeyIsDown", "1"))));
       set
       {
         _reCheckIfCtrlIsDown = value;
@@ -200,11 +187,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint MagnetsWeight
     {
-      get
-      {
-        return (uint)(_magnetsWeight ??
-                       (_magnetsWeight = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.MagnetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
-      }
+      get =>
+        (uint)(_magnetsWeight ??
+               (_magnetsWeight = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.MagnetsWeight", Convert.ToString( (uint)DefaultOptions.MagnetsWeight))))));
       set
       {
         _magnetsWeight = value;
@@ -217,11 +202,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint UserWeight
     {
-      get
-      {
-        return (uint)(_userWeight ??
-                       (_userWeight = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.UserWeight", Convert.ToString( (uint)DefaultOptions.UserWeight))))));
-      }
+      get =>
+        (uint)(_userWeight ??
+               (_userWeight = (Convert.ToUInt32(_config.GetConfigWithDefault("Option.UserWeight", Convert.ToString( (uint)DefaultOptions.UserWeight))))));
       set
       {
         _userWeight = value;
@@ -234,11 +217,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint LogRetention
     {
-      get
-      {
-        return (uint)(_logRetention ??
-                       (_logRetention = Convert.ToUInt32(_config.GetConfigWithDefault("Option.LogRetention", Convert.ToString((uint)DefaultOptions.LogRetention)))));
-      }
+      get =>
+        (uint)(_logRetention ??
+               (_logRetention = Convert.ToUInt32(_config.GetConfigWithDefault("Option.LogRetention", Convert.ToString((uint)DefaultOptions.LogRetention)))));
       set
       {
         _logRetention = value;
@@ -251,11 +232,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public uint LogDisplaySize
     {
-      get
-      {
-        return (uint)( _logDisplaySize ??
-                       (_logDisplaySize = Convert.ToUInt32(_config.GetConfigWithDefault("Option.LogDisplaySize", Convert.ToString((uint)DefaultOptions.LogDisplaySize)))));
-      }
+      get =>
+        (uint)( _logDisplaySize ??
+                (_logDisplaySize = Convert.ToUInt32(_config.GetConfigWithDefault("Option.LogDisplaySize", Convert.ToString((uint)DefaultOptions.LogDisplaySize)))));
       set
       {
         _logDisplaySize = value;
@@ -268,11 +247,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public LogLevels LogLevel
     {
-      get
-      {
-        return (LogLevels)(_logLevel ??
-                       (_logLevel = (LogLevels)(int.Parse(_config.GetConfigWithDefault("Option.LogLevels", $"{(uint)DefaultOptions.LogLevel}")))));
-      }
+      get =>
+        (LogLevels)(_logLevel ??
+                    (_logLevel = (LogLevels)(int.Parse(_config.GetConfigWithDefault("Option.LogLevels", $"{(uint)DefaultOptions.LogLevel}")))));
       set
       {
         _logLevel = value;
@@ -286,11 +263,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool CheckUnProcessedEmailsOnStartUp
     {
-      get
-      {
-        return (bool)(_checkUnProcessedEmailsOnStartUp ??
-                       (_checkUnProcessedEmailsOnStartUp = ("1" == _config.GetConfigWithDefault("Option.CheckUnProcessedEmailsOnStartUp", "1"))));
-      }
+      get =>
+        (bool)(_checkUnProcessedEmailsOnStartUp ??
+               (_checkUnProcessedEmailsOnStartUp = ("1" == _config.GetConfigWithDefault("Option.CheckUnProcessedEmailsOnStartUp", "1"))));
       set
       {
         _checkUnProcessedEmailsOnStartUp = value;
@@ -304,11 +279,9 @@ namespace myoddweb.classifier.core
     /// </summary>
     public bool CheckIfUnKnownCategory
     {
-      get
-      {
-        return (bool)(_checkIfUnknownCategory ??
-                       (_checkIfUnknownCategory = ("1" == _config.GetConfigWithDefault("Option.CheckIfUnKnownCategory", "1"))));
-      }
+      get =>
+        (bool)(_checkIfUnknownCategory ??
+               (_checkIfUnknownCategory = ("1" == _config.GetConfigWithDefault("Option.CheckIfUnKnownCategory", "1"))));
       set
       {
         _checkIfUnknownCategory = value;
@@ -318,11 +291,9 @@ namespace myoddweb.classifier.core
 
     public uint CommonWordsMinPercent
     {
-      get
-      {
-        return (uint)(_commonWordsMinPercent ?? 
-                     (_commonWordsMinPercent = Convert.ToUInt32(_config.GetConfigWithDefault("Option.CommonWordsMinPercent", Convert.ToString((uint)DefaultOptions.CommonWordsMinPercent)))));
-      }
+      get =>
+        (uint)(_commonWordsMinPercent ?? 
+               (_commonWordsMinPercent = Convert.ToUInt32(_config.GetConfigWithDefault("Option.CommonWordsMinPercent", Convert.ToString((uint)DefaultOptions.CommonWordsMinPercent)))));
       set
       {
         _commonWordsMinPercent = value;
@@ -330,6 +301,18 @@ namespace myoddweb.classifier.core
       }
     }
 
+    public uint NumberOfItemsToParse
+    {
+      get =>
+        (uint)(_numberOfItemsToParse ??
+               (_numberOfItemsToParse = Convert.ToUInt32(_config.GetConfigWithDefault("Option.NumberOfItemsToParse", Convert.ToString((uint)DefaultOptions.NumberOfItemsToParse)))));
+      set
+      {
+        _numberOfItemsToParse = value;
+        _config.SetConfig("Option.NumberOfItemsToParse", Convert.ToString(value));
+      }
+    }
+    
     /// <summary>
     /// Check if we can log given a certain log level.
     /// </summary>
@@ -350,11 +333,7 @@ namespace myoddweb.classifier.core
     public Options(IConfig config)
     {
       //  cannot be null.
-      if (config == null)
-      {
-        throw new ArgumentNullException(nameof(config));
-      }
-      _config = config;
+      _config = config ?? throw new ArgumentNullException(nameof(config));
     }
   }
 }
