@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using myoddweb.viewer.utils;
 using myoddweb.classifier.utils;
@@ -55,21 +56,34 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// Our lock...
     /// </summary>
-    private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+    private readonly SemaphoreSlim _lock = new SemaphoreSlim(1,1);
+
+    /// <summary>
+    /// The current token
+    /// </summary>
+    private CancellationToken _token;
 
     /// <inheritdoc />
     public DateTime LastProcessed {
       get
       {
-        _lock.EnterReadLock();
         try
         {
-          var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, -1);
-          return -1 == last ? DateTime.Now : Helpers.UnixToDateTime(last);
+          _lock.Wait(_token);
+          try
+          {
+            var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, -1);
+            return -1 == last ? DateTime.Now : Helpers.UnixToDateTime(last);
+          }
+          finally
+          {
+            _lock.Release();
+          }
         }
-        finally
+        catch (OperationCanceledException)
         {
-          _lock.ExitReadLock();
+          // ignore this as we cancelled
+          return DateTime.MinValue;
         }
       }
     }
@@ -81,12 +95,49 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
+    /// Start the processing of mails.
+    /// </summary>
+    /// <param name="token"></param>
+    public void Start(CancellationToken token)
+    {
+      _token = token;
+    }
+
+    /// <summary>
+    /// Stop the mail processing
+    /// </summary>
+    public void Stop()
+    {
+      try
+      {
+        // surely we cancelled!
+        Contract.Assert( _token.IsCancellationRequested );
+
+        // of course we cannot use the same token.
+        _lock.Wait( CancellationToken.None );
+        try
+        {
+          _mailItems.Clear();
+          StopTimerInLock();
+        }
+        finally
+        {
+          _lock.Release();
+        }
+      }
+      catch 
+      {
+        // ignore this, we are getting out
+      }
+    }
+
+    /// <summary>
     /// Add a mail item to be moved to the folder.
     /// </summary>
     /// <param name="entryIdItem">The item we are moving.</param>
-    public void Add(string entryIdItem)
+    public Task AddAsync(string entryIdItem)
     {
-      Add(new List<string> { entryIdItem });
+      return AddAsync( new List<string> { entryIdItem });
     }
 
     /// <inheritdoc />
@@ -94,16 +145,22 @@ namespace myoddweb.classifier.core
     /// Add a range of mail entry ids to our list.
     /// </summary>
     /// <param name="ids"></param>
-    public void Add( IList<string> ids)
+    public async Task AddAsync( IList<string> ids)
     {
-      _lock.EnterWriteLock();
+      await _lock.WaitAsync(_token).ConfigureAwait( false );
       try
       {
-        AddInLockAsync(ids).GetAwaiter().GetResult();
+        AddInLock(ids);
       }
       finally
       {
-        _lock.ExitWriteLock();
+        _lock.Release();
+      }
+
+      //  if the delay is set to 0 then do everything now.
+      if (0 == _engine.Options.ClassifyDelaySeconds)
+      {
+        await HandleAllItemsInLock().ConfigureAwait(false);
       }
     }
 
@@ -112,7 +169,7 @@ namespace myoddweb.classifier.core
     /// We are inside a lock.
     /// </summary>
     /// <param name="ids"></param>
-    private async Task AddInLockAsync( IList<string> ids)
+    private void AddInLock( IList<string> ids)
     { 
       //  anything to do?
       if ( !ids.Any() )
@@ -124,11 +181,7 @@ namespace myoddweb.classifier.core
       _mailItems.UnionWith(ids);
 
       //  if the delay is set to 0 then do everything now.
-      if (0 == _engine.Options.ClassifyDelaySeconds)
-      {
-        await HandleAllItemsInLock().ConfigureAwait(false);
-      }
-      else
+      if (0 != _engine.Options.ClassifyDelaySeconds)
       {
         // start the timer
         StartTimerInLock();
@@ -145,7 +198,7 @@ namespace myoddweb.classifier.core
 
       // recreate the timer, we cannot use a value of 0 in the timer. 
       _ticker = new System.Timers.Timer(0 == _engine.Options.ClassifyDelaySeconds ? 1 : _engine.Options.ClassifyDelayMilliseconds);
-      _ticker.Elapsed += async (sender, e) => await HandleTimerAsync();
+      _ticker.Elapsed += async (sender, e) => await HandleTimerAsync().ConfigureAwait(false);
       _ticker.AutoReset = true;
       _ticker.Enabled = true;
     }
@@ -168,36 +221,95 @@ namespace myoddweb.classifier.core
 
     private async Task<bool> HandleTimerAsync()
     {
-      _lock.EnterWriteLock();
+      if (_ticker == null)
+      {
+        return false;
+      }
+
       try
       {
-        if( _ticker == null )
+        await _lock.WaitAsync(_token).ConfigureAwait(false);
+        try
         {
-          return false;
+          // does the time still exist?
+          if (_ticker == null)
+          {
+            return false;
+          }
+
+          // stop the lock
+          StopTimerInLock();
         }
-        return await HandleTimerInLock().ConfigureAwait( false );
+        finally
+        {
+          _lock.Release();
+        }
       }
-      finally
+      catch (OperationCanceledException )
       {
-        _lock.ExitWriteLock();
+        // ignore this cancelled operation.
+      }
+
+      // the timer might have restarted already
+      // but it's fine as we are going to handle the items we have here.
+      return await HandleAllItemsAsync().ConfigureAwait(false);
+    }
+
+    private async Task<bool> HandleAllItemsAsync()
+    {
+      try
+      {
+        string[] items;
+        await _lock.WaitAsync(_token).ConfigureAwait(false);
+        try
+        {
+          // get a clone of all the items
+          items = _mailItems.ToArray();
+
+          // clear the list.
+          _mailItems.Clear();
+        }
+        finally
+        {
+          _lock.Release();
+        }
+        return await HandleAllItemsAsync( items ).ConfigureAwait( false );
+      }
+      catch (OperationCanceledException )
+      {
+        // ignore this as we cancelled the operation
+        return false;
       }
     }
 
-    /// <summary>
-    /// Fired when the timer even it called.
-    /// </summary>
-    /// <returns></returns>
-    private async Task<bool> HandleTimerInLock()
+    private async Task<bool> HandleAllItemsAsync(IReadOnlyCollection<string> items)
     {
-      // we are inside the lock
-      // so we can stop the timer
-      StopTimerInLock();
+      // we can now process them
+      foreach (var item in items)
+      {
+        try
+        {
+          await _lock.WaitAsync(_token);
+          try
+          {
+            // handle this item
+            await HandleItemInLock(item).ConfigureAwait(false);
 
-      // handle all the mail items
-      await HandleAllItemsInLock().ConfigureAwait( false );
-
-      // we are done,
-      return true;
+            // get out now if needed.
+            _token.ThrowIfCancellationRequested();
+          }
+          finally
+          {
+            _lock.Release();
+          }
+        }
+        catch (OperationCanceledException )
+        {
+          // ignore this as we cancelled
+          return false;
+        }
+      }
+      return items.Count > 0;
     }
 
     /// <summary>
@@ -220,7 +332,7 @@ namespace myoddweb.classifier.core
     private void UpdateLastProcessedEmailInLock(Outlook._MailItem mailItem)
     {
       // the current time
-      var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime);
+      var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime > DateTime.Now ? DateTime.Now : mailItem.ReceivedTime );
 
       // get the last processed time
       var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, 0);
@@ -242,6 +354,9 @@ namespace myoddweb.classifier.core
     {
       try
       {
+        // bail out if needed.
+        _token.ThrowIfCancellationRequested();
+
         //  flag this item as been processed.
         _mailItemsBeingProcessed.Add( entryIdItem);
         return await HandleItemFlagedAsBeingProcessedInLock( entryIdItem ).ConfigureAwait( false );

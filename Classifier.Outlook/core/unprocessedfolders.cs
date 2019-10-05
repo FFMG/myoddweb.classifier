@@ -3,12 +3,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using myoddweb.classifier.forms;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.core
 {
-  public class UnProcessedFolders
+  public class UnProcessedFolders : IDisposable
   {
+    /// <summary>
+    /// Our progress bar
+    /// </summary>
+    private ProgressForm _progress;
+
     /// <summary>
     /// What will be processing the emails themselves.
     /// </summary>
@@ -21,17 +27,10 @@ namespace myoddweb.classifier.core
 
     public UnProcessedFolders( IMailProcessor mailprocessor, ILogger logger )
     {
-      if (logger == null)
-      {
-        throw new ArgumentNullException(nameof(logger));
-      }
-      if (mailprocessor == null)
-      {
-        throw new ArgumentNullException(nameof(mailprocessor));
-      }
+      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      _mailprocessor = mailprocessor ?? throw new ArgumentNullException(nameof(mailprocessor));
 
-      _logger = logger;
-      _mailprocessor = mailprocessor;
+      _progress = new ProgressForm();
     }
 
     /// <summary>
@@ -40,20 +39,9 @@ namespace myoddweb.classifier.core
     /// <param name="folders"></param>
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
-    public Task ProcessAsync(Outlook._Folders folders, int limit, bool includeSubfolders)
+    public async Task ProcessAsync(Outlook._Folders folders, int limit, bool includeSubfolders)
     {
-      // then parse all the folders.
-      return Task.Run(() => Process(folders, limit, includeSubfolders));
-    }
 
-    /// <summary>
-    /// Process all the un-processed emails in the given folder.
-    /// </summary>
-    /// <param name="folders"></param>
-    /// <param name="limit"></param>
-    /// <param name="includeSubfolders"></param>
-    private void Process(IEnumerable folders, int limit, bool includeSubfolders)
-    {
       // get the last time we processed an email and create a filter for it.
       var lastProccessed = _mailprocessor.LastProcessed;
       var filter = $"[ReceivedTime]>'{lastProccessed:g}'";
@@ -63,7 +51,12 @@ namespace myoddweb.classifier.core
 
       // then parse all the folders.
       var ids = GetUnprocessedEmailsInFolders( folders, limit, includeSubfolders, filter);
-      _mailprocessor.Add(ids);
+
+      // we are done with the progress bar 
+      CloseProgressBar();
+
+      // we can then add the ids we have to be processed.
+      await _mailprocessor.AddAsync( ids );
     }
 
     /// <summary>
@@ -72,23 +65,15 @@ namespace myoddweb.classifier.core
     /// <param name="folder"></param>
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
-    public Task ProcessAsync(Outlook.MAPIFolder folder, int limit, bool includeSubfolders )
+    public async Task ProcessAsync(Outlook.MAPIFolder folder, int limit, bool includeSubfolders )
     {
-      // then parse this folder.
-      return Task.Run( () => Process(folder, limit, includeSubfolders ));
-    }
-
-    /// <summary>
-    /// Process all the un-processed emails in the given folder.
-    /// </summary>
-    /// <param name="folder"></param>
-    /// <param name="limit"></param>
-    /// <param name="includeSubfolders"></param>
-    private void Process(Outlook.MAPIFolder folder, int limit, bool includeSubfolders)
-    {
-      // then parse all the folders.
       var ids = GetUnprocessedEmailsInFolder(folder, limit, includeSubfolders, "");
-      _mailprocessor.Add(ids);
+
+      // we are done with the progress bar 
+      CloseProgressBar();
+
+      // then add whatever we found to the list
+      await _mailprocessor.AddAsync(ids).ConfigureAwait( false );
     }
 
     /// <summary>
@@ -158,8 +143,15 @@ namespace myoddweb.classifier.core
       }
 
       var restrictedItems = string.IsNullOrWhiteSpace(restrictFolder) ? folder.Items : folder.Items.Restrict(restrictFolder);
+
+      // add an more items to the progress bar
+      _progress.AddRange(restrictedItems.Count , limit );
+
       foreach (var item in restrictedItems)
       {
+        // step forward.
+        _progress.Step();
+
         // get the mail item
         if (!(item is Outlook._MailItem mailItem))
         {
@@ -184,6 +176,18 @@ namespace myoddweb.classifier.core
         }
       }
       return ids;
+    }
+
+    private void CloseProgressBar()
+    {
+      _progress?.Close();
+      _progress?.Dispose();
+      _progress = null;
+    }
+
+    public void Dispose()
+    {
+      CloseProgressBar();
     }
   }
 }

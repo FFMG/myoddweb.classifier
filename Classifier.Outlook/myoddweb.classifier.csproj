@@ -207,6 +207,12 @@
     <Compile Include="forms\ChooseCategoryForm.Designer.cs">
       <DependentUpon>ChooseCategoryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="interfaces\ICategories.cs" />
     <Compile Include="interfaces\IClassify.cs" />
     <Compile Include="interfaces\IConfig.cs" />
@@ -310,6 +316,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -3,6 +3,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier
@@ -14,6 +15,11 @@ namespace myoddweb.classifier
     private Outlook._Folders _folders;
 
     private CustomUI _customUI;
+
+    /// <summary>
+    /// The cancellation token source, so we can start everything.
+    /// </summary>
+    private CancellationTokenSource _cts;
 
     private ItemMove TheIemMove { get; set; }
 
@@ -30,16 +36,14 @@ namespace myoddweb.classifier
       _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
 
       // create all the required values.
-      CreateEngine();
-      CreateMailProcessor();
-      CreateItemMove();
+      Create();
 
       // new email arrives.
       Application.NewMailEx += Application_NewMailEx;
 
-      // look for item moves.
-      TasksController.Add(Task.Run(() => MonitorItemMove()));
-     
+      // start all the values
+      Start();
+
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
@@ -48,6 +52,33 @@ namespace myoddweb.classifier
 
       // log the version 
       LogStartupInformation();
+    }
+
+    private void Start()
+    {
+      _cts = new CancellationTokenSource();
+
+      TheMailProcessor.Start( _cts.Token );
+
+      // look for item moves.
+      TasksController.Add(Task.Run(() => MonitorItemMove()));
+    }
+
+    private void Stop()
+    {
+      _cts?.Cancel();
+
+      TheMailProcessor.Stop();
+
+      _cts?.Dispose();
+      _cts = null;
+    }
+
+    private void Create()
+    {
+      CreateEngine();
+      CreateMailProcessor();
+      CreateItemMove();
     }
 
     /// <summary>
@@ -209,19 +240,19 @@ namespace myoddweb.classifier
     /// </summary>
     /// <param name="entryIdItem">The new email</param>
     /// <returns></returns>
-    private Task<bool> Application_NewMailExAsync(string entryIdItem)
+    private async Task<bool> Application_NewMailExAsync(string entryIdItem)
     {
       try
       {
         // add it to the mail processor.
-        TheMailProcessor.Add(entryIdItem);
+        await TheMailProcessor.AddAsync(entryIdItem);
+        return true;
       }
       catch (Exception ex)
       {
         TheEngine.Logger.LogException(ex);
-        return Task.FromResult(false);
+        return false;
       }
-      return Task.FromResult(true);
     }
   }
 }
