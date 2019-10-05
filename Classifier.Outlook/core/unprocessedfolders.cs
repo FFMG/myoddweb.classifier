@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using myoddweb.classifier.forms;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -39,7 +40,8 @@ namespace myoddweb.classifier.core
     /// <param name="folders"></param>
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
-    public async Task ProcessAsync(Outlook._Folders folders, int limit, bool includeSubfolders)
+    /// <param name="token"></param>
+    public async Task ProcessAsync(Outlook._Folders folders, int limit, bool includeSubfolders, CancellationToken token)
     {
 
       // get the last time we processed an email and create a filter for it.
@@ -50,7 +52,7 @@ namespace myoddweb.classifier.core
       _logger.LogVerbose( $"Looking for messages received after : '{lastProccessed:g}'" );
 
       // then parse all the folders.
-      var ids = GetUnprocessedEmailsInFolders( folders, limit, includeSubfolders, filter);
+      var ids = GetUnprocessedEmailsInFolders( folders, limit, includeSubfolders, filter, token );
 
       // we are done with the progress bar 
       CloseProgressBar();
@@ -65,9 +67,10 @@ namespace myoddweb.classifier.core
     /// <param name="folder"></param>
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
-    public async Task ProcessAsync(Outlook.MAPIFolder folder, int limit, bool includeSubfolders )
+    /// <param name="token"></param>
+    public async Task ProcessAsync(Outlook.MAPIFolder folder, int limit, bool includeSubfolders, CancellationToken token )
     {
-      var ids = GetUnprocessedEmailsInFolder(folder, limit, includeSubfolders, "");
+      var ids = GetUnprocessedEmailsInFolder(folder, limit, includeSubfolders, "", token );
 
       // we are done with the progress bar 
       CloseProgressBar();
@@ -83,8 +86,14 @@ namespace myoddweb.classifier.core
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
     /// <param name="restrictFolder"></param>
+    /// <param name="token"></param>
     /// <returns></returns>
-    private IList<string> GetUnprocessedEmailsInFolders(IEnumerable folders, int limit, bool includeSubfolders, string restrictFolder)
+    private IList<string> GetUnprocessedEmailsInFolders(
+      IEnumerable folders, 
+      int limit, 
+      bool includeSubfolders, 
+      string restrictFolder,
+      CancellationToken token)
     {
       var ids = new List<string>();
       try
@@ -102,13 +111,20 @@ namespace myoddweb.classifier.core
 
         foreach (Outlook.MAPIFolder folder in folders)
         {
+          token.ThrowIfCancellationRequested();
+
           var subLimit = limit - ids.Count;
-          ids.AddRange( GetUnprocessedEmailsInFolder(folder, subLimit, includeSubfolders, restrictFolder) );
+          ids.AddRange(GetUnprocessedEmailsInFolder(folder, subLimit, includeSubfolders, restrictFolder, token));
           if (ids.Count >= limit)
           {
             break;
           }
         }
+      }
+      catch (OperationCanceledException)
+      {
+        // the operation was cancelled.
+        return new List<string>();
       }
       catch (Exception e)
       {
@@ -126,14 +142,20 @@ namespace myoddweb.classifier.core
     /// <param name="limit"></param>
     /// <param name="includeSubfolders"></param>
     /// <param name="restrictFolder">the filter we want to use to look in the folder.</param>
+    /// <param name="token"></param>
     /// <returns></returns>
-    private IList<string> GetUnprocessedEmailsInFolder(Outlook.MAPIFolder folder, int limit, bool includeSubfolders, string restrictFolder)
+    private IList<string> GetUnprocessedEmailsInFolder(
+      Outlook.MAPIFolder folder, 
+      int limit, 
+      bool includeSubfolders, 
+      string restrictFolder,
+      CancellationToken token)
     {
       // do the sub folders.
       var ids = new List<string>();
       if (includeSubfolders)
       {
-        ids.AddRange( GetUnprocessedEmailsInFolders(folder.Folders, limit, true, restrictFolder) );
+        ids.AddRange( GetUnprocessedEmailsInFolders(folder.Folders, limit, true, restrictFolder, token ) );
       }
       
       // is it a mail folder?
@@ -149,6 +171,11 @@ namespace myoddweb.classifier.core
 
       foreach (var item in restrictedItems)
       {
+        if (token.IsCancellationRequested)
+        {
+          return new List<string>();
+        }
+
         // step forward.
         _progress.Step();
 

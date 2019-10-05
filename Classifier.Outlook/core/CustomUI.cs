@@ -282,12 +282,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      // then reparse them all
-      foreach (var mapiFolder in folders)
-      {
-        var unProcessedFolders = new UnProcessedFolders(Globals.ThisAddIn.TheMailProcessor, Globals.ThisAddIn.TheEngine.Logger);
-        TasksController.Add( unProcessedFolders.ProcessAsync( mapiFolder, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, false ) );
-      }
+      Globals.ThisAddIn.ParseFolders(folders);
     }
     
     public void OnDetails(Office.IRibbonControl control)

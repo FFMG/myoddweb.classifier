@@ -2,6 +2,7 @@
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using myoddweb.classifier.interfaces;
@@ -66,10 +67,16 @@ namespace myoddweb.classifier
 
     private void Stop()
     {
+      // cancel the token
       _cts?.Cancel();
 
+      // stop the mail processor
       TheMailProcessor.Stop();
 
+      // wait for the tasks to be done
+      TasksController.WaitAll();
+
+      // clean up
       _cts?.Dispose();
       _cts = null;
     }
@@ -92,8 +99,7 @@ namespace myoddweb.classifier
     /// <param name="e"></param>
     private void ThisAddIn_Shutdown(object sender, EventArgs e)
     {
-      // wait for the tasks to be done
-      TasksController.WaitAll();
+      Stop();
 
       // unregister all the folders.
       TheIemMove = null;
@@ -201,7 +207,7 @@ namespace myoddweb.classifier
     private Task ParseUnprocessedEmailsAsync()
     {
       var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
-      return folders.ProcessAsync(_folders, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, true );
+      return folders.ProcessAsync(_folders, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, true, _cts.Token );
     }
 
     /// <inheritdoc />
@@ -253,6 +259,17 @@ namespace myoddweb.classifier
         TheEngine.Logger.LogException(ex);
         return false;
       }
+    }
+
+    public void ParseFolders(IList<Outlook.MAPIFolder> folders)
+    {
+      // then reparse them all
+      foreach (var mapiFolder in folders)
+      {
+        var unProcessedFolders = new UnProcessedFolders(Globals.ThisAddIn.TheMailProcessor, Globals.ThisAddIn.TheEngine.Logger);
+        TasksController.Add(unProcessedFolders.ProcessAsync(mapiFolder, (int)TheEngine.Options.NumberOfItemsToParse, false, _cts.Token ));
+      }
+
     }
   }
 }
