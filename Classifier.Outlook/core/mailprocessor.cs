@@ -289,7 +289,7 @@ namespace myoddweb.classifier.core
       {
         try
         {
-          await _lock.WaitAsync(_token);
+          await _lock.WaitAsync(_token).ConfigureAwait(false);
           try
           {
             // handle this item

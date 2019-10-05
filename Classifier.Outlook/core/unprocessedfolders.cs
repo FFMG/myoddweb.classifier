@@ -58,7 +58,7 @@ namespace myoddweb.classifier.core
       CloseProgressBar();
 
       // we can then add the ids we have to be processed.
-      await _mailprocessor.AddAsync( ids );
+      await _mailprocessor.AddAsync( ids ).ConfigureAwait(false);
     }
 
     /// <summary>

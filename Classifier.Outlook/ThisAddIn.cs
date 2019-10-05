@@ -251,7 +251,7 @@ namespace myoddweb.classifier
       try
       {
         // add it to the mail processor.
-        await TheMailProcessor.AddAsync(entryIdItem);
+        await TheMailProcessor.AddAsync(entryIdItem).ConfigureAwait(false);
         return true;
       }
       catch (Exception ex)
