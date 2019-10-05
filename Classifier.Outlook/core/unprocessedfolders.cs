@@ -26,12 +26,12 @@ namespace myoddweb.classifier.core
     /// </summary>
     private readonly ILogger _logger;
 
-    public UnProcessedFolders( IMailProcessor mailprocessor, ILogger logger )
+    public UnProcessedFolders( string title, IMailProcessor mailprocessor, ILogger logger )
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _mailprocessor = mailprocessor ?? throw new ArgumentNullException(nameof(mailprocessor));
 
-      _progress = new ProgressForm();
+      _progress = new ProgressForm( title );
     }
 
     /// <summary>

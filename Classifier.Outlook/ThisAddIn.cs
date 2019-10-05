@@ -206,7 +206,7 @@ namespace myoddweb.classifier
     /// </summary>
     private Task ParseUnprocessedEmailsAsync()
     {
-      var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
+      var folders = new UnProcessedFolders( "Unprocessed emails",  TheMailProcessor, TheEngine.Logger );
       return folders.ProcessAsync(_folders, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, true, _cts.Token );
     }
 
@@ -266,7 +266,7 @@ namespace myoddweb.classifier
       // then reparse them all
       foreach (var mapiFolder in folders)
       {
-        var unProcessedFolders = new UnProcessedFolders(Globals.ThisAddIn.TheMailProcessor, Globals.ThisAddIn.TheEngine.Logger);
+        var unProcessedFolders = new UnProcessedFolders( "Parse folder", TheMailProcessor, TheEngine.Logger);
         TasksController.Add(unProcessedFolders.ProcessAsync(mapiFolder, (int)TheEngine.Options.NumberOfItemsToParse, false, _cts.Token ));
       }
 

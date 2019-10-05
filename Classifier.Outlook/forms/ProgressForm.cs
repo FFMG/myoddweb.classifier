@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Outlook;
 
 namespace myoddweb.classifier.forms
 {
@@ -9,10 +8,19 @@ namespace myoddweb.classifier.forms
   {
     public bool Cancelled { get; private set; }
 
-    private NativeWindow _mainWindow;
+    /// <summary>
+    /// The window we are centering with.
+    /// </summary>
+    private readonly NativeWindow _mainWindow;
 
-    public ProgressForm()
+    /// <summary>
+    /// The title we will be displaying
+    /// </summary>
+    private readonly string _title;
+
+    public ProgressForm( string title )
     {
+      _title = title;
       InitializeComponent();
 
       _mainWindow = new NativeWindow();
@@ -27,7 +35,7 @@ namespace myoddweb.classifier.forms
 
     private void ProgressForm_Load(object sender, EventArgs e)
     {
-
+      Text = _title;
     }
 
     private void ProgressForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -43,6 +51,7 @@ namespace myoddweb.classifier.forms
       // are we even visible?
       if (!Visible)
       {
+        StartPosition = FormStartPosition.CenterParent;
         Show(_mainWindow);
       }
 
@@ -54,6 +63,8 @@ namespace myoddweb.classifier.forms
     public void Step()
     {
       progressBar.PerformStep();
+
+      Text = $"{_title} [{(int)((progressBar.Value * 100) / (double)progressBar.Maximum)}%]";
     }
   }
 }
