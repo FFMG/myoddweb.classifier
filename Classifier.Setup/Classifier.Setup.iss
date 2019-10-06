@@ -92,7 +92,7 @@ begin
   begin
    Result := false;
    exit;
-  end
+  end;
 
   if RegKeyExists( HKLM64, 'SOFTWARE\Microsoft\VSTO Runtime Setup\v4' ) then 
   begin
@@ -214,7 +214,7 @@ begin
      MsgBox('Outlook VSTO 32/64 does appear to be installed, install cannot continue.', mbInformation, MB_OK);
      Result := false;
      exit;
-   end
+   end;
     
    // check if outlook is running
    winHwnd := FindWindowByClassName( 'rctrl_renwnd32' );
