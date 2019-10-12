@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ClassifyEngine.h"
+#include <stdexcept>
 
 #include <msclr\marshal_cppstd.h>
 
