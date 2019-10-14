@@ -1,5 +1,4 @@
 ﻿using Classifier.Interfaces.Helpers;
-using myoddweb.viewer.utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using myoddweb.classifier.interfaces;
+using myoddweb.classifier.utils;
 
 namespace myoddweb.classifier.forms
 {
@@ -67,7 +67,7 @@ namespace myoddweb.classifier.forms
       var categoryProbabilities = new Dictionary<int, double>();
 
       var sw = StopWatch.Start( null );
-      var category = _classifyEngine == null ? -1 : _classifyEngine.Categorize(_rawText, 75, out wordsCategory, out categoryProbabilities);
+      var category = _classifyEngine?.Categorize(_rawText, 75, out wordsCategory, out categoryProbabilities) ?? -1;
       sw.Stop(@"Done : {0}.");
 
       // get the text body
