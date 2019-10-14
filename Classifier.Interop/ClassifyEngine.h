@@ -58,7 +58,7 @@ public:
 
   // Log
   int Log(String^ source, String^ entry);
-  bool ClearLogEntries(int olderThan);
+  bool ClearLogEntries(long long olderThan);
   int GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry^> ^% entries, int max);
 
 protected:
@@ -103,14 +103,14 @@ protected:
   typedef int(__stdcall *f_GetVersion)();
 
   typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
-  typedef bool(__stdcall *f_ClearLogEntries)(int);
+  typedef bool(__stdcall *f_ClearLogEntries)(long long);
 
   struct LogEntry
   {
     int id;
     std::u16string source;
     std::u16string entry;
-    int unixtime;
+    long long unixtime;
   };
   // all the log entries, the id => LogEntry
   typedef std::unordered_map<int, LogEntry> LogEntries;

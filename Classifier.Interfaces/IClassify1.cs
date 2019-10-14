@@ -161,7 +161,7 @@ namespace Classifier.Interfaces
     /// </summary>
     /// <param name="olderThan"> the date we want to delte.</param>
     /// <returns>success or not</returns>
-    bool ClearLogEntries(int olderThan);
+    bool ClearLogEntries(long olderThan);
 
     /// <summary>
     /// Get a list of log entries.

@@ -71,10 +71,7 @@ namespace myoddweb.classifier.core
       appLog.WriteEntry(e.ToString(), System.Diagnostics.EventLogEntryType.Error);
     }
 
-    /// <summary>
-    /// Log an error message
-    /// </summary>
-    /// <param name="message"></param>
+    /// <inheritdoc />
     public void LogError(string message)
     {
       _parent?.LogError(message);
@@ -135,7 +132,7 @@ namespace myoddweb.classifier.core
       return _parent?.Log(source, entry) ?? -1;
     }
 
-    public bool ClearLogEntries(int olderThan)
+    public bool ClearLogEntries(long olderThan)
     {
       return _parent?.ClearLogEntries(olderThan) ?? false;
     }

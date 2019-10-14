@@ -15,7 +15,7 @@
     /// <param name="configName"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    string GetConfigWithDefault(string configName, string defaultValue);
+    T GetConfigWithDefault<T>(string configName, T defaultValue);
 
     /// <summary>
     /// Save a configuration value
@@ -23,6 +23,6 @@
     /// <param name="configName"></param>
     /// <param name="configValue"></param>
     /// <returns></returns>
-    bool SetConfig(string configName, string configValue);
+    bool SetConfig<T>(string configName, T configValue);
   }
 }

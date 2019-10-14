@@ -872,7 +872,7 @@ int ClassifyEngine::Log(String^ source, String^ entry)
  * @param olderThan the date we want to delte.
  * @return success or not
  */
-bool ClassifyEngine::ClearLogEntries(int olderThan)
+bool ClassifyEngine::ClearLogEntries(long long olderThan)
 {
   f_ClearLogEntries funci = (f_ClearLogEntries)GetUnmanagedFunction(ProcType::procClearLogEntries);
 
@@ -892,7 +892,7 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
   // whatever happens, empty the list.
   entries = gcnew List<Classifier::Interfaces::Helpers::LogEntry^>();
 
-  f_GetLogEntries funci = (f_GetLogEntries)GetUnmanagedFunction(ProcType::procGetLogEntries );
+  const auto funci = (f_GetLogEntries)GetUnmanagedFunction(ProcType::procGetLogEntries );
 
   // did it work?
   if (nullptr == funci)

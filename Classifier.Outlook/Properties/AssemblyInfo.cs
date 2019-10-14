@@ -11,7 +11,7 @@ using System.Security;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://www.myoddweb.com")]
 [assembly: AssemblyProduct("Myoddweb.Classifier")]
-[assembly: AssemblyCopyright("Copyright (c) 2015-2017")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -23,15 +23,10 @@ using System.Security;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("0dea111e-f282-4cdc-b265-cd9b85be1eea")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.7.0.5")]
-[assembly: AssemblyFileVersion("0.7.0.5")]
+// 0.8.0.1 - Some performance fixes.
+//           NewtonSoft 12.0.1
+// 0.9.0.0 - .NET 4.5.2.
+//           NewtonSoft 12.0.2
+//           Engine 1.7.1
+[assembly: AssemblyVersion("0.9.0.0")]
+[assembly: AssemblyFileVersion("0.9.0.0")]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using myoddweb.classifier.utils;
@@ -25,7 +24,7 @@ namespace myoddweb.classifier.core
       public bool WasMagnetUsed { get; set; }
     }
 
-    private const string ConfigName = "Processor.LastEmail";
+    private const string ConfigLastProcessedEmail = "Processor.LastEmail";
 
     /// <summary>
     /// Our timer
@@ -45,34 +44,27 @@ namespace myoddweb.classifier.core
     /// <summary>
     /// The mail items we are currently processing
     /// </summary>
-    private ConcurrentBag<string> _mailItemsBeingProcessed;
+    private readonly HashSet<string> _mailItemsBeingProcessed = new HashSet<string>();
 
     /// <summary>
     /// The mail items we want to move and the categories we are moving them to.
     /// </summary>
-    private List<string> _mailItems;
+    private readonly HashSet<string> _mailItems = new HashSet<string>();
 
     /// <summary>
     /// Our lock...
     /// </summary>
     private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
-    /// <summary>
-    /// Get the last time we processed an email
-    /// Or the current time we we don't have a valid value.
-    /// </summary>
+    /// <inheritdoc />
     public DateTime LastProcessed {
       get
       {
         _lock.EnterReadLock();
         try
         {
-          var last = Convert.ToInt32(_engine.Config.GetConfigWithDefault(ConfigName, "-1"));
-          if (-1 == last)
-          {
-            return DateTime.Now;
-          }
-          return Helpers.UnixToDateTime(last);
+          var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, -1);
+          return -1 == last ? DateTime.Now : Helpers.UnixToDateTime(last);
         }
         finally
         {
@@ -83,21 +75,8 @@ namespace myoddweb.classifier.core
 
     public MailProcessor(IEngine engine, Outlook._NameSpace session )
     {
-      // can't be null
-      if (engine == null)
-      {
-        throw new ArgumentNullException(nameof(engine));
-      }
-
-      if (session == null)
-      {
-        throw new ArgumentNullException(nameof(session));
-      }
-
-      _engine = engine;
-      _session = session;
-      _mailItems = new List<string>();
-      _mailItemsBeingProcessed = new ConcurrentBag<string>();
+      _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+      _session = session ?? throw new ArgumentNullException(nameof(session));
     }
 
     /// <summary>
@@ -119,7 +98,7 @@ namespace myoddweb.classifier.core
       _lock.EnterWriteLock();
       try
       {
-        AddInLock(ids);
+        AddInLockAsync(ids).GetAwaiter().GetResult();
       }
       finally
       {
@@ -132,7 +111,7 @@ namespace myoddweb.classifier.core
     /// We are inside a lock.
     /// </summary>
     /// <param name="ids"></param>
-    private void AddInLock(List<string> ids)
+    private async Task AddInLockAsync( IList<string> ids)
     { 
       //  anything to do?
       if ( !ids.Any() )
@@ -141,12 +120,12 @@ namespace myoddweb.classifier.core
       }
 
       //  add this item to our list.
-      _mailItems.AddRange(ids);
+      _mailItems.UnionWith(ids);
 
       //  if the delay is set to 0 then do everything now.
       if (0 == _engine.Options.ClassifyDelaySeconds)
       {
-        HandleAllItemsInLock().Wait();
+        await HandleAllItemsInLock().ConfigureAwait(false);
       }
       else
       {
@@ -165,7 +144,7 @@ namespace myoddweb.classifier.core
 
       // recreate the timer, we cannot use a value of 0 in the timer. 
       _ticker = new System.Timers.Timer(0 == _engine.Options.ClassifyDelaySeconds ? 1 : _engine.Options.ClassifyDelayMilliseconds);
-      _ticker.Elapsed += async (sender, e) => await HandleTimer();
+      _ticker.Elapsed += async (sender, e) => await HandleTimerAsync();
       _ticker.AutoReset = true;
       _ticker.Enabled = true;
     }
@@ -186,7 +165,7 @@ namespace myoddweb.classifier.core
       _ticker = null;
     }
 
-    private async Task<bool> HandleTimer()
+    private async Task<bool> HandleTimerAsync()
     {
       _lock.EnterWriteLock();
       try
@@ -230,7 +209,7 @@ namespace myoddweb.classifier.core
       await Task.WhenAll(_mailItems.Select(HandleItemInLock).Cast<Task>().ToArray() ).ConfigureAwait( false );
 
       // clear the list.
-      _mailItems = new List<string>();
+      _mailItems.Clear();
     }
 
     /// <summary>
@@ -243,14 +222,14 @@ namespace myoddweb.classifier.core
       var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime);
 
       // get the last processed time
-      var last = Convert.ToInt32(_engine.Config.GetConfigWithDefault(ConfigName, "0"));
+      var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, 0);
 
       // did we handle something older?
       if (last > when)
       {
         return;
       }
-      _engine.Config.SetConfig(ConfigName, Convert.ToString(when));
+      _engine.Config.SetConfig(ConfigLastProcessedEmail, when);
     }
 
     /// <summary>
@@ -268,8 +247,8 @@ namespace myoddweb.classifier.core
       }
       finally
       {
-        // we are done processing this.
-        _mailItemsBeingProcessed = new ConcurrentBag<string>(_mailItemsBeingProcessed.Except(new[] { entryIdItem }));
+        // we are done processing this item.
+        _mailItemsBeingProcessed.RemoveWhere( e => e == entryIdItem );
       }
     }
 

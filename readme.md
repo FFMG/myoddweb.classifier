@@ -1,4 +1,4 @@
-# MyOddWeb.Classifier [![Release](https://img.shields.io/badge/release-v0.7.0.5-brightgreen.png?style=flat)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
+# MyOddWeb.Classifier [![Release](https://img.shields.io/badge/release-v0.8.0.1-brightgreen.png?style=flat)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
 
 <!---
 Mono does not work currently...
@@ -48,10 +48,15 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 ### From the code
 
 - Get the code
-- Build it using visual studio 2015 or later, (I have not tried the others).
+- Build it using visual studio 2017 or later, (I tried with 2015 as well ... and it works(ish)).
 - You can either debug and/or simply run outlook.
 
 ## Versions
+#### 0.8.0.1 (09/01/2019)
+- Some code cleanup
+- Updated to engine 1.7.0
+  - Sqlite 3.26.0
+
 #### 0.7.0.5 (09/11/2017)
 
 - Added - Added an option to train items that are manually moved from one folder to another.
