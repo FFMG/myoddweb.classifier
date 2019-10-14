@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using myoddweb.viewer.utils;
 using myoddweb.classifier.utils;
 using System.Linq;
 using System.Threading;

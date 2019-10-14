@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include <msclr\marshal_cppstd.h>
+#include <stdexcept>
 
 using namespace msclr::interop;
 
@@ -134,10 +135,10 @@ void ClassifyEngine::LogEventInfo(String^ sEvent)
 const FARPROC ClassifyEngine::GetUnmanagedFunction( ProcType procType) const
 {
   //  check if we have already loaded this function.
-  auto it = _farProcs.find(procType);
+  const auto it = _farProcs.find(procType);
   if (it == _farProcs.end())
   {
-    throw new std::exception("Could not locate proc, was 'Initialise()' called?");
+    throw std::exception("Could not locate proc, was 'Initialise()' called?");
   }
   return it->second;
 }
@@ -350,10 +351,10 @@ bool ClassifyEngine::InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType p
     break;
 
   default:
-    auto s = marshal_as<std::string>(
-      String::Format("Could not locate the name of the given unmanaged function id. {0}", (int)procType)
+    const auto s = marshal_as<std::string>(
+      String::Format("Could not locate the name of the given unmanaged function id. {0}", static_cast<int>(procType))
       );
-    throw new std::invalid_argument(s);
+    throw std::invalid_argument(s);
   }
 
   // save it, for next time.
