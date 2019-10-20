@@ -71,7 +71,7 @@ protected:
   typedef bool(__stdcall *f_DeleteCategory)(const char16_t*);
   typedef bool(__stdcall *f_Release)();
 
-  typedef int(__stdcall *f_GetCategories)(std::map<int, std::u16string>&);
+  typedef int(__stdcall *f_GetCategoryInfo)(int number, int& id, int categoryNameLength, char16_t* categoryName);
   typedef int(__stdcall *f_Categorize)(const char16_t*, unsigned int);
   typedef int(__stdcall *f_GetCategoryFromUniqueId)(const char16_t*);
   typedef int(__stdcall *f_GetCategory)(const char16_t*);
@@ -105,16 +105,18 @@ protected:
   typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_ClearLogEntries)(long long);
 
-  struct LogEntry
+  struct LogEntryInfo
   {
     int id;
-    std::u16string source;
-    std::u16string entry;
+    char16_t* source;
+    int sourceLength;
+    char16_t* entry;
+    int entryLength;
     long long unixtime;
   };
+
   // all the log entries, the id => LogEntry
-  typedef std::unordered_map<int, LogEntry> LogEntries;
-  typedef int( __stdcall *f_GetLogEntries)(LogEntries&, int);
+  typedef int( __stdcall *f_GetLogEntries)(LogEntryInfo*, int);
 
   enum ProcType
   {
@@ -129,7 +131,7 @@ protected:
     procCategorizeWithInfo,
     procGetCategoryFromUniqueId,
     procGetCategory,
-    procGetCategories,
+    procGetCategoryInfo,
     procRenameCategory,
     procDeleteCategory,
 
@@ -173,5 +175,8 @@ private:
   bool InitialiseUnmanagedFunctions();
   bool InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType procType);
   bool CallUnmanagedInitialise(String^ databasePath);
+
+  void FreeLogEntries(LogEntryInfo* logEntries, int count );
+  LogEntryInfo* CreateLogEntries( int count );
 };
 

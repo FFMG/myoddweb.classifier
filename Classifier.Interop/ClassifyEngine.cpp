@@ -306,8 +306,8 @@ bool ClassifyEngine::InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType p
     procAddress = GetProcAddress(hInstance, "GetCategory");
     break;
 
-  case procGetCategories:
-    procAddress = GetProcAddress(hInstance, "GetCategories");
+  case procGetCategoryInfo:
+    procAddress = GetProcAddress(hInstance, "GetCategoryInfo");
     break;
 
   case procRenameCategory:
@@ -540,12 +540,13 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   }
 
   // call the function
-  std::wstring wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
+  const auto wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
 
   // call the category info.
   wordscategory_info wordsCategoryInfo;
   categoriesProbabilities_info categoriesProbabilitiesInfo;
-  int overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo, categoriesProbabilitiesInfo );
+
+  const auto overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo, categoriesProbabilitiesInfo );
 
   // reset our own list in case the user passed something.
   wordsCategory->Clear();
@@ -651,9 +652,9 @@ int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
   }
 
   // the initialise function.
-  f_GetCategories funci = (f_GetCategories)GetUnmanagedFunction( ProcType::procGetCategories );
+  f_GetCategoryInfo funci = (f_GetCategoryInfo)GetUnmanagedFunction( ProcType::procGetCategoryInfo );
 
-  // did it work?
+  // did it work?`
   if (nullptr == funci)
   {
     LogEventWarning("Could not locate the Classifier.Engine 'GetCategories()' function?");
@@ -663,28 +664,31 @@ int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
   // clear what we have now.
   categories->Clear();
   
-  // call the function
-  std::map<int, std::u16string> u16categories;
-  int result = funci(u16categories);
-  if (result <= 0)
+  for(auto number = 0;; ++number )
   {
-    // either an error or nothing at all.
-    return result;
-  }
+    int id = 0;
+    int categoryNameLength = funci(number, id, categoryNameLength, nullptr);
+    if (-1 == categoryNameLength)
+    {
+      break;
+    }
 
-  // we now need to recreate the result.
-  for (std::map<int, std::u16string>::const_iterator it = u16categories.begin();
-       it != u16categories.end();
-       ++it)
-  {
+    char16_t* categoryName = new char16_t[categoryNameLength+1];
+    memset( categoryName, 0, (categoryNameLength+1)*sizeof(char16_t));
+    funci(number, id, categoryNameLength, categoryName);
+
     // cast the wide string to a char16_t* for windows.
     // this is the same size/value so no work needs to be done here.
-    const std::wstring ws = (const wchar_t*)it->second.c_str();
-    categories->Add(it->first, gcnew System::String(ws.c_str()) );
+    const std::wstring ws = (const wchar_t*)categoryName;
+    categories->Add(id, gcnew System::String(ws.c_str()) );
+
+    // we are done with this
+    delete [] categoryName;
+    categoryName = nullptr;
   }
 
-  // return the result.
-  return result;
+  // return the number of items.
+  return categories->Count;
 }
 
 bool ClassifyEngine::RenameCategory(String^ oldName, String^ newName)
@@ -793,34 +797,41 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
     return -1;
   }
 
-  MagnetsInfo magnetsInfo;
-  int numberOfMagnets = funci(magnetsInfo);
-  if (numberOfMagnets == -1)
+  try
   {
-    //  nothing was found.
-    return -1;
-  }
+    MagnetsInfo magnetsInfo;
+    const auto numberOfMagnets = funci(magnetsInfo);
+    if (numberOfMagnets == -1)
+    {
+      //  nothing was found.
+      return -1;
+    }
 
-  // add them all to the list.
-  for (MagnetsInfo::const_iterator it = magnetsInfo.begin();
-       it != magnetsInfo.end();
-       ++it)
+    // add them all to the list.
+    for (auto it = magnetsInfo.begin();
+         it != magnetsInfo.end();
+         ++it)
+    {
+      auto magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
+      magnet->Id = it->first;
+      magnet->Rule = it->second.ruleType;
+      magnet->Category = it->second.categoryTarget;
+
+      // that name.
+      const std::wstring ws = (const wchar_t*)it->second.magnetName.c_str();
+      magnet->Name = gcnew System::String(ws.c_str());
+
+      // add it to the list.
+      magnets->Add(magnet);
+    }
+    // return what we found.
+    return numberOfMagnets;
+
+  }
+  catch (Exception^ ex)
   {
-    auto magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
-    magnet->Id = it->first;
-    magnet->Rule = it->second.ruleType;
-    magnet->Category = it->second.categoryTarget;
-
-    // that name.
-    const std::wstring ws = (const wchar_t*)it->second.magnetName.c_str();
-    magnet->Name = gcnew System::String(ws.c_str());
-
-    // add it to the list.
-    magnets->Add(magnet);
+    return 0;
   }
-
-  // return what we found.
-  return numberOfMagnets;
 }
 
 /**
@@ -902,33 +913,82 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
     return -1;
   }
 
-  LogEntries logEntries;
+  // create a log entry
+  auto logEntries = CreateLogEntries( max );
   int numberOfEntries = funci(logEntries, max );
   if (numberOfEntries == -1)
   {
     //  nothing was found.
+    FreeLogEntries( logEntries, max );
     return -1;
   }
-
+  
   // add them all to the list.
-  for (auto it = logEntries.begin(); it != logEntries.end(); ++it)
+  for (auto i = 0; i < numberOfEntries; ++i)
   {
     auto entry = gcnew Classifier::Interfaces::Helpers::LogEntry();
 
-    entry->Id = it->second.id;
+    const auto& logEntry = logEntries[i];
+    entry->Id = logEntry.id;
 
-    const std::wstring wsource = (const wchar_t*)it->second.source.c_str();
+    const std::wstring wsource = (const wchar_t*)logEntry.source;
     entry->Source = gcnew System::String(wsource.c_str());
 
-    const std::wstring wentry = (const wchar_t*)it->second.entry.c_str();
+    const std::wstring wentry = (const wchar_t*)logEntry.entry;
     entry->Entry = gcnew System::String(wentry.c_str());
 
-    entry->Unixtime = it->second.unixtime;
+    entry->Unixtime = logEntry.unixtime;
 
     // add it to the list.
     entries->Add(entry);
   }
 
+  // done with the log entries
+  FreeLogEntries( logEntries, max );
+
   // return what we found.
   return numberOfEntries;
 }
+
+ClassifyEngine::LogEntryInfo* ClassifyEngine::CreateLogEntries(int count)
+{
+  const auto length = 256;
+
+  auto logEntries = new LogEntryInfo[count];
+  for (int i = 0; i < count; ++i)
+  {
+    auto& entry = logEntries[i];
+    entry.entryLength = length;
+    entry.sourceLength = length;
+    entry.id = -1;
+    entry.unixtime = 0;
+
+    entry.entry = new char16_t[entry.entryLength + 1];
+    memset(entry.entry, 0, (entry.entryLength + 1) * sizeof(char16_t));
+
+    entry.source = new char16_t[entry.sourceLength + 1];
+    memset(entry.source, 0, (entry.sourceLength + 1) * sizeof(char16_t));
+  }
+  return logEntries;
+}
+
+/**
+ * \param the entries we are trying to free.
+ */
+void ClassifyEngine::FreeLogEntries(LogEntryInfo* logEntries, int count )
+{
+  for (int i = 0; i < count; ++i)
+  {
+    auto& entry = logEntries[i];
+    if (entry.entry != nullptr)
+    {
+      delete[] entry.entry;
+    }
+    if (entry.source != nullptr)
+    {
+      delete[] entry.source;
+    }
+  }
+  delete [] logEntries;
+}
+
