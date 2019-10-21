@@ -530,7 +530,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   }
 
   // the initialise function.
-  f_CategorizeWithWordCategory funci = (f_CategorizeWithWordCategory)GetUnmanagedFunction(ProcType::procCategorizeWithInfo);
+  const auto funci = (f_CategorizeWithInfo)GetUnmanagedFunction(ProcType::procCategorizeWithInfo);
 
   // did it work?
   if (nullptr == funci)
@@ -543,27 +543,40 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   const auto wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
 
   // call the category info.
-  wordscategory_info wordsCategoryInfo;
-  categoriesProbabilities_info categoriesProbabilitiesInfo;
+  const auto wordsCategoryInfoLength = 255;
+  const auto categoryProbabilityLength = 255;
 
-  const auto overallCategoryId = funci((const char16_t*)wTextToCategorise.c_str(), minPercentage, wordsCategoryInfo, categoriesProbabilitiesInfo );
+  auto wordsCategoryInfo = CreateWordCategoryInfo(wordsCategoryInfoLength);
+  auto categoryProbability = CreateCategoryProbability( categoryProbabilityLength );
+
+  const int overallCategoryId = funci(
+    (const char16_t*)wTextToCategorise.c_str(), 
+    minPercentage, 
+    wordsCategoryInfo, 
+    wordsCategoryInfoLength,
+    categoryProbability,
+    categoryProbabilityLength
+    );
 
   // reset our own list in case the user passed something.
   wordsCategory->Clear();
 
   // add them all to the list.
-  for (wordscategory_info::const_iterator it = wordsCategoryInfo.begin();
-    it != wordsCategoryInfo.end();
-    ++it)
+  for ( auto i = 0; i < wordsCategoryInfoLength; ++i )
   {
+    const auto& word = wordsCategoryInfo[i];
+    if (word.category == -1)
+    {
+      break;
+    }
     // create the category.
     Classifier::Interfaces::Helpers::WordCategory^ wordCategory = gcnew Classifier::Interfaces::Helpers::WordCategory();
 
     // re-create it in managed c++ so we can pass it along.
-    const std::wstring ws = (const wchar_t*)it->first.c_str();
+    const std::wstring ws = (const wchar_t*)word.word;
     wordCategory->Word = gcnew System::String(ws.c_str());
-    wordCategory->Category = it->second.category;
-    wordCategory->Probability = it->second.probability;
+    wordCategory->Category = word.category;
+    wordCategory->Probability = word.probability;
 
     // add it to the list.
     wordsCategory->Add(wordCategory);
@@ -573,10 +586,19 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   categoryProbabilities->Clear();
 
   // and copy the values.
-  for (categoriesProbabilities_info::const_iterator it = categoriesProbabilitiesInfo.begin(); it != categoriesProbabilitiesInfo.end(); ++it)
+  for (auto i = 0; i < categoryProbabilityLength; ++i )
   {
-    categoryProbabilities->Add(it->first, it->second);
+    const auto& category = categoryProbability[i];
+    if (category.category == -1)
+    {
+      //  we are done;
+      break;
+    }
+    categoryProbabilities->Add(category.category, category.probability);
   }
+
+  FreeWordCategoryInfo( wordsCategoryInfo, wordsCategoryInfoLength );
+  FreeCategoryProbability(categoryProbability, categoryProbabilityLength );
 
   // return the overall category.
   return overallCategoryId;
@@ -595,7 +617,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   }
 
   // call the function
-  std::wstring wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
+  const auto wTextToCategorise = marshal_as<std::wstring>(textToCategorise);
 
   // cast the wide string to a char16_t* for windows.
   // this is the same size/value so no work needs to be done here.
@@ -667,7 +689,7 @@ int ClassifyEngine::GetCategories(Dictionary<int, String^> ^% categories)
   for(auto number = 0;; ++number )
   {
     int id = 0;
-    int categoryNameLength = funci(number, id, categoryNameLength, nullptr);
+    int categoryNameLength = funci(number, id, -1, nullptr);
     if (-1 == categoryNameLength)
     {
       break;
@@ -799,36 +821,44 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
 
   try
   {
-    MagnetsInfo magnetsInfo;
-    const auto numberOfMagnets = funci(magnetsInfo);
+    // first get how many magnets we need
+    const auto numberOfMagnets = funci(nullptr, -1 );
     if (numberOfMagnets == -1)
     {
       //  nothing was found.
       return -1;
     }
 
+    // create the magnets
+    auto magnetsInfo = CreateMagnets( numberOfMagnets );
+    funci( magnetsInfo, numberOfMagnets );
+    PrepareMagnetsName( magnetsInfo, numberOfMagnets );
+    funci(magnetsInfo, numberOfMagnets);
+
     // add them all to the list.
-    for (auto it = magnetsInfo.begin();
-         it != magnetsInfo.end();
-         ++it)
+    for ( auto i = 0; i < numberOfMagnets; ++i )
     {
+      const auto& magnetInfo = magnetsInfo[i];
       auto magnet = gcnew Classifier::Interfaces::Helpers::Magnet();
-      magnet->Id = it->first;
-      magnet->Rule = it->second.ruleType;
-      magnet->Category = it->second.categoryTarget;
+      magnet->Id = magnetInfo.id;
+      magnet->Rule = magnetInfo.ruleType;
+      magnet->Category = magnetInfo.categoryTarget;
 
       // that name.
-      const std::wstring ws = (const wchar_t*)it->second.magnetName.c_str();
+      const std::wstring ws = (const wchar_t*)magnetInfo.magnetName;
       magnet->Name = gcnew System::String(ws.c_str());
 
       // add it to the list.
       magnets->Add(magnet);
     }
+
+    // free it all
+    FreeMagnets( magnetsInfo, numberOfMagnets );
+
     // return what we found.
     return numberOfMagnets;
-
   }
-  catch (Exception^ ex)
+  catch (Exception^)
   {
     return 0;
   }
@@ -992,3 +1022,96 @@ void ClassifyEngine::FreeLogEntries(LogEntryInfo* logEntries, int count )
   delete [] logEntries;
 }
 
+/**
+ * \param the magnets we are trying to free.
+ * \param the number of magnets
+ */
+void ClassifyEngine::FreeMagnets(MagnetInfo* magnets, int count)
+{
+  for (int i = 0; i < count; ++i)
+  {
+    auto& magnet = magnets[i];
+    if (magnet.magnetName != nullptr)
+    {
+      delete[] magnet.magnetName;
+    }
+  }
+  delete[] magnets;
+}
+
+void ClassifyEngine::PrepareMagnetsName(MagnetInfo* magnets, int count)
+{
+  for (int i = 0; i < count; ++i)
+  {
+    auto& magnet = magnets[i];
+    if (magnet.magnetName != nullptr)
+    {
+      delete[] magnet.magnetName;
+      magnet.magnetName = nullptr;
+    }
+    magnet.magnetName = new char16_t[magnet.magnetLength + 1];
+    memset( magnet.magnetName, 0, (magnet.magnetLength +1) * sizeof(char16_t));
+  }
+}
+
+ClassifyEngine::MagnetInfo* ClassifyEngine::CreateMagnets(int count)
+{
+  auto magnets = new MagnetInfo[count];
+  for (int i = 0; i < count; ++i)
+  {
+    auto& magnet = magnets[i];
+    magnet.id = -1;
+    magnet.categoryTarget = -1;
+    magnet.magnetName = nullptr;
+    magnet.magnetLength = 0;
+    magnet.ruleType = -1;
+  }
+  return magnets;
+}
+
+ClassifyEngine::WordCategoryInfo* ClassifyEngine::CreateWordCategoryInfo(int count)
+{
+  const auto length = 256;
+  auto words = new WordCategoryInfo[count];
+  for (int i = 0; i < count; ++i)
+  {
+    auto& word = words[i];
+    word.category = -1;
+    word.probability = 0.0;
+    word.wordLength = length;
+    word.word = new char16_t[word.wordLength + 1];
+    memset(word.word, 0, (word.wordLength + 1) * sizeof(char16_t));;
+  }
+  return words;
+}
+
+void ClassifyEngine::FreeWordCategoryInfo(WordCategoryInfo* words, int size)
+{
+  for (int i = 0; i < size; ++i)
+  {
+    auto& word = words[i];
+    if (word.word == nullptr)
+    {
+      continue;
+    }
+    delete [] word.word;
+  }
+  delete [] words;
+}
+
+ClassifyEngine::CategoryProbability* ClassifyEngine::CreateCategoryProbability(int size)
+{
+  auto categories = new CategoryProbability[size];
+  for (int i = 0; i < size; ++i)
+  {
+    auto& category = categories[i];
+    category.category = -1;
+    category.probability = 0;
+  }
+  return categories;
+}
+
+void ClassifyEngine::FreeCategoryProbability(CategoryProbability* categories, int size)
+{
+  delete[] categories;
+}

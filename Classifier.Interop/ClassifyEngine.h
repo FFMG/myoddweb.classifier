@@ -82,23 +82,36 @@ protected:
 
   struct MagnetInfo
   {
-    std::u16string magnetName;
+    int id;
+    char16_t* magnetName;
+    int magnetLength;
     int ruleType;
     int categoryTarget;
   };
 
   // all the magnets, the id => MagnetInfo
-  typedef std::unordered_map<int, MagnetInfo> MagnetsInfo;
-  typedef int(__stdcall *f_GetMagnets)(MagnetsInfo&);
+  typedef int(__stdcall *f_GetMagnets)(MagnetInfo* magnets, int max);
 
   struct WordCategoryInfo
+  {
+    char16_t* word;
+    int wordLength;
+    int category;
+    double probability;
+  };
+  struct CategoryProbability
   {
     int category;
     double probability;
   };
-  typedef std::unordered_map<std::u16string, WordCategoryInfo> wordscategory_info;
-  typedef std::unordered_map<int, double> categoriesProbabilities_info;
-  typedef int(__stdcall *f_CategorizeWithWordCategory)(const char16_t*, unsigned int, wordscategory_info&, categoriesProbabilities_info&);
+  typedef int(__stdcall *f_CategorizeWithInfo)(
+    const char16_t*, 
+    unsigned int, 
+    WordCategoryInfo*,    // array of words.
+    int,                  // number of words.
+    CategoryProbability*, // array of probabilities
+    int                   // number 
+  );
   
   typedef int(__stdcall *f_GetVersion)();
 
@@ -178,5 +191,15 @@ private:
 
   void FreeLogEntries(LogEntryInfo* logEntries, int count );
   LogEntryInfo* CreateLogEntries( int count );
+
+  void FreeMagnets(MagnetInfo* magnets, int count);
+  void PrepareMagnetsName( MagnetInfo* magnets, int count );
+  MagnetInfo* CreateMagnets( int count );
+
+  WordCategoryInfo* CreateWordCategoryInfo( int size );
+  void FreeWordCategoryInfo(WordCategoryInfo* words, int size);
+
+  CategoryProbability* CreateCategoryProbability(int size);
+  void FreeCategoryProbability(CategoryProbability* categories, int size);
 };
 
