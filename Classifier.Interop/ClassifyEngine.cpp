@@ -607,7 +607,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
 int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercentage)
 {
   // the initialise function.
-  f_Categorize funci = (f_Categorize)GetUnmanagedFunction( ProcType::procCategorize );
+  const auto funci = (f_Categorize)GetUnmanagedFunction( ProcType::procCategorize );
 
   // did it work?
   if (nullptr == funci)

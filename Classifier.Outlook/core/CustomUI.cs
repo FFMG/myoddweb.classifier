@@ -16,6 +16,7 @@ using Exception = System.Exception;
 using Office = Microsoft.Office.Core;
 using myoddweb.classifier.interfaces;
 using myoddweb.classifier.utils;
+using Microsoft.Office.Core;
 
 // For more information, see the Ribbon XML documentation in the Visual Studio Tools for Office Help.
 namespace myoddweb.classifier.core
@@ -582,6 +583,16 @@ namespace myoddweb.classifier.core
         );
       }
       return menu;
+    }
+
+    /// <summary>
+    /// GetContent callback
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <returns></returns>
+    public string GetMenuFolder(IRibbonControl control)
+    {
+      return "";
     }
   }
 }

@@ -17,27 +17,18 @@ namespace myoddweb.classifier.core
         return false;
       }
 
-      // if we have no categories then something is 'broken'
-      // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0)
-      {
-        return false;
-      }
-
-      //  if we have a valid item, then we don't return null.
+      // always display the menu
+      // - if we have no categories, the menu will still display.
+      // - if we have a valid item, then we don't return null.
       return (GetFolderContent(control) != null);
     }
 
     public string GetFolderContent(IRibbonControl control)
     {
-      // if we have no categories then something is 'broken'
-      // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0)
-      {
-        return "";
-      }
-
-      return GetContenteWithPosibleFolder(GetMultipleFoldersFromControl(control));
+      // do we have a valid folder item?
+      // if not, then display the default menu item
+      var folders = GetMultipleFoldersFromControl(control);
+      return null == folders ? BuildMenu(BuildCommonMenus()) : GetContenteWithPosibleFolder(folders);
     }
 
     /// <summary>
