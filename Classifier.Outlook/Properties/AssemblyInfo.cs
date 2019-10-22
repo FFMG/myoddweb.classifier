@@ -29,5 +29,6 @@ using System.Security;
 //           NewtonSoft 12.0.2
 //           Engine 1.7.1
 // 0.9.1.0 - Added rescann folder option
-[assembly: AssemblyVersion("0.9.1.0")]
-[assembly: AssemblyFileVersion("0.9.1.0")]
+// 0.9.2.0 - Show default menu in case of no categories
+[assembly: AssemblyVersion("0.9.2.0")]
+[assembly: AssemblyFileVersion("0.9.2.0")]
