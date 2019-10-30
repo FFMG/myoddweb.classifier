@@ -549,13 +549,16 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
   auto wordsCategoryInfo = CreateWordCategoryInfo(wordsCategoryInfoLength);
   auto categoryProbability = CreateCategoryProbability( categoryProbabilityLength );
 
+  auto textCategoryInfo = new TextCategoryInfo();
+  textCategoryInfo->wordCategoryAndProbability = wordsCategoryInfo;
+  textCategoryInfo->wordCategoryAndProbabilityLength = wordsCategoryInfoLength;
+  textCategoryInfo->category = categoryProbability;
+  textCategoryInfo->categoryLength = categoryProbabilityLength;
+
   const int overallCategoryId = funci(
     (const char16_t*)wTextToCategorise.c_str(), 
     minPercentage, 
-    wordsCategoryInfo, 
-    wordsCategoryInfoLength,
-    categoryProbability,
-    categoryProbabilityLength
+    textCategoryInfo
     );
 
   // reset our own list in case the user passed something.
@@ -573,7 +576,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
     Classifier::Interfaces::Helpers::WordCategory^ wordCategory = gcnew Classifier::Interfaces::Helpers::WordCategory();
 
     // re-create it in managed c++ so we can pass it along.
-    const std::wstring ws = (const wchar_t*)word.word;
+    const std::wstring ws = (const wchar_t*)word.word.word;
     wordCategory->Word = gcnew System::String(ws.c_str());
     wordCategory->Category = word.category;
     wordCategory->Probability = word.probability;
@@ -599,6 +602,7 @@ int ClassifyEngine::Categorize(String^ textToCategorise, unsigned int minPercent
 
   FreeWordCategoryInfo( wordsCategoryInfo, wordsCategoryInfoLength );
   FreeCategoryProbability(categoryProbability, categoryProbabilityLength );
+  delete textCategoryInfo;
 
   // return the overall category.
   return overallCategoryId;
@@ -810,7 +814,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
   // whatever happens, empty the list.
   magnets = gcnew List<Classifier::Interfaces::Helpers::Magnet^>();
 
-  f_GetMagnets funci = (f_GetMagnets)GetUnmanagedFunction(ProcType::procGetMagnets);
+  const auto funci = (f_GetMagnets)GetUnmanagedFunction(ProcType::procGetMagnets);
 
   // did it work?
   if (nullptr == funci)
@@ -845,7 +849,7 @@ int ClassifyEngine::GetMagnets(List<Classifier::Interfaces::Helpers::Magnet^> ^%
       magnet->Category = magnetInfo.categoryTarget;
 
       // that name.
-      const std::wstring ws = (const wchar_t*)magnetInfo.magnetName;
+      const std::wstring ws = (const wchar_t*)magnetInfo.magnetName.word;
       magnet->Name = gcnew System::String(ws.c_str());
 
       // add it to the list.
@@ -961,10 +965,10 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
     const auto& logEntry = logEntries[i];
     entry->Id = logEntry.id;
 
-    const std::wstring wsource = (const wchar_t*)logEntry.source;
+    const std::wstring wsource = (const wchar_t*)logEntry.source.word;
     entry->Source = gcnew System::String(wsource.c_str());
 
-    const std::wstring wentry = (const wchar_t*)logEntry.entry;
+    const std::wstring wentry = (const wchar_t*)logEntry.entry.word;
     entry->Entry = gcnew System::String(wentry.c_str());
 
     entry->Unixtime = logEntry.unixtime;
@@ -980,7 +984,7 @@ int ClassifyEngine::GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry
   return numberOfEntries;
 }
 
-ClassifyEngine::LogEntryInfo* ClassifyEngine::CreateLogEntries(int count)
+LogEntryInfo* ClassifyEngine::CreateLogEntries(int count)
 {
   const auto length = 256;
 
@@ -988,16 +992,10 @@ ClassifyEngine::LogEntryInfo* ClassifyEngine::CreateLogEntries(int count)
   for (int i = 0; i < count; ++i)
   {
     auto& entry = logEntries[i];
-    entry.entryLength = length;
-    entry.sourceLength = length;
+    entry.entry = CreateStringWithLength(length);
+    entry.source = CreateStringWithLength(length);
     entry.id = -1;
     entry.unixtime = 0;
-
-    entry.entry = new char16_t[entry.entryLength + 1];
-    memset(entry.entry, 0, (entry.entryLength + 1) * sizeof(char16_t));
-
-    entry.source = new char16_t[entry.sourceLength + 1];
-    memset(entry.source, 0, (entry.sourceLength + 1) * sizeof(char16_t));
   }
   return logEntries;
 }
@@ -1010,13 +1008,13 @@ void ClassifyEngine::FreeLogEntries(LogEntryInfo* logEntries, int count )
   for (int i = 0; i < count; ++i)
   {
     auto& entry = logEntries[i];
-    if (entry.entry != nullptr)
+    if (entry.entry.word != nullptr)
     {
-      delete[] entry.entry;
+      delete[] entry.entry.word;
     }
-    if (entry.source != nullptr)
+    if (entry.source.word != nullptr)
     {
-      delete[] entry.source;
+      delete[] entry.source.word;
     }
   }
   delete [] logEntries;
@@ -1031,9 +1029,9 @@ void ClassifyEngine::FreeMagnets(MagnetInfo* magnets, int count)
   for (int i = 0; i < count; ++i)
   {
     auto& magnet = magnets[i];
-    if (magnet.magnetName != nullptr)
+    if (magnet.magnetName.word != nullptr)
     {
-      delete[] magnet.magnetName;
+      delete[] magnet.magnetName.word;
     }
   }
   delete[] magnets;
@@ -1044,17 +1042,16 @@ void ClassifyEngine::PrepareMagnetsName(MagnetInfo* magnets, int count)
   for (int i = 0; i < count; ++i)
   {
     auto& magnet = magnets[i];
-    if (magnet.magnetName != nullptr)
+    if (magnet.magnetName.word != nullptr)
     {
-      delete[] magnet.magnetName;
-      magnet.magnetName = nullptr;
+      delete[] magnet.magnetName.word;
+      magnet.magnetName.word = nullptr;
     }
-    magnet.magnetName = new char16_t[magnet.magnetLength + 1];
-    memset( magnet.magnetName, 0, (magnet.magnetLength +1) * sizeof(char16_t));
+    magnet.magnetName = CreateStringWithLength(magnet.magnetName.length);
   }
 }
 
-ClassifyEngine::MagnetInfo* ClassifyEngine::CreateMagnets(int count)
+MagnetInfo* ClassifyEngine::CreateMagnets(int count)
 {
   auto magnets = new MagnetInfo[count];
   for (int i = 0; i < count; ++i)
@@ -1062,44 +1059,42 @@ ClassifyEngine::MagnetInfo* ClassifyEngine::CreateMagnets(int count)
     auto& magnet = magnets[i];
     magnet.id = -1;
     magnet.categoryTarget = -1;
-    magnet.magnetName = nullptr;
-    magnet.magnetLength = 0;
+    magnet.magnetName.word = nullptr;
+    magnet.magnetName.length = 0;
     magnet.ruleType = -1;
   }
   return magnets;
 }
 
-ClassifyEngine::WordCategoryInfo* ClassifyEngine::CreateWordCategoryInfo(int count)
+WordCategoryAndProbability* ClassifyEngine::CreateWordCategoryInfo(int count)
 {
   const auto length = 256;
-  auto words = new WordCategoryInfo[count];
+  auto words = new WordCategoryAndProbability[count];
   for (int i = 0; i < count; ++i)
   {
     auto& word = words[i];
     word.category = -1;
     word.probability = 0.0;
-    word.wordLength = length;
-    word.word = new char16_t[word.wordLength + 1];
-    memset(word.word, 0, (word.wordLength + 1) * sizeof(char16_t));;
+    word.word = CreateStringWithLength( length );
   }
   return words;
 }
 
-void ClassifyEngine::FreeWordCategoryInfo(WordCategoryInfo* words, int size)
+void ClassifyEngine::FreeWordCategoryInfo(WordCategoryAndProbability* words, int size)
 {
   for (int i = 0; i < size; ++i)
   {
     auto& word = words[i];
-    if (word.word == nullptr)
+    if (word.word.word == nullptr)
     {
       continue;
     }
-    delete [] word.word;
+    delete [] word.word.word;
   }
   delete [] words;
 }
 
-ClassifyEngine::CategoryProbability* ClassifyEngine::CreateCategoryProbability(int size)
+CategoryProbability* ClassifyEngine::CreateCategoryProbability(int size)
 {
   auto categories = new CategoryProbability[size];
   for (int i = 0; i < size; ++i)
