@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <unordered_map>
+#include "../common/engine.h"
 
 using namespace System::Collections::Generic;
 
@@ -62,6 +63,7 @@ public:
   int GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry^> ^% entries, int max);
 
 protected:
+
   typedef bool(__stdcall *f_Initialise)(const char*);
   typedef bool(__stdcall *f_SetConfig)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_GetConfig)(const char16_t*, char16_t*, size_t);
@@ -76,57 +78,17 @@ protected:
   typedef int(__stdcall *f_GetCategoryFromUniqueId)(const char16_t*);
   typedef int(__stdcall *f_GetCategory)(const char16_t*);
 
+  typedef int(__stdcall* f_GetMagnets)(MagnetInfo* magnets, int max);
   typedef int(__stdcall *f_CreateMagnet)(const char16_t*, int , int);
   typedef bool(__stdcall *f_UpdateMagnet)(int, const char16_t*, int, int);
   typedef bool(__stdcall *f_DeleteMagnet)(int);
-
-  struct MagnetInfo
-  {
-    int id;
-    char16_t* magnetName;
-    int magnetLength;
-    int ruleType;
-    int categoryTarget;
-  };
-
-  // all the magnets, the id => MagnetInfo
-  typedef int(__stdcall *f_GetMagnets)(MagnetInfo* magnets, int max);
-
-  struct WordCategoryInfo
-  {
-    char16_t* word;
-    int wordLength;
-    int category;
-    double probability;
-  };
-  struct CategoryProbability
-  {
-    int category;
-    double probability;
-  };
-  typedef int(__stdcall *f_CategorizeWithInfo)(
-    const char16_t*, 
-    unsigned int, 
-    WordCategoryInfo*,    // array of words.
-    int,                  // number of words.
-    CategoryProbability*, // array of probabilities
-    int                   // number 
-  );
+    
+  typedef int(__stdcall *f_CategorizeWithInfo)( const char16_t*, unsigned int, TextCategoryInfo*);
   
   typedef int(__stdcall *f_GetVersion)();
 
   typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_ClearLogEntries)(long long);
-
-  struct LogEntryInfo
-  {
-    int id;
-    char16_t* source;
-    int sourceLength;
-    char16_t* entry;
-    int entryLength;
-    long long unixtime;
-  };
 
   // all the log entries, the id => LogEntry
   typedef int( __stdcall *f_GetLogEntries)(LogEntryInfo*, int);
@@ -196,8 +158,8 @@ private:
   void PrepareMagnetsName( MagnetInfo* magnets, int count );
   MagnetInfo* CreateMagnets( int count );
 
-  WordCategoryInfo* CreateWordCategoryInfo( int size );
-  void FreeWordCategoryInfo(WordCategoryInfo* words, int size);
+  WordCategoryAndProbability* CreateWordCategoryInfo( int size );
+  void FreeWordCategoryInfo(WordCategoryAndProbability* words, int size);
 
   CategoryProbability* CreateCategoryProbability(int size);
   void FreeCategoryProbability(CategoryProbability* categories, int size);

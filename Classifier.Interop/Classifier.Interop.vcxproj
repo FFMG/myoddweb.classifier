@@ -190,6 +190,7 @@ xcopy /y "$(TargetDir)*.lib" "..\lib\x64"
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\engine.h" />
     <ClInclude Include="Classifier.Interop.h" />
     <ClInclude Include="ClassifyEngine.h" />
     <ClInclude Include="EngineExports.h" />
