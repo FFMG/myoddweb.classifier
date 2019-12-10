@@ -8,6 +8,8 @@ using System.Threading;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.interfaces;
 using System.Net.Mail;
+using System.Text;
+using System.Timers;
 
 namespace myoddweb.classifier.core
 {
@@ -197,11 +199,11 @@ namespace myoddweb.classifier.core
 
       // recreate the timer, we cannot use a value of 0 in the timer. 
       _ticker = new System.Timers.Timer(0 == _engine.Options.ClassifyDelaySeconds ? 1 : _engine.Options.ClassifyDelayMilliseconds);
-      _ticker.Elapsed += async (sender, e) => await HandleTimerAsync().ConfigureAwait(false);
+      _ticker.Elapsed += HandleTimer;
       _ticker.AutoReset = true;
       _ticker.Enabled = true;
     }
-    
+
     /// <summary>
     /// Stop the timers while we are inside a lock
     /// </summary>
@@ -218,40 +220,32 @@ namespace myoddweb.classifier.core
       _ticker = null;
     }
 
-    private async Task<bool> HandleTimerAsync()
+    private void HandleTimer(object sender, ElapsedEventArgs e)
     {
-      if (_ticker == null)
-      {
-        return false;
-      }
-
+      _lock.Wait(_token);
       try
       {
-        await _lock.WaitAsync(_token).ConfigureAwait(false);
-        try
+        if (_ticker == null)
         {
-          // does the time still exist?
-          if (_ticker == null)
-          {
-            return false;
-          }
+          return;
+        }
 
-          // stop the lock
-          StopTimerInLock();
-        }
-        finally
-        {
-          _lock.Release();
-        }
+        // stop the lock
+        StopTimerInLock();
       }
-      catch (OperationCanceledException )
+      catch (OperationCanceledException)
       {
         // ignore this cancelled operation.
+        return;
+      }
+      finally
+      {
+        _lock.Release();
       }
 
       // the timer might have restarted already
       // but it's fine as we are going to handle the items we have here.
-      return await HandleAllItemsAsync().ConfigureAwait(false);
+      HandleAllItemsAsync().Wait(_token);
     }
 
     private async Task<bool> HandleAllItemsAsync()
@@ -272,11 +266,17 @@ namespace myoddweb.classifier.core
         {
           _lock.Release();
         }
-        return await HandleAllItemsAsync( items ).ConfigureAwait( false );
+
+        return await HandleAllItemsAsync(items).ConfigureAwait(false);
       }
-      catch (OperationCanceledException )
+      catch (OperationCanceledException)
       {
         // ignore this as we cancelled the operation
+        return false;
+      }
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
         return false;
       }
     }
@@ -330,18 +330,25 @@ namespace myoddweb.classifier.core
     /// <param name="mailItem"></param>
     private void UpdateLastProcessedEmailInLock(Outlook._MailItem mailItem)
     {
-      // the current time
-      var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime > DateTime.Now ? DateTime.Now : mailItem.ReceivedTime );
-
-      // get the last processed time
-      var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, 0);
-
-      // did we handle something older?
-      if (last > when)
+      try
       {
-        return;
+        // the current time
+        var when = Helpers.DateTimeToUnix(mailItem.ReceivedTime > DateTime.Now ? DateTime.Now : mailItem.ReceivedTime );
+
+        // get the last processed time
+        var last = _engine.Config.GetConfigWithDefault<long>(ConfigLastProcessedEmail, 0);
+
+        // did we handle something older?
+        if (last > when)
+        {
+          return;
+        }
+        _engine.Config.SetConfig(ConfigLastProcessedEmail, when);
       }
-      _engine.Config.SetConfig(ConfigLastProcessedEmail, when);
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
+      }
     }
 
     /// <summary>
@@ -357,8 +364,8 @@ namespace myoddweb.classifier.core
         _token.ThrowIfCancellationRequested();
 
         //  flag this item as been processed.
-        _mailItemsBeingProcessed.Add( entryIdItem);
-        return await HandleItemFlagedAsBeingProcessedInLock( entryIdItem ).ConfigureAwait( false );
+        _mailItemsBeingProcessed.Add(entryIdItem);
+        return await HandleItemFlagedAsBeingProcessedInLock(entryIdItem).ConfigureAwait(false);
       }
       finally
       {
@@ -519,9 +526,17 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     private bool MailWasSentByUs(Outlook._MailItem mailItem)
     {
-      // if the received by name is null, then it means we did not receive it
-      // and if we did not receive it then we must have sent it...
-      return mailItem?.ReceivedByName == null;
+      try
+      {
+        // if the received by name is null, then it means we did not receive it
+        // and if we did not receive it then we must have sent it...
+        return mailItem?.ReceivedByName == null;
+      }
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
+        return false;
+      }
     }
 
     /// <summary>
@@ -690,10 +705,42 @@ namespace myoddweb.classifier.core
     /// <param name="mail"></param>
     private static List<string> GetSmtpAddressForRecipients(Outlook._MailItem mail)
     {
-      const string prSmtpAddress = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
       var recips = mail.Recipients;
+      var addresses = new List<string>();
+      foreach (Outlook.Recipient recipient in recips)
+      {
+        try
+        {
+          try
+          {
+            addresses.Add( GetSmtpAddress(recipient));
+          }
+          catch
+          {
+            // try get the address
+            var email = recipient.Address;
+            if (!string.IsNullOrEmpty(email))
+            {
+              addresses.Add(email);
+            }
+          }
+        }
+        catch
+        {
+          //  ignore
+        }
+      }
+      return addresses;
+    }
 
-      return (from Outlook.Recipient recip in recips select recip.PropertyAccessor.GetProperty(prSmtpAddress) as string).ToList();
+    private static string GetSmtpAddress(Outlook.Recipient address )
+    {
+      if (address == null)
+      {
+        return null;
+      }
+      const string prSmtpAddress = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+      return address.PropertyAccessor.GetProperty(prSmtpAddress) as string;
     }
 
 
@@ -756,20 +803,20 @@ namespace myoddweb.classifier.core
         return new Dictionary<MailStringCategories, string>();
       }
 
-      var mailItems = new Dictionary<MailStringCategories, string>
-      {
-        {MailStringCategories.Bcc, mailItem.BCC},
-        {MailStringCategories.To, mailItem.To},
-        {MailStringCategories.Address, GetSmtpMailAddressForSender(mailItem, logger)?.Address},
-        {MailStringCategories.SenderName, mailItem.SenderName},
-        {MailStringCategories.Cc, mailItem.CC},
-        {MailStringCategories.Subject, mailItem.Subject},
-        {MailStringCategories.Smtp, string.Join(" ", GetSmtpAddressForRecipients(mailItem))}
-      };
+      var mailItems = new Dictionary<MailStringCategories, string>();
+      TryAdd(mailItems, MailStringCategories.Bcc, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.To, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.Address, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.SenderName, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.Cc, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.Subject, mailItem, logger);
+      TryAdd(mailItems, MailStringCategories.Smtp, mailItem, logger);
 
-      //  add the body of the email.
-      switch (mailItem.BodyFormat)
+      try
       {
+        //  add the body of the email.
+        switch (mailItem.BodyFormat)
+        {
         case Outlook.OlBodyFormat.olFormatHTML:
           mailItems.Add(MailStringCategories.HtmlBody, mailItem.HTMLBody);
           break;
@@ -778,7 +825,7 @@ namespace myoddweb.classifier.core
           var byteArray = mailItem.RTFBody as byte[];
           if (byteArray != null)
           {
-            var convertedRtf = new System.Text.ASCIIEncoding().GetString(byteArray);
+            var convertedRtf = new ASCIIEncoding().GetString(byteArray);
             mailItems.Add(MailStringCategories.RtfBody, convertedRtf);
           }
           else
@@ -792,10 +839,62 @@ namespace myoddweb.classifier.core
         default:
           mailItems.Add(MailStringCategories.Body, mailItem.Body);
           break;
+        }
+      }
+      catch (Exception e)
+      {
+        logger?.LogException(e);
       }
 
       //  done
       return mailItems;
+    }
+
+    private void TryAdd(IDictionary<MailStringCategories, string> mailItems, MailStringCategories categoryKey, Outlook._MailItem mailItem, ILogger logger)
+    {
+      try
+      {
+        var categoryValue = "";
+        switch (categoryKey)
+        {
+          case MailStringCategories.Bcc:
+            categoryValue = mailItem.BCC;
+            break;
+
+          case MailStringCategories.To:
+            categoryValue = mailItem.To;
+            break;
+
+          case MailStringCategories.Address:
+            categoryValue = GetSmtpMailAddressForSender(mailItem, logger)?.Address;
+            break;
+
+          case MailStringCategories.SenderName:
+            categoryValue = mailItem.SenderName;
+            break;
+
+          case MailStringCategories.Cc:
+            categoryValue = mailItem.CC;
+            break;
+
+          case MailStringCategories.Subject:
+            categoryValue = mailItem.Subject;
+            break;
+
+          case MailStringCategories.Smtp:
+            categoryValue = string.Join(" ", GetSmtpAddressForRecipients(mailItem));
+            break;
+
+          default:
+            return;
+        }
+
+        mailItems[categoryKey] = categoryValue;
+      }
+      catch (Exception e)
+      {
+        logger?.LogException(e);
+      }
     }
 
     /// <summary>
@@ -830,18 +929,28 @@ namespace myoddweb.classifier.core
     /// <returns>boolean if we can/could classify this mail item or not.</returns>
     public bool IsUsableClassNameForClassification(string className)
     {
-      switch (className)
+      try
       {
-        //  https://msdn.microsoft.com/en-us/library/ee200767(v=exchg.80).aspx
-        case "IPM.Note":
-        case "IPM.Note.SMIME.MultipartSigned":
-        case "IPM.Note.SMIME":
-        case "IPM.Note.Receipt.SMIME":
-          return true;
-      }
+        switch (className)
+        {
+          //  https://msdn.microsoft.com/en-us/library/ee200767(v=exchg.80).aspx
+          case "IPM.Note":
+          case "IPM.Note.SMIME.MultipartSigned":
+          case "IPM.Note.SMIME":
+          case "IPM.Note.Receipt.SMIME":
+            return true;
+        }
 
-      // no, we cannot use it.
-      return false;
+        // no, we cannot use it.
+        return false;
+      }
+      catch (Exception e)
+      {
+        _engine.Logger.LogException(e);
+
+        // no, we cannot use it.
+        return false;
+      }
     }
 
     /// <inheritdoc />
