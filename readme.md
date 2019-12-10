@@ -57,12 +57,16 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 
 ### 0.9.1.1 (10/30/2019)
 
+- Updated to less restrictive MIT License
 - Added option to re-scan entire folder, (for whatever reason)
   - Added progress bar when loading/processing large number of mail.
 - Empty/no categories no longer hide the menu.
 - Some code cleanup
 - Updated to engine 1.7.3
   - Sqlite 3.30.1
+- Various code optimisations.
+- Various performance / memory fixes
+- Minor other improvements
 
 ### 0.8.0.1 (09/01/2019)
 
@@ -238,6 +242,7 @@ Just close outlook, delete the database and restart outlook.
 - Give a link to the setup program on http://www.myoddweb.com
 - Update the site with more information.
 - Test on versions of Outlook, please add a message if you are able to test.
+  - <s>Test on Office 365</s>[0.9.1.1]
   - <s>Test on outlook 2016</s>[0.6.0.5]
   - <s>Test on outlook 2013</s>[0.5.0.4]
   - <s>Test on outlook 2010</s>[0.5.0.4]
@@ -252,4 +257,4 @@ Just close outlook, delete the database and restart outlook.
 
 ## LICENSE
 
-[Apache License](https://github.com/FFMG/myoddweb.classifier/blob/master/LICENSE) / (http://www.apache.org/licenses/)
+[MIT License](https://github.com/FFMG/myoddweb.classifier/blob/master/LICENSE)
