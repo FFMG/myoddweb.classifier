@@ -1,12 +1,11 @@
-﻿using myoddweb.classifier.core;
+﻿using System.Diagnostics;
 using myoddweb.classifier.interfaces;
-using System.Diagnostics;
 
-namespace myoddweb.viewer.utils
+namespace myoddweb.classifier.utils
 {
   public class StopWatch
   {
-    private Stopwatch _stopwatch;
+    private readonly Stopwatch _stopwatch;
 
     private readonly ILogger _logger;
 

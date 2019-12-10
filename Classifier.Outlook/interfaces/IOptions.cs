@@ -17,7 +17,8 @@
     ReAutomaticallyTrainMessages = 0,
     ReCheckIfCtrlKeyIsDown = 1,
     CheckUnProcessedEmailsOnStartUp = 1,
-    CheckIfUnKnownCategory = 1
+    CheckIfUnKnownCategory = 1,
+    NumberOfItemsToParse = 200
   }
 
   public interface IOptions
@@ -111,6 +112,11 @@
     /// This delay is needed to let outlook apply its own rules.
     /// </summary>
     uint ClassifyDelaySeconds { get; set; }
+
+    /// <summary>
+    /// The number of items we want to process at a time when we are parsing a folder.
+    /// </summary>
+    uint NumberOfItemsToParse { get; set; }
 
     /// <summary>
     /// Get the classification delay in milliseconds.

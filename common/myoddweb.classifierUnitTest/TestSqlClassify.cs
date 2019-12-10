@@ -108,6 +108,24 @@ namespace myoddweb.classifierUnitTest
     }
 
     [Test]
+    public void TestSimpleCategoriseWithWordCategory()
+    {
+      var categoryName = RandomString(8);
+      var categoryText = RandomStringWithSpaces(8);
+      var uniqueEntryId = RandomString(100);
+
+      Assert.IsTrue(TheEngine.Classify.Train(categoryName, categoryText, uniqueEntryId, 1));
+
+      // get the category
+      var categoryId = TheEngine.Categories.GetCategory(categoryName);
+
+      // the category should/must exist.
+      var wordCategory = new List<Classifier.Interfaces.Helpers.WordCategory>();
+      var categoryProbabilities = new Dictionary<int, double>();
+      Assert.AreEqual(categoryId, TheEngine.Classify.Categorize(categoryText, 0, out wordCategory, out categoryProbabilities));
+    }
+
+    [Test]
     public void TestGetCategories()
     {
       // we should have no categories to start with.

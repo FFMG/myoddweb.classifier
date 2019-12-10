@@ -27,9 +27,10 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>myoddweb.classifier</RootNamespace>
     <AssemblyName>myoddweb.classifier</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
@@ -45,7 +46,6 @@
     <FriendlyName>myoddweb.classifier</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -101,6 +101,7 @@
     <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MixedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <!--
     This section defines properties that are set when the "Release" configuration is selected.
@@ -133,7 +134,7 @@
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -190,6 +191,9 @@
     <Compile Include="core\categories.cs" />
     <Compile Include="core\classify.cs" />
     <Compile Include="core\config.cs" />
+    <Compile Include="core\CustomUI.Folder.cs" />
+    <Compile Include="core\CustomUI.Item.cs" />
+    <Compile Include="core\CustomUI.Multiple.cs" />
     <Compile Include="core\folders.cs" />
     <Compile Include="core\itemmove.cs" />
     <Compile Include="core\logger.cs" />
@@ -202,6 +206,12 @@
     </Compile>
     <Compile Include="forms\ChooseCategoryForm.Designer.cs">
       <DependentUpon>ChooseCategoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="forms\ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="interfaces\ICategories.cs" />
     <Compile Include="interfaces\IClassify.cs" />
@@ -307,6 +317,9 @@
     <EmbeddedResource Include="forms\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="forms\ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -318,7 +331,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="myodd.classifier.pfx" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -381,7 +396,7 @@
     <ManifestKeyFile>myodd.classifier.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>08BD16A6EAF363C5B67DE8BEA9656E1AD066A999</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>60B831972ADCD0F77AB01C62EB5BEB3466B7464C</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,7 +2,9 @@
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using myoddweb.classifier.interfaces;
 
 namespace myoddweb.classifier
@@ -14,6 +16,11 @@ namespace myoddweb.classifier
     private Outlook._Folders _folders;
 
     private CustomUI _customUI;
+
+    /// <summary>
+    /// The cancellation token source, so we can start everything.
+    /// </summary>
+    private CancellationTokenSource _cts;
 
     private ItemMove TheIemMove { get; set; }
 
@@ -30,24 +37,55 @@ namespace myoddweb.classifier
       _folders = Application.Session.DefaultStore.GetRootFolder().Folders;
 
       // create all the required values.
-      CreateEngine();
-      CreateMailProcessor();
-      CreateItemMove();
+      Create();
 
       // new email arrives.
       Application.NewMailEx += Application_NewMailEx;
 
-      // look for item moves.
-      TasksController.Add(Task.Run(() => MonitorItemMove()));
-     
+      // start all the values
+      Start();
+
       // do we want to check unprocessed emails?
       if (TheEngine.Options.CheckUnProcessedEmailsOnStartUp)
       {
-        TasksController.Add(Task.Run(() => ParseUnprocessedEmails()));
+        TasksController.Add( ParseUnprocessedEmailsAsync() );
       }
 
       // log the version 
       LogStartupInformation();
+    }
+
+    private void Start()
+    {
+      _cts = new CancellationTokenSource();
+
+      TheMailProcessor.Start( _cts.Token );
+
+      // look for item moves.
+      TasksController.Add(Task.Run(() => MonitorItemMove()));
+    }
+
+    private void Stop()
+    {
+      // cancel the token
+      _cts?.Cancel();
+
+      // stop the mail processor
+      TheMailProcessor.Stop();
+
+      // wait for the tasks to be done
+      TasksController.WaitAll();
+
+      // clean up
+      _cts?.Dispose();
+      _cts = null;
+    }
+
+    private void Create()
+    {
+      CreateEngine();
+      CreateMailProcessor();
+      CreateItemMove();
     }
 
     /// <summary>
@@ -61,8 +99,7 @@ namespace myoddweb.classifier
     /// <param name="e"></param>
     private void ThisAddIn_Shutdown(object sender, EventArgs e)
     {
-      // wait for the tasks to be done
-      TasksController.WaitAll();
+      Stop();
 
       // unregister all the folders.
       TheIemMove = null;
@@ -167,10 +204,10 @@ namespace myoddweb.classifier
     /// <summary>
     /// parse all the unprocessed emails.
     /// </summary>
-    private void ParseUnprocessedEmails()
+    private Task ParseUnprocessedEmailsAsync()
     {
-      var folders = new UnProcessedFolders(TheMailProcessor, TheEngine.Logger );
-      folders.Process(_folders);
+      var folders = new UnProcessedFolders( "Unprocessed emails",  TheMailProcessor, TheEngine.Logger );
+      return folders.ProcessAsync(_folders, (int)Globals.ThisAddIn.TheEngine.Options.NumberOfItemsToParse, true, _cts.Token );
     }
 
     /// <inheritdoc />
@@ -209,19 +246,30 @@ namespace myoddweb.classifier
     /// </summary>
     /// <param name="entryIdItem">The new email</param>
     /// <returns></returns>
-    private Task<bool> Application_NewMailExAsync(string entryIdItem)
+    private async Task<bool> Application_NewMailExAsync(string entryIdItem)
     {
       try
       {
         // add it to the mail processor.
-        TheMailProcessor.Add(entryIdItem);
+        await TheMailProcessor.AddAsync(entryIdItem).ConfigureAwait(false);
+        return true;
       }
       catch (Exception ex)
       {
         TheEngine.Logger.LogException(ex);
-        return Task.FromResult(false);
+        return false;
       }
-      return Task.FromResult(true);
+    }
+
+    public void ParseFolders(IList<Outlook.MAPIFolder> folders)
+    {
+      // then reparse them all
+      foreach (var mapiFolder in folders)
+      {
+        var unProcessedFolders = new UnProcessedFolders( "Parse folder", TheMailProcessor, TheEngine.Logger);
+        TasksController.Add(unProcessedFolders.ProcessAsync(mapiFolder, (int)TheEngine.Options.NumberOfItemsToParse, false, _cts.Token ));
+      }
+
     }
   }
 }

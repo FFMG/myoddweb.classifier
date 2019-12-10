@@ -320,6 +320,8 @@ namespace myoddweb.classifier.forms
 
       // the number of items we want to display in the log.
       _engine.Options.LogDisplaySize = GetNumberOfEntriesToDisplay();
+
+      _engine.Options.NumberOfItemsToParse = GetNumberOfItemsToParse();
     }
 
     private uint GetLogRetentionPolicy()
@@ -368,6 +370,11 @@ namespace myoddweb.classifier.forms
     private uint GetClassifyDelaySeconds()
     {
       return (uint)numericUpDownClassifyDelay.Value;
+    }
+
+    private uint GetNumberOfItemsToParse()
+    {
+      return (uint) numericNumberOfItemsToParse.Value;
     }
 
     private uint GetNumberOfEntriesToDisplay()
@@ -491,6 +498,9 @@ namespace myoddweb.classifier.forms
       // the classify delay in seconds.
       RebuildClassifyDelay();
 
+      // the number of items to parse
+      RebuildMAxNumberOfItemsToParse();
+
       // the defaults.
       RebuildDefaults();
     }
@@ -520,6 +530,9 @@ namespace myoddweb.classifier.forms
 
       labelDisplaySizeDefault.Text = $"[ {(int)DefaultOptions.LogDisplaySize} ]";
       labelDisplaySizeDefault.ForeColor = Color.DarkGray;
+
+      labelDefaultNumberOfItemsToParse.Text = $"[ {(int)DefaultOptions.NumberOfItemsToParse} ]";
+      labelDefaultNumberOfItemsToParse.ForeColor = Color.DarkGray;
     }
 
     private void RebuildCommonPercentSpinner()
@@ -544,6 +557,14 @@ namespace myoddweb.classifier.forms
       numericUpDownClassifyDelay.Minimum = 0;
       numericUpDownClassifyDelay.ReadOnly = false;
       numericUpDownClassifyDelay.Value = _engine.Options.ClassifyDelaySeconds;
+    }
+
+    private void RebuildMAxNumberOfItemsToParse()
+    {
+      numericNumberOfItemsToParse.Maximum = 500;
+      numericNumberOfItemsToParse.Minimum = 0;
+      numericNumberOfItemsToParse.ReadOnly = false;
+      numericNumberOfItemsToParse.Value = _engine.Options.NumberOfItemsToParse;
     }
 
     private void Log_Click(object sender, EventArgs e)

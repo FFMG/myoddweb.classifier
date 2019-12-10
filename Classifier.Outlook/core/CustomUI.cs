@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.forms;
-using myoddweb.viewer.utils;
 using Exception = System.Exception;
 using Office = Microsoft.Office.Core;
 using myoddweb.classifier.interfaces;
+using myoddweb.classifier.utils;
+using Microsoft.Office.Core;
 
 // For more information, see the Ribbon XML documentation in the Visual Studio Tools for Office Help.
 namespace myoddweb.classifier.core
 {
   [ComVisible(true)]
-  public class CustomUI : Office.IRibbonExtensibility
+  public partial class CustomUI : Office.IRibbonExtensibility
   {
     /// <summary>
     /// The max number of items we will try to classify.
@@ -40,26 +41,14 @@ namespace myoddweb.classifier.core
 
     private Office.IRibbonUI _ribbon;
 
-    public CustomUI()
-    {
-    }
-
     public void SetMailProcessor(MailProcessor mailProcessor)
     {
-      if (mailProcessor == null)
-      {
-        throw new ArgumentNullException(nameof(mailProcessor));
-      }
-      _mailProcessor = mailProcessor;
+      _mailProcessor = mailProcessor ?? throw new ArgumentNullException(nameof(mailProcessor));
     }
 
     public void SetEngine(IEngine engine)
     {
-      if (engine == null)
-      {
-        throw new ArgumentNullException(nameof(engine));
-      }
-      _engine = engine;
+      _engine = engine ?? throw new ArgumentNullException(nameof(engine));
     }
 
     #region IRibbonExtensibility Members
@@ -74,9 +63,9 @@ namespace myoddweb.classifier.core
     #region Ribbon Callbacks
     //Create callback methods here. For more information about adding callback methods, visit http://go.microsoft.com/fwlink/?LinkID=271226
 
-    public void Ribbon_Load(Office.IRibbonUI ribbonUI)
+    public void Ribbon_Load(Office.IRibbonUI ribbonUi)
     {
-      this._ribbon = ribbonUI;
+      _ribbon = ribbonUi;
     }
 
     #endregion
@@ -85,24 +74,21 @@ namespace myoddweb.classifier.core
 
     private static string GetResourceText(string resourceName)
     {
-      Assembly asm = Assembly.GetExecutingAssembly();
-      string[] resourceNames = asm.GetManifestResourceNames();
-      for (int i = 0; i < resourceNames.Length; ++i)
+      var asm = Assembly.GetExecutingAssembly();
+      var resourceNames = asm.GetManifestResourceNames();
+      for (var i = 0; i < resourceNames.Length; ++i)
       {
-        if (string.Compare(resourceName, resourceNames[i], StringComparison.OrdinalIgnoreCase) == 0)
+        if (string.Compare(resourceName, resourceNames[i], StringComparison.OrdinalIgnoreCase) != 0)
         {
-          using (StreamReader resourceReader = new StreamReader(asm.GetManifestResourceStream(resourceNames[i])))
-          {
-            if (resourceReader != null)
-            {
-              return resourceReader.ReadToEnd();
-            }
-          }
+          continue;
+        }
+        using (var resourceReader = new StreamReader(asm.GetManifestResourceStream(resourceNames[i]) ?? throw new InvalidOperationException()))
+        {
+          return resourceReader.ReadToEnd();
         }
       }
       return null;
     }
-
     #endregion
 
 
@@ -110,13 +96,23 @@ namespace myoddweb.classifier.core
     //  https://naimhamadi.wordpress.com/2014/07/15/adding-a-custom-context-menu-item-to-outlook-2013/
     //
 
-    private _MailItem GetMailItemFromRibbonControl(Office.IRibbonControl control)
+    /// <summary>
+    /// Get the first selected mail item
+    /// </summary>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    private _MailItem GetMailItemFromControl(Office.IRibbonControl control)
     {
-      var items = GetMultipleMailItemFromRibbonControl( control );
+      var items = GetMultipleMailItemsFromControl( control );
       return items?.First();
     }
 
-    private List<_MailItem> GetMultipleMailItemFromRibbonControl(Office.IRibbonControl control)
+    /// <summary>
+    /// Given the curent control, get the list of selected mails.
+    /// </summary>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    private IList<_MailItem> GetMultipleMailItemsFromControl(Office.IRibbonControl control)
     {
       var explorer = Globals.ThisAddIn.Application.ActiveExplorer();
       if (explorer?.Selection == null || explorer.Selection.Count <= 0)
@@ -127,17 +123,30 @@ namespace myoddweb.classifier.core
       var listItems = new List<_MailItem>();
       foreach (var selectionItem in explorer.Selection)
       {
-        var item = selectionItem as _MailItem;
-        if (null != item)
+        if (!(selectionItem is _MailItem item))
         {
-          if( !_mailProcessor.IsUsableClassNameForClassification(item.MessageClass) )
-          {
-            continue;
-          }
-          listItems.Add(item);
+          continue;
         }
+        if( !_mailProcessor.IsUsableClassNameForClassification(item.MessageClass) )
+        {
+          continue;
+        }
+        listItems.Add(item);
       }
       return (listItems.Count == 0 ? null : listItems);
+    }
+
+    /// <summary>
+    /// Get the currently selected folders, (if any).
+    /// </summary>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    private IList<MAPIFolder> GetMultipleFoldersFromControl(Office.IRibbonControl control)
+    {
+      // NB: Outlook 15/16 only allow one folder to be selected at a time.
+      //     But to future proof, we will allow return a list.
+      var folder = Globals.ThisAddIn.Application.ActiveExplorer().CurrentFolder;
+      return folder != null ? new List<MAPIFolder>{ folder } : null;
     }
 
     /// <summary>
@@ -148,7 +157,7 @@ namespace myoddweb.classifier.core
     public async Task OnSelectCategory(Office.IRibbonControl control)
     {
       // get all the mail items.
-      var mailItems = GetMultipleMailItemFromRibbonControl(control);
+      var mailItems = GetMultipleMailItemsFromControl(control);
       // get the category id that was seleted.
       var regex = new Regex("myoddweb.classifier_manage_([0-9]+)");
       if (!regex.IsMatch(control.Id))
@@ -261,9 +270,25 @@ namespace myoddweb.classifier.core
       }
     }
 
+    /// <summary>
+    /// (re)Parse one or more folders
+    /// </summary>
+    /// <param name="control"></param>
+    public void OnParse(Office.IRibbonControl control)
+    {
+      // get the folders
+      var folders = GetMultipleFoldersFromControl(control);
+      if (null == folders)
+      {
+        return;
+      }
+
+      Globals.ThisAddIn.ParseFolders(folders);
+    }
+    
     public void OnDetails(Office.IRibbonControl control)
     {
-      var items = GetMultipleMailItemFromRibbonControl(control);
+      var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
       {
         // we can only show the details of one email
@@ -284,7 +309,7 @@ namespace myoddweb.classifier.core
 
     public void OnMagnet(Office.IRibbonControl control)
     {
-      var items = GetMultipleMailItemFromRibbonControl(control);
+      var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
       {
         // we can only do the magnet of one email
@@ -299,28 +324,6 @@ namespace myoddweb.classifier.core
       {
         magnetMailItemForm.ShowDialog();
       }
-    }
-
-    public string GetMultipleItemsContent(Office.IRibbonControl control)
-    {
-      // do we have a valid mail item?
-      // if not then we are not going to display it.
-      var mailItem = GetMailItemFromRibbonControl(control);
-      return null == mailItem ? "" : GetContentWithPosibleMailItem(null).Result;
-    }
-
-
-    /// <summary>
-    /// GetContent callback
-    /// </summary>
-    /// <param name="control">The control.</param>
-    /// <returns></returns>
-    public string GetContent(Office.IRibbonControl control)
-    {
-      // do we have a valid mail item?
-      // if not then we are not going to display it.
-      var mailItem = GetMailItemFromRibbonControl(control);
-      return null == mailItem ? "" : GetContentWithPosibleMailItem( mailItem ).Result;
     }
 
     /// <summary>
@@ -393,94 +396,6 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
-    /// GetContent callback
-    /// </summary>
-    /// <param name="mailItem">The mail item.</param>
-    /// <returns></returns>
-    public async Task<string> GetContentWithPosibleMailItem( _MailItem mailItem )
-    { 
-      // create the menu xml
-      var translationsXml = new StringBuilder(@"<menu xmlns=""http://schemas.microsoft.com/office/2009/07/customui"">");
-
-      // if we have no categories then something is 'broken'
-      // so we do not want our menu to show.
-      if ( _engine.Categories.Count == 0 )
-      {
-        return "";
-      }
-
-      // do we know the current category?
-      var currentCategory = mailItem == null ? null : _mailProcessor.GetCategoryFromMailItem(mailItem);
-
-      // get the current category if?
-      var currentCategoryId = currentCategory == null ? -1 : (int)currentCategory.Id;
-
-      // try and guess the new category
-      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, _engine.Categories.List).ConfigureAwait(false);
-
-      // and create a menu for all of them.
-      foreach (var category in _engine.Categories.List )
-      {
-        var safeLabel = category.XmlName.Replace( "&amp;", "&amp;&amp;");
-        var getImage = "";
-        if (currentCategoryId == category.Id && guessCategoryResponse.CategoryId == category.Id)
-        {
-          // best guess selected image.
-          getImage = @"getImage=""GetImageBoth""";
-        }
-        else if (currentCategoryId == category.Id)
-        {
-          getImage = @"getImage=""GetImageSelected""";
-        }
-        else if (guessCategoryResponse.CategoryId == category.Id)
-        {
-          getImage = @"getImage=""GetImageMaybe""";
-        }
-        else
-        {
-          //  no image
-        }
-
-        // best guess selected image.
-        translationsXml.Append(
-          $@"<button id =""myoddweb.classifier_manage_{category.Id}"" label=""{safeLabel}"" onAction=""OnSelectCategory"" {getImage}/>"
-          );
-      }
-
-      // if we have existing categories, add a separator
-      // otherwise we don't need to
-      if (_engine.Categories.Count > 0 )
-      {
-        translationsXml.Append(@"<menuSeparator id=""separator"" />");
-      }
-
-      // show the email details
-      // but only if we have selected one email.
-      if (mailItem != null)
-      {
-        translationsXml.Append(
-          $@"<button id =""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
-      }
-
-      // If the value is null, it means we have more than one mail item
-      // we cannot set a magnet with multiple mails.
-      // well, we could, but it is just to much to keep it simple to the user.
-      if (mailItem != null)
-      {
-        translationsXml.Append(
-          $@"<button id =""{"myoddweb.classifier_magnet"}"" label=""{"Magnet ..."}"" onAction=""{"OnMagnet"}"" />");
-      }
-
-      translationsXml.Append(
-        $@"<button id =""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>");
-
-      translationsXml.Append(@"</menu>");
-
-      var menu = translationsXml.ToString();
-      return menu;
-    }
-
-    /// <summary>
     /// The bitmap we will be using when we know the selected category.
     /// </summary>
     /// <param name="control"></param>
@@ -514,73 +429,170 @@ namespace myoddweb.classifier.core
     {
       return Properties.Resources.maybe;
     }
-    
-    /// <summary>
-    /// Return tru of the menu is visible or not.
-    /// </summary>
-    /// <param name="control"></param>
-    /// <returns>false if we have no valid message selected.</returns>
-    public bool IsMultipleItemsMenuVisible(Office.IRibbonControl control)
-    {
-      // if we have no engine, then we have a problem somehwere.
-      if (null == _engine)
-      {
-        return false;
-      }
 
+    public string GetContenteWithPosibleFolder( IList<MAPIFolder> folders)
+    {
       // if we have no categories then something is 'broken'
-      // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0 )
+      // we want the user to be able to add categories, so just show the default.
+      if (_engine.Categories.Count == 0)
       {
-        return false;
+        return BuildMenu(BuildCommonMenus());
       }
 
-      //  if we have a valid item, then we don't return null.
-      return (GetMailItemFromRibbonControl(control) != null);
+      var menu = new StringBuilder();
+
+      menu.Append($@"<button id=""{"myoddweb.classifier_parse"}"" label=""{"Parse ..."}"" onAction=""{"OnParse"}"" />");
+
+      // add a separator
+      menu.Append(BuildMenuSeparator(menu));
+
+      // common menu
+      menu.Append(BuildCommonMenus());
+
+      // putting it all together
+      return BuildMenu( menu );
     }
 
     /// <summary>
-    /// Return tru of the menu is visible or not.
+    /// GetContent callback
     /// </summary>
-    /// <param name="control"></param>
-    /// <returns>false if we have no valid message selected.</returns>
-    public bool IsMenuVisible(Office.IRibbonControl control)
+    /// <param name="mailItem">The mail item.</param>
+    /// <returns></returns>
+    public async Task<string> GetContentWithPosibleMailItemAsync(_MailItem mailItem)
     {
-      // if we have no engine, then we have a problem somehwere.
-      if (null == _engine)
-      {
-        return false;
-      }
-
       // if we have no categories then something is 'broken'
-      // so we do not want our menu to show.
-      if (_engine.Categories.Count == 0  )
+      // we want the user to be able to add categories, so just show the default.
+      if (_engine.Categories.Count == 0)
       {
-        return false;
+        return BuildMenu( BuildCommonMenus() );
       }
 
-      //  if we have a valid item, then we don't return null.
-      return (GetMailItemFromRibbonControl(control) != null);
+      // create the menu xml
+      var menu = new StringBuilder();
+
+      // add all the categories.
+      menu.Append( await BuildCategoriesMenusAsync(mailItem).ConfigureAwait( false ) );
+
+      // add a separator
+      menu.Append(BuildMenuSeparator(menu));
+
+      // show the email details
+      // but only if we have selected one email.
+      if (mailItem != null)
+      {
+        menu.Append(BuildMailItemMenu());
+      }
+
+      // add a separator
+      menu.Append(BuildMenuSeparator(menu));
+
+      // add the common items.
+      menu.Append(BuildCommonMenus() );
+
+      return BuildMenu(menu);
+    }
+
+    private string BuildMenuSeparator(StringBuilder menu)
+    {
+      return $@"<menuSeparator id=""separator_{menu.Length}"" />";
     }
 
     /// <summary>
-    /// Display the main menu label.
+    /// Build the menu item if we have a valid mail item.
     /// </summary>
-    /// <param name="control"></param>
     /// <returns></returns>
-    public string GetMainLabel(Office.IRibbonControl control)
+    private StringBuilder BuildMailItemMenu()
     {
-      return "Myoddweb.Classifier";
+      var menu = new StringBuilder();
+      menu.Append( $@"<button id=""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
+
+      // If the value is null, it means we have more than one mail item
+      // we cannot set a magnet with multiple mails.
+      // well, we could, but it is just to much to keep it simple to the user.
+      menu.Append( $@"<button id=""{"myoddweb.classifier_magnet"}"" label=""{"Magnet ..."}"" onAction=""{"OnMagnet"}"" />");
+
+      return menu;
     }
 
     /// <summary>
-    /// Display the main menu label.
+    /// Put all the menu rows together and create a menu item.
     /// </summary>
-    /// <param name="control"></param>
+    /// <param name="menus"></param>
     /// <returns></returns>
-    public string GetMultipleItemsLabel(Office.IRibbonControl control)
+    private string BuildMenu(StringBuilder menus)
     {
-      return "Myoddweb.Classifier";
+      return $@"<menu xmlns=""http://schemas.microsoft.com/office/2009/07/customui"">{menus}</menu>";
+    }
+
+    /// <summary>
+    /// Build the common menu(s)
+    /// </summary>
+    /// <returns></returns>
+    private StringBuilder BuildCommonMenus()
+    {
+      return new StringBuilder(
+          $@"<button id=""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>"
+        );
+    }
+
+    /// <summary>
+    /// Build rows of available categories.
+    /// </summary>
+    /// <param name="mailItem"></param>
+    /// <returns></returns>
+    private async Task<StringBuilder> BuildCategoriesMenusAsync(_MailItem mailItem)
+    {
+      // do we know the current category?
+      var currentCategory = mailItem == null ? null : _mailProcessor.GetCategoryFromMailItem(mailItem);
+
+      // get the current category if?
+      var currentCategoryId = (int?)currentCategory?.Id ?? -1;
+
+      // try and guess the new category
+      var guessCategoryResponse = await GuessPosibleCategory(mailItem, currentCategoryId, _engine.Categories.List).ConfigureAwait(false);
+      var proposedCurrentCategoryId = guessCategoryResponse?.CategoryId ?? -1;
+
+      var menu = new StringBuilder();
+
+      // and create a menu for all of them.
+      foreach (var category in _engine.Categories.List)
+      {
+        var safeLabel = category.XmlName.Replace("&amp;", "&amp;&amp;");
+        var getImage = "";
+        if (currentCategoryId == category.Id && proposedCurrentCategoryId == category.Id)
+        {
+          // best guess selected image.
+          getImage = @"getImage=""GetImageBoth""";
+        }
+        else if (currentCategoryId == category.Id)
+        {
+          getImage = @"getImage=""GetImageSelected""";
+        }
+        else if (proposedCurrentCategoryId == category.Id)
+        {
+          getImage = @"getImage=""GetImageMaybe""";
+        }
+        //else
+        //{
+        //  no image
+        //}
+
+        // best guess selected image.
+        menu.Append(
+          $@"<button id=""myoddweb.classifier_manage_{category.Id}"" label=""{safeLabel}"" onAction=""OnSelectCategory"" {getImage}/>"
+        );
+      }
+      return menu;
+    }
+
+    /// <summary>
+    /// GetContent callback
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <returns></returns>
+    public string GetMenuFolder(IRibbonControl control)
+    {
+      return "";
     }
   }
 }

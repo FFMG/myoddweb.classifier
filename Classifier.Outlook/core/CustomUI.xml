@@ -3,6 +3,13 @@
   <ribbon>
   </ribbon>
   <contextMenus>
+    <contextMenu idMso="ContextMenuFolder">
+      <dynamicMenu id="MyoddweblassifierContextMenuFolder"
+                   getLabel="GetMenuFolderLabel"
+                   getVisible="IsMenuFolderMenuVisible"
+                   getContent="GetFolderContent"
+                   getImage="GetImageClassify"/>
+    </contextMenu>
     <contextMenu idMso="ContextMenuMailItem">
       <dynamicMenu id="MyoddweblassifierSingleItemMenu" 
                    getLabel="GetMainLabel"
@@ -18,7 +25,8 @@
                    getContent="GetMultipleItemsContent"
                    getImage="GetImageClassify" />
       </contextMenu>
-  
+
+
   </contextMenus>
 </customUI>
 

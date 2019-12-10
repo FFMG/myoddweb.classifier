@@ -67,10 +67,12 @@ namespace myoddweb.classifierUnitTest
       var categoryHam = TheEngine.Categories.GetCategory("Ham");
 
       var cat1 = TheEngine.Categories.FindCategoryById(categorySpam);
+      Assert.IsNotNull(cat1);
       Assert.That(cat1.Id == categorySpam);
       Assert.That(cat1.Name == "Spam");
 
       var cat2 = TheEngine.Categories.FindCategoryById(categoryHam);
+      Assert.IsNotNull(cat2);
       Assert.That(cat2.Id == categoryHam);
       Assert.That(cat2.Name == "Ham");
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace myoddweb.classifier.interfaces
@@ -23,7 +24,7 @@ namespace myoddweb.classifier.interfaces
     /// Add a mail item to be moved to the folder.
     /// </summary>
     /// <param name="entryIdItem">The item we are moving.</param>
-    void Add(string entryIdItem);
+    Task AddAsync(string entryIdItem);
 
     /// <summary>
     /// Classify an item given an entry id.
@@ -38,7 +39,7 @@ namespace myoddweb.classifier.interfaces
     /// Add a range of mail entry ids to our list.
     /// </summary>
     /// <param name="ids"></param>
-    void Add(List<string> ids);
+    Task AddAsync( IList<string> ids);
 
     /// <summary>
     /// Are we currently busy with this mail item?
@@ -46,5 +47,16 @@ namespace myoddweb.classifier.interfaces
     /// <param name="itemId"></param>
     /// <returns></returns>
     bool IsProccessing(string itemId);
+
+    /// <summary>
+    /// Start the processing of mails.
+    /// </summary>
+    /// <param name="token"></param>
+    void Start(CancellationToken token );
+
+    /// <summary>
+    /// Stop the mail processing
+    /// </summary>
+    void Stop();
   }
 }

@@ -92,7 +92,7 @@ begin
   begin
    Result := false;
    exit;
-  end
+  end;
 
   if RegKeyExists( HKLM64, 'SOFTWARE\Microsoft\VSTO Runtime Setup\v4' ) then 
   begin
@@ -214,7 +214,7 @@ begin
      MsgBox('Outlook VSTO 32/64 does appear to be installed, install cannot continue.', mbInformation, MB_OK);
      Result := false;
      exit;
-   end
+   end;
     
    // check if outlook is running
    winHwnd := FindWindowByClassName( 'rctrl_renwnd32' );
@@ -225,7 +225,7 @@ begin
    end
    else
    begin 
-     if not IsDotNetDetected('v4.5', 0) then begin
+     if not IsDotNetDetected('v4.5.2', 0) then begin
          MsgBox('MyOdd Classifier requires Microsoft .NET Framework 4.5.x'#13#13
                 'Please use Windows Update to install this version,'#13
                 'and then re-run the setup program.', mbInformation, MB_OK);

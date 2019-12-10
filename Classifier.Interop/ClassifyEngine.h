@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <unordered_map>
+#include "../common/engine.h"
 
 using namespace System::Collections::Generic;
 
@@ -62,6 +63,7 @@ public:
   int GetLogEntries(List<Classifier::Interfaces::Helpers::LogEntry^> ^% entries, int max);
 
 protected:
+
   typedef bool(__stdcall *f_Initialise)(const char*);
   typedef bool(__stdcall *f_SetConfig)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_GetConfig)(const char16_t*, char16_t*, size_t);
@@ -71,50 +73,25 @@ protected:
   typedef bool(__stdcall *f_DeleteCategory)(const char16_t*);
   typedef bool(__stdcall *f_Release)();
 
-  typedef int(__stdcall *f_GetCategories)(std::map<int, std::u16string>&);
+  typedef int(__stdcall *f_GetCategoryInfo)(int number, int& id, int categoryNameLength, char16_t* categoryName);
   typedef int(__stdcall *f_Categorize)(const char16_t*, unsigned int);
   typedef int(__stdcall *f_GetCategoryFromUniqueId)(const char16_t*);
   typedef int(__stdcall *f_GetCategory)(const char16_t*);
 
+  typedef int(__stdcall* f_GetMagnets)(MagnetInfo* magnets, int max);
   typedef int(__stdcall *f_CreateMagnet)(const char16_t*, int , int);
   typedef bool(__stdcall *f_UpdateMagnet)(int, const char16_t*, int, int);
   typedef bool(__stdcall *f_DeleteMagnet)(int);
-
-  struct MagnetInfo
-  {
-    std::u16string magnetName;
-    int ruleType;
-    int categoryTarget;
-  };
-
-  // all the magnets, the id => MagnetInfo
-  typedef std::unordered_map<int, MagnetInfo> MagnetsInfo;
-  typedef int(__stdcall *f_GetMagnets)(MagnetsInfo&);
-
-  struct WordCategoryInfo
-  {
-    int category;
-    double probability;
-  };
-  typedef std::unordered_map<std::u16string, WordCategoryInfo> wordscategory_info;
-  typedef std::unordered_map<int, double> categoriesProbabilities_info;
-  typedef int(__stdcall *f_CategorizeWithWordCategory)(const char16_t*, unsigned int, wordscategory_info&, categoriesProbabilities_info&);
+    
+  typedef int(__stdcall *f_CategorizeWithInfo)( const char16_t*, unsigned int, TextCategoryInfo*);
   
   typedef int(__stdcall *f_GetVersion)();
 
   typedef int(__stdcall *f_Log)(const char16_t*, const char16_t*);
   typedef bool(__stdcall *f_ClearLogEntries)(long long);
 
-  struct LogEntry
-  {
-    int id;
-    std::u16string source;
-    std::u16string entry;
-    int unixtime;
-  };
   // all the log entries, the id => LogEntry
-  typedef std::unordered_map<int, LogEntry> LogEntries;
-  typedef int( __stdcall *f_GetLogEntries)(LogEntries&, int);
+  typedef int( __stdcall *f_GetLogEntries)(LogEntryInfo*, int);
 
   enum ProcType
   {
@@ -129,7 +106,7 @@ protected:
     procCategorizeWithInfo,
     procGetCategoryFromUniqueId,
     procGetCategory,
-    procGetCategories,
+    procGetCategoryInfo,
     procRenameCategory,
     procDeleteCategory,
 
@@ -173,5 +150,18 @@ private:
   bool InitialiseUnmanagedFunctions();
   bool InitialiseUnmanagedFunction(HINSTANCE hInstance, ProcType procType);
   bool CallUnmanagedInitialise(String^ databasePath);
+
+  void FreeLogEntries(LogEntryInfo* logEntries, int count );
+  LogEntryInfo* CreateLogEntries( int count );
+
+  void FreeMagnets(MagnetInfo* magnets, int count);
+  void PrepareMagnetsName( MagnetInfo* magnets, int count );
+  MagnetInfo* CreateMagnets( int count );
+
+  WordCategoryAndProbability* CreateWordCategoryInfo( int size );
+  void FreeWordCategoryInfo(WordCategoryAndProbability* words, int size);
+
+  CategoryProbability* CreateCategoryProbability(int size);
+  void FreeCategoryProbability(CategoryProbability* categories, int size);
 };
 

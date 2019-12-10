@@ -16,7 +16,7 @@ namespace myoddweb.classifierUnitTest
       var en = new Mock<IEngine>();
       var mp = new MailProcessor( en.Object, ns.Object );
 
-      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders( mp, null));
+      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders( "Title", mp, null));
     }
 
     [Test]
@@ -24,7 +24,7 @@ namespace myoddweb.classifierUnitTest
     {
       var lo = new Mock<ILogger>();
 
-      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders(null, lo.Object ));
+      Assert.Throws<ArgumentNullException>(() => new UnProcessedFolders( "Title", null, lo.Object ));
     }
   }
 }
