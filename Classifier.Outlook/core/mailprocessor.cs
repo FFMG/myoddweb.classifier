@@ -20,14 +20,10 @@ namespace myoddweb.classifier.core
     /// </summary>
     private const string IdentifierKey = "Classifier.Identifier";
 
-    public class CategorizeResponse
-    {
-      public int CategoryId { get; set; }
-
-      public bool WasMagnetUsed { get; set; }
-    }
-
     private const string ConfigLastProcessedEmail = "Processor.LastEmail";
+
+    private readonly List<Task> _timerTasks = new List<Task>();
+
 
     /// <summary>
     /// Our timer
@@ -58,6 +54,12 @@ namespace myoddweb.classifier.core
     /// Our lock...
     /// </summary>
     private readonly SemaphoreSlim _lock = new SemaphoreSlim(1,1);
+
+    /// <summary>
+    /// Our timer tasks lock...
+    /// </summary>
+    private readonly SemaphoreSlim _taksLock = new SemaphoreSlim(1, 1);
+
 
     /// <summary>
     /// The current token
@@ -125,6 +127,9 @@ namespace myoddweb.classifier.core
         {
           _lock.Release();
         }
+
+        // wait for all the side taks to complete.
+        Task.WaitAll(_timerTasks.ToArray());
       }
       catch 
       {
@@ -222,30 +227,53 @@ namespace myoddweb.classifier.core
 
     private void HandleTimer(object sender, ElapsedEventArgs e)
     {
-      _lock.Wait(_token);
       try
       {
-        if (_ticker == null)
+        #region Check Timer
+        //  check the timer, if it has stopped then we stopped it.
+        _lock.Wait(_token);
+        try
         {
-          return;
-        }
+          if (_ticker == null)
+          {
+            return;
+          }
 
-        // stop the lock
-        StopTimerInLock();
+          // stop the lock
+          StopTimerInLock();
+        }
+        finally
+        {
+          _lock.Release();
+        }
+        #endregion
+
+        #region Handle All Items
+        _taksLock.Wait(_token);
+        try
+        {
+          // remove everything that is complete
+          _timerTasks.RemoveAll(t => t.IsCompleted);
+
+          // the timer might have restarted already
+          // but it's fine as we are going to handle the items we have here.
+          _timerTasks.Add(HandleAllItemsAsync());
+        }
+        finally
+        {
+          _taksLock.Release();
+        }
+        #endregion
       }
       catch (OperationCanceledException)
       {
         // ignore this cancelled operation.
-        return;
+        // all the locks should be released.
       }
-      finally
+      catch (Exception exception)
       {
-        _lock.Release();
+        _engine.Logger.LogException(exception);
       }
-
-      // the timer might have restarted already
-      // but it's fine as we are going to handle the items we have here.
-      HandleAllItemsAsync().Wait(_token);
     }
 
     private async Task<bool> HandleAllItemsAsync()
@@ -573,9 +601,8 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     public async Task<CategorizeResponse> CategorizeAsync(Outlook._MailItem mailItem)
     {
-      bool magnetWasUsed;
-      var categoryId = await Task.FromResult(Categorize(mailItem, out magnetWasUsed)).ConfigureAwait(false);
-      return new CategorizeResponse { CategoryId = categoryId, WasMagnetUsed = magnetWasUsed };
+      var categoryId = await Task.FromResult(Categorize(mailItem, out var magnetWasUsed)).ConfigureAwait(false);
+      return new CategorizeResponse( categoryId, magnetWasUsed );
     }
 
     /// <summary>
@@ -854,7 +881,7 @@ namespace myoddweb.classifier.core
     {
       try
       {
-        var categoryValue = "";
+        string categoryValue;
         switch (categoryKey)
         {
           case MailStringCategories.Bcc:

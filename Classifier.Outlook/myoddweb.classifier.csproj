@@ -189,6 +189,7 @@
   -->
   <ItemGroup>
     <Compile Include="core\categories.cs" />
+    <Compile Include="core\CategorizeResponse.cs" />
     <Compile Include="core\classify.cs" />
     <Compile Include="core\config.cs" />
     <Compile Include="core\CustomUI.Folder.cs" />

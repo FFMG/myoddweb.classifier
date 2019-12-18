@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using Microsoft.Office.Interop.Outlook;
 using myoddweb.classifier.forms;
 using Exception = System.Exception;
-using Office = Microsoft.Office.Core;
 using myoddweb.classifier.interfaces;
 using myoddweb.classifier.utils;
 using Microsoft.Office.Core;
@@ -22,7 +21,7 @@ using Microsoft.Office.Core;
 namespace myoddweb.classifier.core
 {
   [ComVisible(true)]
-  public partial class CustomUI : Office.IRibbonExtensibility
+  public partial class CustomUI : IRibbonExtensibility
   {
     /// <summary>
     /// The max number of items we will try to classify.
@@ -39,7 +38,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     private MailProcessor _mailProcessor;
 
-    private Office.IRibbonUI _ribbon;
+    private IRibbonUI _ribbon;
 
     public void SetMailProcessor(MailProcessor mailProcessor)
     {
@@ -63,7 +62,7 @@ namespace myoddweb.classifier.core
     #region Ribbon Callbacks
     //Create callback methods here. For more information about adding callback methods, visit http://go.microsoft.com/fwlink/?LinkID=271226
 
-    public void Ribbon_Load(Office.IRibbonUI ribbonUi)
+    public void Ribbon_Load(IRibbonUI ribbonUi)
     {
       _ribbon = ribbonUi;
     }
@@ -101,7 +100,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private _MailItem GetMailItemFromControl(Office.IRibbonControl control)
+    private _MailItem GetMailItemFromControl(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl( control );
       return items?.First();
@@ -112,7 +111,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private IList<_MailItem> GetMultipleMailItemsFromControl(Office.IRibbonControl control)
+    private IList<_MailItem> GetMultipleMailItemsFromControl(IRibbonControl control)
     {
       var explorer = Globals.ThisAddIn.Application.ActiveExplorer();
       if (explorer?.Selection == null || explorer.Selection.Count <= 0)
@@ -141,7 +140,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private IList<MAPIFolder> GetMultipleFoldersFromControl(Office.IRibbonControl control)
+    private IList<MAPIFolder> GetMultipleFoldersFromControl(IRibbonControl control)
     {
       // NB: Outlook 15/16 only allow one folder to be selected at a time.
       //     But to future proof, we will allow return a list.
@@ -154,7 +153,7 @@ namespace myoddweb.classifier.core
     /// The user wants us to categorise this mail item.
     /// </summary>
     /// <param name="control"></param>
-    public async Task OnSelectCategory(Office.IRibbonControl control)
+    public async Task OnSelectCategory(IRibbonControl control)
     {
       // get all the mail items.
       var mailItems = GetMultipleMailItemsFromControl(control);
@@ -256,7 +255,7 @@ namespace myoddweb.classifier.core
     /// Show the various options and allow the user to change certain settings. 
     /// </summary>
     /// <param name="control"></param>
-    public void OnManageMore(Office.IRibbonControl control)
+    public void OnManageMore(IRibbonControl control)
     {
       if (null == _engine.Options )
       {
@@ -274,7 +273,7 @@ namespace myoddweb.classifier.core
     /// (re)Parse one or more folders
     /// </summary>
     /// <param name="control"></param>
-    public void OnParse(Office.IRibbonControl control)
+    public void OnParse(IRibbonControl control)
     {
       // get the folders
       var folders = GetMultipleFoldersFromControl(control);
@@ -286,7 +285,7 @@ namespace myoddweb.classifier.core
       Globals.ThisAddIn.ParseFolders(folders);
     }
     
-    public void OnDetails(Office.IRibbonControl control)
+    public void OnDetails(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
@@ -307,7 +306,7 @@ namespace myoddweb.classifier.core
       }
     }
 
-    public void OnMagnet(Office.IRibbonControl control)
+    public void OnMagnet(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
@@ -333,13 +332,9 @@ namespace myoddweb.classifier.core
     /// <param name="categories">the categories tool we will use to re-categorise</param>
     /// <param name="currentCategoryId">The current value of the category</param>
     /// <returns>Categories.CategorizeResponse the new id or -1 if we don't know.</returns>
-    protected async Task<MailProcessor.CategorizeResponse> GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, IEnumerable<Category> categories )
+    protected async Task<CategorizeResponse> GuessPosibleCategory( _MailItem mailItem, int currentCategoryId, IEnumerable<Category> categories )
     {
-      var guessCategoryResponse = new MailProcessor.CategorizeResponse
-      {
-        CategoryId = 0,
-        WasMagnetUsed = false
-      };
+      var guessCategoryResponse = new CategorizeResponse( 0, false );
 
       if ( !_engine.Options.ReCheckIfCtrlKeyIsDown || (Control.ModifierKeys & Keys.Control) != Keys.Control)
       {
@@ -376,11 +371,7 @@ namespace myoddweb.classifier.core
         _engine.Logger.LogError(e.ToString());
 
         // @todo we need to log that there was an issue.
-        guessCategoryResponse = new MailProcessor.CategorizeResponse
-        {
-          CategoryId = 0,
-          WasMagnetUsed = false
-        };
+        guessCategoryResponse = new CategorizeResponse( 0, false );
       }
 
       // reset the cursor.
@@ -400,7 +391,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns>The 'valid' bitmap</returns>
-    public Bitmap GetImageSelected(Office.IRibbonControl control)
+    public Bitmap GetImageSelected(IRibbonControl control)
     {
       return Properties.Resources.valid;
     }
@@ -410,22 +401,22 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns>The 'valid' bitmap</returns>
-    public Bitmap GetImageBoth(Office.IRibbonControl control)
+    public Bitmap GetImageBoth(IRibbonControl control)
     {
       return Properties.Resources.both;
     }
 
-    public Bitmap GetImageOptions(Office.IRibbonControl control)
+    public Bitmap GetImageOptions(IRibbonControl control)
     {
       return Properties.Resources.settings;
     }
 
-    public Bitmap GetImageClassify(Office.IRibbonControl control)
+    public Bitmap GetImageClassify(IRibbonControl control)
     {
       return Properties.Resources.classify;
     }
     
-    public Bitmap GetImageMaybe(Office.IRibbonControl control)
+    public Bitmap GetImageMaybe(IRibbonControl control)
     {
       return Properties.Resources.maybe;
     }
