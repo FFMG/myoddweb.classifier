@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -11,7 +9,7 @@ using System.Security;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://www.myoddweb.com")]
 [assembly: AssemblyProduct("Myoddweb.Classifier")]
-[assembly: AssemblyCopyright("Copyright (c) 2015-2019")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +30,8 @@ using System.Security;
 //           Engine 1.7.2
 // 0.9.1.1 
 //           Engine 1.7.3
-// 0.9.1.2
+// 0.9.2.0   Updated copyright to 2021
 //           Engine 1.7.4
-[assembly: AssemblyVersion("0.9.1.2")]
-[assembly: AssemblyFileVersion("0.9.1.2")]
+//           Added Magnet and details image to context menu
+[assembly: AssemblyVersion("0.9.2.0")]
+[assembly: AssemblyFileVersion("0.9.2.0")]

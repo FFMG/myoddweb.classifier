@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Classifier.Interfaces")]
-[assembly: AssemblyCopyright("Copyright (c) 2015-2019")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,5 +22,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d5036364-aa81-46ca-9139-cb3e84298265")]
 
-[assembly: AssemblyVersion("0.9.1.2")]
-[assembly: AssemblyFileVersion("0.9.1.2")]
+[assembly: AssemblyVersion("0.9.2.0")]
+[assembly: AssemblyFileVersion("0.9.2.0")]
