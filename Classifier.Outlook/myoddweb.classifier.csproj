@@ -387,6 +387,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\details.png" />
+    <Content Include="Resources\magnets.png" />
     <Content Include="Resources\magnet.png" />
   </ItemGroup>
   <PropertyGroup>

@@ -113,6 +113,16 @@ namespace myoddweb.classifier.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap magnets {
+            get {
+                object obj = ResourceManager.GetObject("magnets", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap maybe {
             get {
                 object obj = ResourceManager.GetObject("maybe", resourceCulture);

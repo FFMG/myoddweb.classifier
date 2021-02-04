@@ -22,7 +22,7 @@ using Microsoft.Office.Core;
 namespace myoddweb.classifier.core
 {
   [ComVisible(true)]
-  public partial class CustomUI : Office.IRibbonExtensibility
+  public partial class CustomUI : IRibbonExtensibility
   {
     /// <summary>
     /// The max number of items we will try to classify.
@@ -39,7 +39,10 @@ namespace myoddweb.classifier.core
     /// </summary>
     private MailProcessor _mailProcessor;
 
-    private Office.IRibbonUI _ribbon;
+    /// <summary>
+    /// The Ribon UI
+    /// </summary>
+    private IRibbonUI _ribbon;
 
     public void SetMailProcessor(MailProcessor mailProcessor)
     {
@@ -50,7 +53,7 @@ namespace myoddweb.classifier.core
     {
       _engine = engine ?? throw new ArgumentNullException(nameof(engine));
     }
-
+    
     #region IRibbonExtensibility Members
 
     public string GetCustomUI(string ribbonId)
@@ -63,7 +66,7 @@ namespace myoddweb.classifier.core
     #region Ribbon Callbacks
     //Create callback methods here. For more information about adding callback methods, visit http://go.microsoft.com/fwlink/?LinkID=271226
 
-    public void Ribbon_Load(Office.IRibbonUI ribbonUi)
+    public void Ribbon_Load(IRibbonUI ribbonUi)
     {
       _ribbon = ribbonUi;
     }
@@ -253,6 +256,30 @@ namespace myoddweb.classifier.core
     }
 
     /// <summary>
+    /// The user wants to see the categories.
+    /// </summary>
+    /// <param name="control"></param>
+    public void OnManageCategories(IRibbonControl control)
+    {
+      using (var categoriesForm = new CategoriesForm(_engine.Categories, _engine.Config, _engine.Folders))
+      {
+        categoriesForm.ShowDialog();
+      }
+    }
+
+    /// <summary>
+    /// The user wants to see the magnets.
+    /// </summary>
+    /// <param name="control"></param>
+    public void OnManageMagnets(IRibbonControl control)
+    {
+      using (var rulesForm = new MagnetsForm(magnets: _engine.Magnets, categories: _engine.Categories))
+      {
+        rulesForm.ShowDialog();
+      }
+    }
+
+    /// <summary>
     /// Show the various options and allow the user to change certain settings. 
     /// </summary>
     /// <param name="control"></param>
@@ -263,7 +290,7 @@ namespace myoddweb.classifier.core
         return;
       }
 
-      using (var optionsForm = new OptionsForm( _engine, _engine.Categories ))
+      using (var optionsForm = new OptionsForm( _engine ))
       {
         optionsForm.StartPosition = FormStartPosition.CenterScreen;
         optionsForm.ShowDialog( );
@@ -425,6 +452,16 @@ namespace myoddweb.classifier.core
       return Properties.Resources.magnet;
     }
     
+    public Bitmap GetImageCategories(IRibbonControl control)
+    {
+      return Properties.Resources.categories;
+    }
+
+    public Bitmap GetImageMagnets(IRibbonControl control)
+    {
+      return Properties.Resources.magnets;
+    }
+
     public Bitmap GetImageOptions(IRibbonControl control)
     {
       return Properties.Resources.settings;
@@ -540,9 +577,11 @@ namespace myoddweb.classifier.core
     /// <returns></returns>
     private StringBuilder BuildCommonMenus()
     {
-      return new StringBuilder(
-          $@"<button id=""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>"
-        );
+      var menu = new StringBuilder();
+      menu.Append($@"<button id=""{"myoddweb.classifier_categories"}"" label=""{"Manage Categories ..."}"" onAction=""{"OnManageCategories"}"" getImage=""GetImageCategories""/>");
+      menu.Append($@"<button id=""{"myoddweb.classifier_magnets"}"" label=""{"Manage Magnets ..."}"" onAction=""{"OnManageMagnets"}"" getImage=""GetImageMagnets""/>");
+      menu.Append($@"<button id=""{"myoddweb.classifier_settings"}"" label=""{"Options ..."}"" onAction=""{"OnManageMore"}"" getImage=""GetImageOptions""/>");
+      return menu;
     }
 
     /// <summary>
