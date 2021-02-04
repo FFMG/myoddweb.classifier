@@ -26,10 +26,6 @@ namespace myoddweb.classifier.core
     }
 
     /// <inheritdoc />
-    /// <summary>
-    /// Log a system exception.
-    /// </summary>
-    /// <param name="exception"></param>
     public void LogException(System.Exception exception)
     {
       while (true)
@@ -45,47 +41,63 @@ namespace myoddweb.classifier.core
     }
 
     /// <inheritdoc />
-    /// <summary>
-    /// Log an error message
-    /// </summary>
-    /// <param name="message"></param>
     public void LogError(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Error);
     }
 
-    /// <summary>
-    /// Log a warning message
-    /// </summary>
-    /// <param name="message"></param>
+    /// <inheritdoc />
     public void LogWarning(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Warning);
     }
 
-    /// <summary>
-    /// Log an information message
-    /// </summary>
-    /// <param name="message"></param>
+    /// <inheritdoc />
     public void LogInformation(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Information);
     }
 
-    /// <summary>
-    /// Log a verbose message
-    /// </summary>
-    /// <param name="message"></param>
+    /// <inheritdoc />
     public void LogVerbose(string message)
     {
       // log it
       LogMessageToEngine(message, LogLevels.Verbose);
     }
 
+    /// <inheritdoc />
+    public void LogDebug(string message)
+    {
+      // log it
+      LogMessageToEngine(message, LogLevels.Debug);
+    }
 
+    /// <inheritdoc />
+    public int Log(string source, string entry)
+    {
+      return _classifyEngine?.Log(source, entry) ?? -1;
+    }
+
+    /// <inheritdoc />
+    public List<LogEntry> GetLogEntries(int max)
+    {
+      // the entries we gor
+      var entries = new List<LogEntry>();
+
+      // return null if there was an error, errors are logged.
+      return -1 == (_classifyEngine?.GetLogEntries(out entries, max) ?? -1) ? null : entries;
+    }
+
+    /// <inheritdoc />
+    public bool ClearLogEntries(long olderThan)
+    {
+      return _classifyEngine?.ClearLogEntries(olderThan) ?? false;
+    }
+
+    #region Private Methods
     /// <summary>
     /// Log a message to the engine
     /// </summary>
@@ -107,44 +119,14 @@ namespace myoddweb.classifier.core
       Log(LogSource(level), json);
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
     private static string LogSource(LogLevels level)
     {
       return $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{level}";
     }
-
-    /// <summary>
-    /// Log a message to the database
-    /// </summary>
-    /// <param name="source">Unique to the souce, something like "myapp.information", max 255 chars</param>
-    /// <param name="entry">The entry we are logging, max 1024 chars.</param>
-    /// <returns>the entry id.</returns>
-    public int Log(string source, string entry)
-    {
-      return _classifyEngine?.Log(source, entry) ?? -1;
-    }
-
-    /// <summary>
-    /// Get a list of log entries.
-    /// </summary>
-    /// <param name="max">The max number of entries we are getting.</param>
-    /// <returns>the entries or null if there was an error.</returns>
-    public List<LogEntry> GetLogEntries(int max)
-    {
-      // the entries we gor
-      var entries = new List<LogEntry>();
-
-      // return null if there was an error, errors are logged.
-      return -1 == (_classifyEngine?.GetLogEntries(out entries, max) ?? -1) ? null : entries;
-    }
-
-    /// <summary>
-    /// Clear log entries that are older than a certain date
-    /// </summary>
-    /// <param name="olderThan"> the date we want to delte.</param>
-    /// <returns>success or not</returns>
-    public bool ClearLogEntries(long olderThan)
-    {
-      return _classifyEngine?.ClearLogEntries(olderThan) ?? false;
-    }
+    #endregion
   }
 }

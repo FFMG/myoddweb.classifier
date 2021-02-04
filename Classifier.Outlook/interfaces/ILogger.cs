@@ -10,11 +10,18 @@ namespace myoddweb.classifier.interfaces
     Error,
     Warning,
     Information,
-    Verbose
+    Verbose,
+    Debug
   }
 
   public interface ILogger
   {
+    /// <summary>
+    /// Log a debug message
+    /// </summary>
+    /// <param name="message"></param>
+    void LogDebug(string message);
+
     /// <summary>
     /// Log a verbose message
     /// </summary>

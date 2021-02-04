@@ -101,7 +101,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private _MailItem GetMailItemFromControl(Office.IRibbonControl control)
+    private _MailItem GetMailItemFromControl(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl( control );
       return items?.First();
@@ -112,7 +112,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private IList<_MailItem> GetMultipleMailItemsFromControl(Office.IRibbonControl control)
+    private IList<_MailItem> GetMultipleMailItemsFromControl(IRibbonControl control)
     {
       var explorer = Globals.ThisAddIn.Application.ActiveExplorer();
       if (explorer?.Selection == null || explorer.Selection.Count <= 0)
@@ -141,7 +141,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns></returns>
-    private IList<MAPIFolder> GetMultipleFoldersFromControl(Office.IRibbonControl control)
+    private IList<MAPIFolder> GetMultipleFoldersFromControl(IRibbonControl control)
     {
       // NB: Outlook 15/16 only allow one folder to be selected at a time.
       //     But to future proof, we will allow return a list.
@@ -154,7 +154,7 @@ namespace myoddweb.classifier.core
     /// The user wants us to categorise this mail item.
     /// </summary>
     /// <param name="control"></param>
-    public async Task OnSelectCategory(Office.IRibbonControl control)
+    public async Task OnSelectCategory(IRibbonControl control)
     {
       // get all the mail items.
       var mailItems = GetMultipleMailItemsFromControl(control);
@@ -256,7 +256,7 @@ namespace myoddweb.classifier.core
     /// Show the various options and allow the user to change certain settings. 
     /// </summary>
     /// <param name="control"></param>
-    public void OnManageMore(Office.IRibbonControl control)
+    public void OnManageMore(IRibbonControl control)
     {
       if (null == _engine.Options )
       {
@@ -274,7 +274,7 @@ namespace myoddweb.classifier.core
     /// (re)Parse one or more folders
     /// </summary>
     /// <param name="control"></param>
-    public void OnParse(Office.IRibbonControl control)
+    public void OnParse(IRibbonControl control)
     {
       // get the folders
       var folders = GetMultipleFoldersFromControl(control);
@@ -286,7 +286,7 @@ namespace myoddweb.classifier.core
       Globals.ThisAddIn.ParseFolders(folders);
     }
     
-    public void OnDetails(Office.IRibbonControl control)
+    public void OnDetails(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
@@ -307,7 +307,7 @@ namespace myoddweb.classifier.core
       }
     }
 
-    public void OnMagnet(Office.IRibbonControl control)
+    public void OnMagnet(IRibbonControl control)
     {
       var items = GetMultipleMailItemsFromControl(control);
       if (items == null || items.Count == 0 || items.Count > 1)
@@ -400,7 +400,7 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns>The 'valid' bitmap</returns>
-    public Bitmap GetImageSelected(Office.IRibbonControl control)
+    public Bitmap GetImageSelected(IRibbonControl control)
     {
       return Properties.Resources.valid;
     }
@@ -410,22 +410,32 @@ namespace myoddweb.classifier.core
     /// </summary>
     /// <param name="control"></param>
     /// <returns>The 'valid' bitmap</returns>
-    public Bitmap GetImageBoth(Office.IRibbonControl control)
+    public Bitmap GetImageBoth(IRibbonControl control)
     {
       return Properties.Resources.both;
     }
 
-    public Bitmap GetImageOptions(Office.IRibbonControl control)
+    public Bitmap GetImageDetails(IRibbonControl control)
+    {
+      return Properties.Resources.details;
+    }
+    
+    public Bitmap GetImageMagnet(IRibbonControl control)
+    {
+      return Properties.Resources.magnet;
+    }
+    
+    public Bitmap GetImageOptions(IRibbonControl control)
     {
       return Properties.Resources.settings;
     }
 
-    public Bitmap GetImageClassify(Office.IRibbonControl control)
+    public Bitmap GetImageClassify(IRibbonControl control)
     {
       return Properties.Resources.classify;
     }
     
-    public Bitmap GetImageMaybe(Office.IRibbonControl control)
+    public Bitmap GetImageMaybe(IRibbonControl control)
     {
       return Properties.Resources.maybe;
     }
@@ -504,12 +514,12 @@ namespace myoddweb.classifier.core
     private StringBuilder BuildMailItemMenu()
     {
       var menu = new StringBuilder();
-      menu.Append( $@"<button id=""{"myoddweb.classifier_details"}"" label=""{"Details ..."}"" onAction=""{"OnDetails"}"" />");
+      menu.Append( $@"<button id=""{"myoddweb.classifier_details"}"" label=""{"View Message Details ..."}"" onAction=""{"OnDetails"}""  getImage=""GetImageDetails""/>");
 
       // If the value is null, it means we have more than one mail item
       // we cannot set a magnet with multiple mails.
       // well, we could, but it is just to much to keep it simple to the user.
-      menu.Append( $@"<button id=""{"myoddweb.classifier_magnet"}"" label=""{"Magnet ..."}"" onAction=""{"OnMagnet"}"" />");
+      menu.Append( $@"<button id=""{"myoddweb.classifier_magnet"}"" label=""{"Create Magnet Rule ..."}"" onAction=""{"OnMagnet"}""  getImage=""GetImageMagnet""/>");
 
       return menu;
     }

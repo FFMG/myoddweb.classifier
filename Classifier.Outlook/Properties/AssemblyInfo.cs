@@ -32,5 +32,7 @@ using System.Security;
 //           Engine 1.7.2
 // 0.9.1.1 
 //           Engine 1.7.3
-[assembly: AssemblyVersion("0.9.1.1")]
-[assembly: AssemblyFileVersion("0.9.1.1")]
+// 0.9.1.2
+//           Engine 1.7.4
+[assembly: AssemblyVersion("0.9.1.2")]
+[assembly: AssemblyFileVersion("0.9.1.2")]

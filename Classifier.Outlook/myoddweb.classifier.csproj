@@ -385,6 +385,10 @@
   <ItemGroup>
     <None Include="Resources\both.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\details.png" />
+    <Content Include="Resources\magnet.png" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

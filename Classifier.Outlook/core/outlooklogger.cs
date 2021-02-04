@@ -72,6 +72,21 @@ namespace myoddweb.classifier.core
     }
 
     /// <inheritdoc />
+    public void LogDebug(string message)
+    {
+      _parent?.LogDebug(message);
+
+      // log to the event log.
+      if (!InstallAndValidateSource())
+      {
+        return;
+      }
+
+      var appLog = new System.Diagnostics.EventLog { Source = _eventViewSource };
+      appLog.WriteEntry(message, System.Diagnostics.EventLogEntryType.Information);
+    }
+
+    /// <inheritdoc />
     public void LogError(string message)
     {
       _parent?.LogError(message);

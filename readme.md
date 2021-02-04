@@ -1,4 +1,4 @@
-# MyOddWeb.Classifier [![Release](https://img.shields.io/badge/release-v0.9.1.1-brightgreen.png?style=flat)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
+# MyOddWeb.Classifier [![Release](https://img.shields.io/badge/release-v0.9.1.2-brightgreen.png?style=flat)](https://github.com/FFMG/myoddweb.classifier/releases/latest)
 
 <!---
 Mono does not work currently...
@@ -50,10 +50,18 @@ MyOddWeb Classifier works with POP3, SMTP, NNTP proxies IMAP and exchanges.
 ### From the code
 
 - Get the code
-- Build it using visual studio 2017 or later, (I tried with 2015 as well ... and it works(ish)).
+- Build it using visual studio 2019 or later, (I tried with 2017 and 2015 as well ... and it works(ish)).
 - You can either debug and/or simply run outlook.
 
 ## Versions
+
+### 0.9.2.0 (02/03/2021)
+
+- Updated to engine 1.7.4
+  - Sqlite 3.34.1
+  - Updated pcre2 to 10.35
+- Added new pictures for message details + message magnet
+- Added debug logger  
 
 ### 0.9.1.1 (10/30/2019)
 
