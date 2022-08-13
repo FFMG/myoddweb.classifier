@@ -31,5 +31,6 @@ bin/**/myoddweb.classifier.*
 bin/**/myoddweb.classifierUnitTest*
 bin/myoddweb.classifierUnitTest*
 *.user
+obj/
 
 bin/**/*.classifier
